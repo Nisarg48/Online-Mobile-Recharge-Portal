@@ -1,0 +1,25 @@
+Recharge Plan Schema : 
+_Id
+data
+validity
+voice
+sms
+connectivity
+price
+subscription
+description
+
+User : 
+_Id
+name
+email
+phone_no
+password
+
+Recharge For Other : 
+_Id
+phone_no
+operator
+
+
+
