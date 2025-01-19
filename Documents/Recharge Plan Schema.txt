@@ -1,13 +1,27 @@
 Recharge Plan Schema : 
-_Id
-data
-validity
-voice
-sms
-connectivity
-price
-subscription
-description
+{
+  "platform": "string", // e.g., "Jio", "Airtel", "Vi"
+  "category": "string", // Category of the plan, e.g., "Popular Plans", "True Unlimited", "Data", "Hero Unlimited"
+  "planId": "string", // Unique ID for the recharge plan
+  "price": "number", // Price of the recharge plan in INR
+  "validity": "number", // Validity of the plan in days
+  "data": {
+    "dailyLimit": "number", // Daily data limit in GB, or null if not applicable
+    "totalData": "number", // Total data in GB, or null if unlimited
+    "postLimitSpeed": "string" // Speed after data limit, e.g., "64kbps", or null
+  },
+  "calls": "string", // Details about calls, e.g., "Unlimited", "100 minutes", "Local/STD only"
+  "sms": "string", // SMS allowance, e.g., "100/day", "300 total", or "Unlimited"
+  "extraBenefits": [
+    {
+      "type": "string", // Type of extra benefit, e.g., "OTT Subscription", "Streaming Service", "Cashback"
+      "description": "string", // Details about the extra benefit, e.g., "Disney+ Hotstar Free for 28 Days"
+      "icon": "string" // URL or path to an image/icon representing the benefit, e.g., "https://example.com/netflix-icon.png"
+    }
+  ],
+  "additionalDetails": "string" // Additional notes about the plan, e.g., "Works only on JioPhone" or "For prepaid users only"
+}
+
 
 User : 
 _Id
