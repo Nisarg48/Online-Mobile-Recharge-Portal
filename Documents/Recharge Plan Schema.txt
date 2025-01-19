@@ -22,6 +22,37 @@ Recharge Plan Schema :
   "additionalDetails": "string" // Additional notes about the plan, e.g., "Works only on JioPhone" or "For prepaid users only"
 }
 
+Recharge Transaction Schema :
+{
+  "transactionId": "string", // Unique ID for each transaction
+  "userId": "string", // Unique ID for the user
+  "mobileNumber": "string", // Mobile number that was recharged
+  "planId": "string", // Unique ID of the recharge plan
+  "plan": {
+    "provider": "string", // e.g., "Jio", "Airtel", "Vi"
+    "category": "string", // Plan category, e.g., "Popular Plans", "True Unlimited"
+    "price": "number", // Plan price in INR
+    "validity": "number", // Plan validity in days
+    "data": {
+      "dailyLimit": "number", // Daily data limit in GB, or null if not applicable
+      "totalData": "number", // Total data in GB, or null if unlimited
+      "postLimitSpeed": "string" // Speed after data limit, e.g., "64kbps", or null
+    },
+    "calls": "string", // Details about calls, e.g., "Unlimited"
+    "sms": "string", // SMS allowance, e.g., "100/day", "Unlimited"
+    "extraBenefits": [
+      {
+        "type": "string", // Type of extra benefit, e.g., "OTT Subscription"
+        "description": "string", // Details about the extra benefit
+        "icon": "string" // URL or path to an image/icon representing the benefit
+      }
+    ],
+    "additionalDetails": "string" // Additional notes about the plan
+  },
+  "transactionDateTime": "string", // ISO 8601 format, e.g., "2024-01-19T08:52:00Z"
+  "status": "string", // Transaction status, e.g., "Success", "Pending", "Failed"
+  "paymentMethod": "string" // Payment method, e.g., "Credit Card", "Debit Card", "UPI", "Net Banking"
+}
 
 User : 
 _Id
