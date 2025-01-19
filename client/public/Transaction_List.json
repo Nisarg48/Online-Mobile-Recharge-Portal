@@ -1,0 +1,362 @@
+[
+    {
+        "transactionId": "txn_001",
+        "userId": "user123",
+        "mobileNumber": "9876543210",
+        "planId": "jio_001",
+        "plan": {
+            "provider": "Jio",
+            "category": "Popular Plans",
+            "price": 299,
+            "validity": 28,
+            "data": {
+                "dailyLimit": 1.5,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "Free access to JioTV and JioCinema",
+                    "icon": "https://example.com/jiotv-icon.png"
+                }
+            ],
+            "additionalDetails": "Complimentary access to Jio apps"
+        },
+        "transactionDateTime": "2025-01-19T08:52:00Z",
+        "status": "Success",
+        "paymentMethod": "Credit Card"
+    },
+    {
+        "transactionId": "txn_002",
+        "userId": "user456",
+        "mobileNumber": "9876543211",
+        "planId": "vi_002",
+        "plan": {
+            "provider": "Vi",
+            "category": "Hero Unlimited",
+            "price": 959,
+            "validity": 84,
+            "data": {
+                "dailyLimit": 2,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "SonyLiv for 28 days",
+                    "icon": "https://example.com/sonyliv-icon.png"
+                }
+            ],
+            "additionalDetails": "Available in select circles"
+        },
+        "transactionDateTime": "2025-01-19T10:15:00Z",
+        "status": "Success",
+        "paymentMethod": "Debit Card"
+    },
+    {
+        "transactionId": "txn_003",
+        "userId": "user789",
+        "mobileNumber": "9876543212",
+        "planId": "airtel_001",
+        "plan": {
+            "provider": "Airtel",
+            "category": "True Unlimited",
+            "price": 3599,
+            "validity": 365,
+            "data": {
+                "dailyLimit": 2,
+                "totalData": null,
+                "postLimitSpeed": "128kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "Free Disney+ Hotstar Mobile for 1 year",
+                    "icon": "https://example.com/disney-icon.png"
+                }
+            ],
+            "additionalDetails": "For prepaid users only"
+        },
+        "transactionDateTime": "2025-01-19T12:30:00Z",
+        "status": "Pending",
+        "paymentMethod": "UPI"
+    },
+    {
+        "transactionId": "txn_004",
+        "userId": "user101",
+        "mobileNumber": "9876543213",
+        "planId": "vi_003",
+        "plan": {
+            "provider": "Vi",
+            "category": "Popular Plans",
+            "price": 3599,
+            "validity": 365,
+            "data": {
+                "dailyLimit": 2,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "Disney+ Hotstar Mobile for one year",
+                    "icon": "https://example.com/disney-icon.png"
+                }
+            ],
+            "additionalDetails": "For prepaid users only"
+        },
+        "transactionDateTime": "2025-01-19T14:45:00Z",
+        "status": "Failed",
+        "paymentMethod": "Net Banking"
+    },
+    {
+        "transactionId": "txn_005",
+        "userId": "user202",
+        "mobileNumber": "9876543214",
+        "planId": "jio_002",
+        "plan": {
+            "provider": "Jio",
+            "category": "True Unlimited",
+            "price": 349,
+            "validity": 56,
+            "data": {
+                "dailyLimit": 2,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "Cashback",
+                    "description": "5% Cashback on JioMart",
+                    "icon": "https://example.com/jiomart-icon.png"
+                }
+            ],
+            "additionalDetails": "Complimentary access to Jio apps"
+        },
+        "transactionDateTime": "2025-01-19T16:00:00Z",
+        "status": "Success",
+        "paymentMethod": "Credit Card"
+    },
+    {
+        "transactionId": "txn_006",
+        "userId": "user303",
+        "mobileNumber": "9876543215",
+        "planId": "airtel_002",
+        "plan": {
+            "provider": "Airtel",
+            "category": "Popular Plans",
+            "price": 299,
+            "validity": 28,
+            "data": {
+                "dailyLimit": 1.5,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "Streaming Service",
+                    "description": "Free Airtel Xstream App",
+                    "icon": "https://example.com/airtelxstream-icon.png"
+                }
+            ],
+            "additionalDetails": "Complimentary access to Airtel apps"
+        },
+        "transactionDateTime": "2025-01-19T18:00:00Z",
+        "status": "Success",
+        "paymentMethod": "Debit Card"
+    },
+    {
+        "transactionId": "txn_007",
+        "userId": "user404",
+        "mobileNumber": "9876543216",
+        "planId": "vi_004",
+        "plan": {
+            "provider": "Vi",
+            "category": "True Unlimited",
+            "price": 999,
+            "validity": 84,
+            "data": {
+                "dailyLimit": 1.5,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "Cashback",
+                    "description": "10% Cashback on Vi payments",
+                    "icon": "https://example.com/vi-icon.png"
+                }
+            ],
+            "additionalDetails": "Only for prepaid users"
+        },
+        "transactionDateTime": "2025-01-19T20:30:00Z",
+        "status": "Pending",
+        "paymentMethod": "Net Banking"
+    },
+    {
+        "transactionId": "txn_008",
+        "userId": "user505",
+        "mobileNumber": "9876543217",
+        "planId": "jio_003",
+        "plan": {
+            "provider": "Jio",
+            "category": "True Unlimited",
+            "price": 599,
+            "validity": 84,
+            "data": {
+                "dailyLimit": 1.5,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "Streaming Service",
+                    "description": "Free access to JioTV, JioCinema, and JioNews",
+                    "icon": "https://example.com/jiotv-icon.png"
+                }
+            ],
+            "additionalDetails": "Complimentary access to Jio apps"
+        },
+        "transactionDateTime": "2025-01-19T22:00:00Z",
+        "status": "Success",
+        "paymentMethod": "Credit Card"
+    },
+    {
+        "transactionId": "txn_009",
+        "userId": "user606",
+        "mobileNumber": "9876543218",
+        "planId": "airtel_003",
+        "plan": {
+            "provider": "Airtel",
+            "category": "Hero Unlimited",
+            "price": 719,
+            "validity": 84,
+            "data": {
+                "dailyLimit": 2,
+                "totalData": null,
+                "postLimitSpeed": "128kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "Amazon Prime Membership for 6 months",
+                    "icon": "https://example.com/amazon-icon.png"
+                }
+            ],
+            "additionalDetails": "Available in select circles"
+        },
+        "transactionDateTime": "2025-01-20T08:00:00Z",
+        "status": "Success",
+        "paymentMethod": "UPI"
+    },
+    {
+        "transactionId": "txn_010",
+        "userId": "user707",
+        "mobileNumber": "9876543219",
+        "planId": "vi_006",
+        "plan": {
+            "provider": "Vi",
+            "category": "Hero Unlimited",
+            "price": 1599,
+            "validity": 180,
+            "data": {
+                "dailyLimit": 2.5,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "Amazon Prime for six months",
+                    "icon": "https://example.com/amazon-icon.png"
+                }
+            ],
+            "additionalDetails": "Available in select circles"
+        },
+        "transactionDateTime": "2025-01-20T10:15:00Z",
+        "status": "Pending",
+        "paymentMethod": "Credit Card"
+    },
+    {
+        "transactionId": "txn_011",
+        "userId": "user808",
+        "mobileNumber": "9876543220",
+        "planId": "airtel_005",
+        "plan": {
+            "provider": "Airtel",
+            "category": "True Unlimited",
+            "price": 839,
+            "validity": 56,
+            "data": {
+                "dailyLimit": 1.5,
+                "totalData": null,
+                "postLimitSpeed": "128kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "Cashback",
+                    "description": "5% Cashback on Airtel Payment Bank transactions",
+                    "icon": "https://example.com/airtelpayments-icon.png"
+                }
+            ],
+            "additionalDetails": "Complimentary access to Airtel Thanks"
+        },
+        "transactionDateTime": "2025-01-20T12:30:00Z",
+        "status": "Success",
+        "paymentMethod": "Debit Card"
+    },
+    {
+        "transactionId": "txn_012",
+        "userId": "user909",
+        "mobileNumber": "9876543221",
+        "planId": "jio_004",
+        "plan": {
+            "provider": "Jio",
+            "category": "Popular Plans",
+            "price": 1299,
+            "validity": 365,
+            "data": {
+                "dailyLimit": 2,
+                "totalData": null,
+                "postLimitSpeed": "64kbps"
+            },
+            "calls": "Unlimited",
+            "sms": "100/day",
+            "extraBenefits": [
+                {
+                    "type": "OTT Subscription",
+                    "description": "Free Disney+ Hotstar subscription",
+                    "icon": "https://example.com/disney-icon.png"
+                }
+            ],
+            "additionalDetails": "For prepaid users only"
+        },
+        "transactionDateTime": "2025-01-20T14:45:00Z",
+        "status": "Failed",
+        "paymentMethod": "Net Banking"
+    }
+]
