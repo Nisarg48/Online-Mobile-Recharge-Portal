@@ -1,23 +1,25 @@
+import { Link } from "react-router-dom";
 import PageLayout from "./PageLayout";
 
 function NetworkProvider() {
     return (
         <PageLayout title="Network Provider">
-            <p className="text-lg text-gray-600 mb-8">
-                Welcome to the Network Provider page. Here, you can view and manage all the available network providers.
-            </p>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {["Jio", "Airtel", "VI", "BSNL"].map((provider) => (
-                    <div
+                {["JIO", "Airtel", "VI"].map((provider) => (
+                    <Link 
+                        to={`/NetworkProvider/${provider}`}
                         key={provider}
-                        className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300"
+                        className=" rounded-lg shadow-md p-4 hover:shadow-lg hover:scale-105 transition duration-300  border-2 border-gray-600"
                     >
                         <h2 className="text-xl font-semibold text-gray-800 mb-3">{provider}</h2>
-                        <p className="text-gray-600">
-                            {provider} offers great plans for mobile and internet users. Check out the latest offers today!
-                        </p>
-                    </div>
+                        <div className="flex justify-center">
+                            <img
+                                src={`./Network_Provider/${provider}.png`} 
+                                alt={provider}
+                                className="w-full h-auto max-w-[200px] rounded-md object-contain"
+                            />
+                        </div>
+                    </Link>
                 ))}
             </div>
         </PageLayout>

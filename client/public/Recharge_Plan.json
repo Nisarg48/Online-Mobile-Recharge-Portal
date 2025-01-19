@@ -1,0 +1,1322 @@
+[
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_001",
+        "price": 699,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Disney+ Hotstar Mobile for 3 months",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_002",
+        "price": 959,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "SonyLiv for 28 days",
+                "icon": "https://example.com/sonyliv-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Vi",
+        "category": "Popular Plans",
+        "planId": "vi_003",
+        "price": 3599,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Disney+ Hotstar Mobile for one year",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_004",
+        "price": 999,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "10% cashback on Vi payments",
+                "icon": "https://example.com/vi-icon.png"
+            }
+        ],
+        "additionalDetails": "Only for prepaid users"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_005",
+        "price": 409,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 4,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to Vi Movies and TV",
+                "icon": "https://example.com/vimovies-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_006",
+        "price": 1599,
+        "validity": 180,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime for six months",
+                "icon": "https://example.com/amazon-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_007",
+        "price": 2099,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "SonyLiv for one year",
+                "icon": "https://example.com/sonyliv-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_008",
+        "price": 1799,
+        "validity": 180,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "5% cashback on Vi payments",
+                "icon": "https://example.com/vi-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_009",
+        "price": 429,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 4,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime Video for one month",
+                "icon": "https://example.com/amazon-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_010",
+        "price": 319,
+        "validity": 21,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Vi Movies and TV for 21 days",
+                "icon": "https://example.com/vimovies-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_011",
+        "price": 599,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime for one year",
+                "icon": "https://example.com/amazon-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_012",
+        "price": 2099,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Zee5 Premium for 12 weeks",
+                "icon": "https://example.com/zee5-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_013",
+        "price": 999,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Vi Movies and TV for 84 days",
+                "icon": "https://example.com/vimovies-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_014",
+        "price": 479,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to Vi Movies and TV",
+                "icon": "https://example.com/vimovies-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_015",
+        "price": 1199,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 4,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime Video for 3 months",
+                "icon": "https://example.com/amazon-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_016",
+        "price": 699,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Vi Movies and TV for 56 days",
+                "icon": "https://example.com/vimovies-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_017",
+        "price": 1399,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Netflix Mobile for 6 months",
+                "icon": "https://example.com/netflix-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Vi",
+        "category": "Hero Unlimited",
+        "planId": "vi_018",
+        "price": 1599,
+        "validity": 90,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "7% Cashback on Vi payments",
+                "icon": "https://example.com/vi-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_019",
+        "price": 429,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 4,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime Video for one month",
+                "icon": "https://example.com/amazon-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Vi",
+        "category": "True Unlimited",
+        "planId": "vi_020",
+        "price": 1699,
+        "validity": 180,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free ZEE5 Premium for six months",
+                "icon": "https://example.com/zee5-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Jio",
+        "category": "Popular Plans",
+        "planId": "jio_001",
+        "price": 299,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to JioTV and JioCinema",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_002",
+        "price": 349,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "5% Cashback on JioMart",
+                "icon": "https://example.com/jiomart-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_003",
+        "price": 599,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioTV, JioCinema, and JioNews",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Includes complimentary subscription to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Popular Plans",
+        "planId": "jio_004",
+        "price": 1299,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Disney+ Hotstar subscription",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_005",
+        "price": 349,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioSaavn Pro",
+                "icon": "https://example.com/jiosaavn-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Popular Plans",
+        "planId": "jio_006",
+        "price": 444,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Prime Video Mobile Edition",
+                "icon": "https://example.com/primevideo-icon.png"
+            }
+        ],
+        "additionalDetails": "Includes complimentary subscription to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_007",
+        "price": 555,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "5% Cashback on JioMart",
+                "icon": "https://example.com/jiomart-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Hero Unlimited",
+        "planId": "jio_008",
+        "price": 799,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 4,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Disney+ Hotstar Mobile for 1 year",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_009",
+        "price": 101,
+        "validity": 14,
+        "data": {
+            "dailyLimit": 1,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioTV and JioCinema",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Hero Unlimited",
+        "planId": "jio_010",
+        "price": 249,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to JioTV, JioCinema, and JioNews",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_011",
+        "price": 199,
+        "validity": 23,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioSaavn Pro",
+                "icon": "https://example.com/jiosaavn-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Hero Unlimited",
+        "planId": "jio_012",
+        "price": 129,
+        "validity": 15,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to JioTV, JioCinema, and JioNews",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_013",
+        "price": 555,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioTV and JioCinema",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Hero Unlimited",
+        "planId": "jio_014",
+        "price": 801,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 3.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to Disney+ Hotstar for 1 year",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_015",
+        "price": 399,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioTV and JioCinema",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Popular Plans",
+        "planId": "jio_016",
+        "price": 1299,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to Netflix Mobile",
+                "icon": "https://example.com/netflix-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_017",
+        "price": 249,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioTV, JioCinema, and JioNews",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Hero Unlimited",
+        "planId": "jio_018",
+        "price": 149,
+        "validity": 24,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to JioTV, JioCinema, and JioNews",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "True Unlimited",
+        "planId": "jio_019",
+        "price": 199,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to JioTV and JioCinema",
+                "icon": "https://example.com/jiotv-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Jio",
+        "category": "Popular Plans",
+        "planId": "jio_020",
+        "price": 349,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 3.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to JioSaavn Pro for 3 months",
+                "icon": "https://example.com/jiosaavn-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Jio apps"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_001",
+        "price": 3599,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Disney+ Hotstar Mobile for 1 year",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Popular Plans",
+        "planId": "airtel_002",
+        "price": 299,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free Airtel Xstream App",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel apps"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_003",
+        "price": 719,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime Membership for 6 months",
+                "icon": "https://example.com/amazon-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_004",
+        "price": 1188,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to Airtel Xstream Premium",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_005",
+        "price": 839,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "5% Cashback on Airtel Payment Bank transactions",
+                "icon": "https://example.com/airtelpayments-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel Thanks"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_006",
+        "price": 1999,
+        "validity": 180,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Netflix Mobile for 6 months",
+                "icon": "https://example.com/netflix-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Popular Plans",
+        "planId": "airtel_007",
+        "price": 499,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free Airtel Xstream App",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel apps"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_008",
+        "price": 148,
+        "validity": 20,
+        "data": {
+            "dailyLimit": 1,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "200",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "10% Cashback on Airtel Payments",
+                "icon": "https://example.com/airtelpayments-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_009",
+        "price": 449,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Prime Video Mobile Edition",
+                "icon": "https://example.com/primevideo-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel apps"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_010",
+        "price": 399,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free Airtel Xstream App",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_011",
+        "price": 599,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Disney+ Hotstar for 1 year",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_012",
+        "price": 719,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free Airtel Xstream App for 84 days",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_013",
+        "price": 206,
+        "validity": 28,
+        "data": {
+            "dailyLimit": 1,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Amazon Prime Video Mobile Edition",
+                "icon": "https://example.com/primevideo-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel apps"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_014",
+        "price": 449,
+        "validity": 56,
+        "data": {
+            "dailyLimit": 2,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free Airtel Xstream App",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Popular Plans",
+        "planId": "airtel_015",
+        "price": 719,
+        "validity": 84,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Disney+ Hotstar Mobile",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_016",
+        "price": 1199,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to Amazon Prime Video",
+                "icon": "https://example.com/primevideo-icon.png"
+            }
+        ],
+        "additionalDetails": "Available in select circles"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_017",
+        "price": 1599,
+        "validity": 180,
+        "data": {
+            "dailyLimit": 2.5,
+            "totalData": null,
+            "postLimitSpeed": "64kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "Cashback",
+                "description": "10% Cashback on Airtel Payment Bank transactions",
+                "icon": "https://example.com/airtelpayments-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel Thanks"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Hero Unlimited",
+        "planId": "airtel_018",
+        "price": 69,
+        "validity": 7,
+        "data": {
+            "dailyLimit": 1,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free access to Airtel Xstream Premium",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    },
+    {
+        "platform": "Airtel",
+        "category": "Popular Plans",
+        "planId": "airtel_019",
+        "price": 109,
+        "validity": 14,
+        "data": {
+            "dailyLimit": 1.5,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "Unlimited",
+        "extraBenefits": [
+            {
+                "type": "Streaming Service",
+                "description": "Free access to Airtel Xstream Premium",
+                "icon": "https://example.com/airtelxstream-icon.png"
+            }
+        ],
+        "additionalDetails": "Complimentary access to Airtel apps"
+    },
+    {
+        "platform": "Airtel",
+        "category": "True Unlimited",
+        "planId": "airtel_020",
+        "price": 2399,
+        "validity": 365,
+        "data": {
+            "dailyLimit": 3,
+            "totalData": null,
+            "postLimitSpeed": "128kbps"
+        },
+        "calls": "Unlimited",
+        "sms": "100/day",
+        "extraBenefits": [
+            {
+                "type": "OTT Subscription",
+                "description": "Free Disney+ Hotstar for 1 year",
+                "icon": "https://example.com/disney-icon.png"
+            }
+        ],
+        "additionalDetails": "For prepaid users only"
+    }
+]

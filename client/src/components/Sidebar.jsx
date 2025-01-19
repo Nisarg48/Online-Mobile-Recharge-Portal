@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 
 function Sidebar({ isOpen, toggleSidebar }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     return (
         <div
@@ -27,7 +27,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <div className="flex items-center justify-between p-4">
                 <div className="flex items-center">
                     <img
-                        src="./Logo.png"
+                        src="/Logo.png"
                         alt="Logo"
                         className={`w-8 h-8 transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
                     />
@@ -51,7 +51,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <nav className="flex flex-col p-4 space-y-5">
                 <Link
                     to="/"
-                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
+                    title="Dashboard"
                 >
                     <FaNetworkWired size={25} />
                     <span className={`ml-2 font-semibold ${isOpen ? "block" : "hidden"}`}>
@@ -61,7 +62,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
                 <Link
                     to="/transaction"
-                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
+                    title="Transactions"
                 >
                     <FaExchangeAlt size={25} />
                     <span className={`ml-2 font-semibold ${isOpen ? "block" : "hidden"}`}>
@@ -71,7 +73,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
                 <Link
                     to="/settings"
-                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
+                    title="Settings"
                 >
                     <FaCog size={25} />
                     <span className={`ml-2 font-semibold ${isOpen ? "block" : "hidden"}`}>
@@ -81,7 +84,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
                 <Link
                     to="/help"
-                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                    className="text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
+                    title="Help"
                 >
                     <FaQuestionCircle size={25} />
                     <span className={`ml-2 font-semibold ${isOpen ? "block" : "hidden"}`}>
@@ -95,7 +99,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
                 {isLoggedIn ? (
                     <div className="flex flex-col space-y-5">
                         <button
-                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
                             onClick={() => setIsLoggedIn(false)}
                         >
                             <FaUserCircle size={25} />
@@ -104,7 +108,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
                             </span>
                         </button>
                         <button
-                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
                             onClick={() => setIsLoggedIn(false)}
                         >
                             <FaSignOutAlt size={25} />
@@ -116,7 +120,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
                 ) : (
                     <div className="flex flex-col space-y-5">
                         <button
-                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
                             onClick={() => setIsLoggedIn(true)}
                         >
                             <FaSignInAlt size={25} />
@@ -126,7 +130,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
                         </button>
                         <Link
                             to="/signup"
-                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center"
+                            className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
                         >
                             <FaUserPlus size={25} />
                             <span className={`ml-2 font-semibold ${isOpen ? "block" : "hidden"}`}>
@@ -141,3 +145,8 @@ function Sidebar({ isOpen, toggleSidebar }) {
 }
 
 export default Sidebar;
+
+// use case
+// sequence diagram
+// class diagram
+// system architecture

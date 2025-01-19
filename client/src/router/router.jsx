@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import SignUp from "../pages/SignUp";
 import NetworkProvider from "../pages/NetworkProvider";
 import Transaction from "../pages/Transaction";
+import Provider from "../pages/Provider";
 
 const router = createBrowserRouter([
     {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
             {
                 path: "/",
                 element: <NetworkProvider />,
+            },
+            {
+                path: "/NetworkProvider/:provider",
+                element: <Provider/>,
             },
             {
                 path: "/transaction",
