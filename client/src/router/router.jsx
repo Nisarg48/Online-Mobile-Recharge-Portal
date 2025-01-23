@@ -5,6 +5,7 @@ import SignUp from "../pages/SignUp";
 import NetworkProvider from "../pages/NetworkProvider";
 import Transaction from "../pages/Transaction";
 import Provider from "../pages/Provider";
+import Help from "../pages/Help";
 
 const router = createBrowserRouter([
     {
@@ -31,6 +32,11 @@ const router = createBrowserRouter([
                 path: "/signup",
                 element: <SignUp />,
             },
+            {
+                path: "/help",
+                element: <Help />,
+            },
+
         ],
     },
 ]);
