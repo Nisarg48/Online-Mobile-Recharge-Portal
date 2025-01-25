@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -45,9 +44,14 @@ function Provider() {
                                 type="number"
                                 placeholder="Enter Mobile Number"
                                 aria-label="Mobile Number"
-                                {...register("rechargeNumber")}
+                                {...register("rechargeNumber",
+                                    {
+                                        required: false,
+                                        pattern: /^\d{10}$/,
+                                        onChange: (e) => setMobileNumber(e.target.value)
+                                    }
+                                )}
                                 className="w-full p-4 pl-12 text-xl border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-                                onChange={(e) => setMobileNumber(e.target.value)}
                             />
                         </div>
                     </form>
@@ -93,7 +97,14 @@ function Provider() {
                         <div className="space-y-4">
                             {filteredPlans.length > 0 ? (
                                 filteredPlans.map((plan) => (
-                                    <Recharge_Plan_Card key={plan.planId} plan={plan} isLoggedIn={true /* Pass the actual isLoggedIn state */} />
+                                    <Recharge_Plan_Card 
+                                        key={plan.planId} 
+                                        plan={plan} 
+                                        isLoggedIn={true}
+                                        mobileNumber={
+                                            mobileNumber.length === 10 ? mobileNumber : null
+                                        }
+                                    />
                                 ))
                             ) : (
                                 <p>No plans available for this provider.</p>

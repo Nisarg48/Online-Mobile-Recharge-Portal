@@ -19,7 +19,7 @@ function Sidebar({ isOpen, toggleSidebar }) {
 
     return (
         <div
-            className={`fixed top-0 left-0 h-full bg-gradient-to-b from-[#50c878] to-[#3a53c7] z-20 transition-all duration-300 ${
+            className={`fixed top-0 left-0 h-full bg-gradient-to-b from-[#50c878] to-[#3a53c7] z-10 transition-all duration-300 ${
                 isOpen ? "w-64" : "w-16"
             }`}
         >
