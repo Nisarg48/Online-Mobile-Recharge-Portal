@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import Icon from "../pakages/Icon";
+import { motion } from "framer-motion";
 
 function SignUp() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -9,30 +9,23 @@ function SignUp() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center relative bg-gradient-to-br from-teal-500 via-green-300 to-blue-400 overflow-hidden">
-
-            <div className="absolute inset-0 z-0">
-                <Icon />
-            </div>
-
-            {/* Dynamic Background */}
-            <div className="absolute inset-0 -z-10">
-                <div className="absolute top-16 left-24 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl animate-pulse"></div>
-                <div className="absolute bottom-16 right-24 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
-                <Icon className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] opacity-20 blur-md" />
-            </div>
-
+        <div className="min-h-screen flex items-center justify-center bg-[#121212]">
             {/* Form Container */}
-            <div className="backdrop-blur-md bg-white/60 text-black rounded-lg shadow-lg max-w-md w-full p-8 border border-white/30 z-10">
-                <h2 className="text-4xl font-bold mb-6 text-center text-gray-800">Sign Up</h2>
+            <motion.div
+                className="bg-[#1e1e1e] rounded-lg shadow-lg max-w-md w-full p-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <h2 className="text-4xl font-bold mb-6 text-center text-[#ffffff]">Sign Up</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Name Field */}
                     <div>
-                        <label className="block mb-2 text-lg font-medium text-gray-800">Name</label>
+                        <label className="block mb-2 text-lg font-medium text-[#ffffff]">Name</label>
                         <input
                             type="text"
                             {...register("name", { required: "Name is required" })}
-                            className="w-full px-4 py-3 text-sm rounded-lg border-[1px] border-white/50 bg-white/20 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                            className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
                             placeholder="Enter your name"
                         />
                         {errors.name && (
@@ -44,7 +37,7 @@ function SignUp() {
 
                     {/* Email Field */}
                     <div>
-                        <label className="block mb-2 text-lg font-medium text-gray-800">Email</label>
+                        <label className="block mb-2 text-lg font-medium text-[#ffffff]">Email</label>
                         <input
                             type="email"
                             {...register("email", {
@@ -54,7 +47,7 @@ function SignUp() {
                                     message: "Invalid email address",
                                 },
                             })}
-                            className="w-full px-4 py-3 text-sm rounded-lg border-[1px] border-white/50 bg-white/20 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                            className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
                             placeholder="Enter your email"
                         />
                         {errors.email && (
@@ -66,7 +59,7 @@ function SignUp() {
 
                     {/* Password Field */}
                     <div>
-                        <label className="block mb-2 text-lg font-medium text-gray-800">Password</label>
+                        <label className="block mb-2 text-lg font-medium text-[#ffffff]">Password</label>
                         <input
                             type="password"
                             {...register("password", {
@@ -76,7 +69,7 @@ function SignUp() {
                                     message: "Password must be at least 6 characters",
                                 },
                             })}
-                            className="w-full px-4 py-3 text-sm rounded-lg border-[1px] border-white/50 bg-white/20 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+                            className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
                             placeholder="Enter your password"
                         />
                         {errors.password && (
@@ -87,22 +80,24 @@ function SignUp() {
                     </div>
 
                     {/* Sign Up Button */}
-                    <button
+                    <motion.button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-teal-400 to-blue-400 text-white py-3 rounded-lg font-bold text-md shadow-md hover:shadow-lg transition-transform transform hover:scale-105"
+                        className="w-full bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white py-3 rounded-lg font-bold text-md shadow-md hover:shadow-lg transition-transform transform hover:scale-105"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                     >
                         Sign Up
-                    </button>
+                    </motion.button>
 
                     {/* Redirect to Login */}
-                    <p className="text-center text-gray-700 mt-4">
+                    <p className="text-center text-[#ffffff] mt-4">
                         Already have an account?&nbsp;
-                        <Link to={"/login"} className="text-teal-300 hover:underline">
+                        <Link to={"/login"} className="text-[#50c878] hover:underline">
                             Login
                         </Link>
                     </p>
                 </form>
-            </div>
+            </motion.div>
         </div>
     );
 }

@@ -1,7 +1,7 @@
-/* eslint-disable no-unused-vars */
 import PageLayout from "./PageLayout";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 
 function Transaction() {
     const [transactionsList, setTransactionsList] = useState([]);
@@ -11,9 +11,7 @@ function Transaction() {
     useEffect(() => {
         fetch("/Transaction_List.json")
             .then((res) => {
-                if (!res.ok) {
-                    throw new Error("Failed to fetch transactions.");
-                }
+                if (!res.ok) throw new Error("Failed to fetch transactions.");
                 return res.json();
             })
             .then((data) => {
@@ -30,23 +28,30 @@ function Transaction() {
 
     return (
         <PageLayout title="Transaction">
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="text-lg text-[#ffffff] mb-8 text-center">
                 Below is the list of your recent transactions:
             </p>
-            {error && <p className="text-red-600 mb-4">{error}</p>}
+            {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             {isLoading ? (
-                <p className="text-gray-500">Loading transactions...</p>
+                <div className="flex justify-center items-center py-10">
+                    <div className="spinner-border animate-spin border-t-4 border-[#50c878] rounded-full w-16 h-16"></div>
+                </div>
             ) : transactionsList.length > 0 ? (
-                <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
-                        <thead>
-                            <tr className="bg-gray-200 text-gray-700 text-left">
-                                <th className="px-4 py-2">Transaction ID</th>
-                                <th className="px-4 py-2">Date & Time</th>
-                                <th className="px-4 py-2">Mobile Number</th>
-                                <th className="px-4 py-2">Plan</th>
-                                <th className="px-4 py-2">Amount</th>
-                                <th className="px-4 py-2">Status</th>
+                <motion.div
+                    className="overflow-x-auto bg-[#1e1e1e] rounded-lg shadow-lg p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <table className="min-w-full bg-[#1e1e1e] rounded-lg overflow-hidden">
+                        <thead className="bg-[#333333]">
+                            <tr className="text-[#ffffff] text-left">
+                                <th className="px-6 py-3">Transaction ID</th>
+                                <th className="px-6 py-3">Date & Time</th>
+                                <th className="px-6 py-3">Mobile Number</th>
+                                <th className="px-6 py-3">Plan</th>
+                                <th className="px-6 py-3">Amount</th>
+                                <th className="px-6 py-3">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,9 +64,9 @@ function Transaction() {
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </motion.div>
             ) : (
-                <p className="text-gray-500">No transactions found.</p>
+                <p className="text-[#ffffff] text-center">No transactions found.</p>
             )}
         </PageLayout>
     );
@@ -76,87 +81,48 @@ function TransactionRow({ transaction, isEven }) {
         status = "Unknown",
     } = transaction;
 
-    // Handle plan details with default values
-    const {
-        provider = "N/A",
-        category = "N/A",
-        price = 0,
-        validity = "N/A",
-        data = {},
-        calls = "N/A",
-        sms = "N/A",
-        extraBenefits = [],
-    } = plan;
-
     const formattedPlanDetails = `
-        Provider: ${provider}, 
-        Category: ${category}, 
-        Price: ₹${price}, 
-        Validity: ${validity} days, 
-        Calls: ${calls}, 
-        SMS: ${sms},
-        Data: ${data.dailyLimit ? `${data.dailyLimit}GB/day` : "Unlimited"} 
-        ${data.postLimitSpeed ? `(Post-limit: ${data.postLimitSpeed})` : ""}
+        Provider: ${plan.provider || "N/A"}, 
+        Category: ${plan.category || "N/A"}, 
+        Price: ₹${plan.price || 0}, 
+        Validity: ${plan.validity || "N/A"} days, 
+        Calls: ${plan.calls || "N/A"}, 
+        SMS: ${plan.sms || "N/A"},
+        Data: ${plan.data?.dailyLimit ? `${plan.data.dailyLimit}GB/day` : "Unlimited"} 
+        ${plan.data?.postLimitSpeed ? `(Post-limit: ${plan.data.postLimitSpeed})` : ""}
     `;
 
     return (
-        <tr className={isEven ? "bg-gray-50" : "bg-white"}>
-            <td className="px-4 py-2 border-b">{transactionId || "N/A"}</td>
-            <td className="px-4 py-2 border-b">
-                {transactionDateTime
-                    ? new Date(transactionDateTime).toLocaleString()
-                    : "N/A"}
+        <motion.tr
+            className={`${isEven ? "bg-[#333333]" : "bg-[#1e1e1e]"} hover:bg-[#444444] transition-colors`}
+            whileHover={{ scale: 1.02 }}
+        >
+            <td className="px-6 py-4 border-b border-[#444444]">{transactionId || "N/A"}</td>
+            <td className="px-6 py-4 border-b border-[#444444]">
+                {transactionDateTime ? new Date(transactionDateTime).toLocaleString() : "N/A"}
             </td>
-            <td className="px-4 py-2 border-b">{mobileNumber || "N/A"}</td>
-            <td className="px-4 py-2 border-b">
-                <span title={formattedPlanDetails}>
-                    {provider} - ₹{price} ({validity} days)
-                </span>
+            <td className="px-6 py-4 border-b border-[#444444]">{mobileNumber || "N/A"}</td>
+            <td className="px-6 py-4 border-b border-[#444444]" title={formattedPlanDetails}>
+                {plan.provider} - ₹{plan.price} ({plan.validity} days)
             </td>
-            <td className="px-4 py-2 border-b">₹{price}</td>
+            <td className="px-6 py-4 border-b border-[#444444]">₹{plan.price}</td>
             <td
-                className={`px-4 py-2 border-b font-medium ${
+                className={`px-6 py-4 border-b border-[#444444] font-medium ${
                     status === "Success"
-                        ? "text-green-600"
+                        ? "text-green-500"
                         : status === "Pending"
-                        ? "text-yellow-600"
-                        : "text-red-600"
+                        ? "text-yellow-500"
+                        : "text-red-500"
                 }`}
             >
                 {status}
             </td>
-        </tr>
+        </motion.tr>
     );
 }
 
 TransactionRow.propTypes = {
-    transaction: PropTypes.shape({
-        transactionId: PropTypes.string,
-        transactionDateTime: PropTypes.string,
-        mobileNumber: PropTypes.string,
-        plan: PropTypes.shape({
-            provider: PropTypes.string,
-            category: PropTypes.string,
-            price: PropTypes.number,
-            validity: PropTypes.number,
-            data: PropTypes.shape({
-                dailyLimit: PropTypes.number,
-                totalData: PropTypes.number,
-                postLimitSpeed: PropTypes.string,
-            }),
-            calls: PropTypes.string,
-            sms: PropTypes.string,
-            extraBenefits: PropTypes.arrayOf(
-                PropTypes.shape({
-                    type: PropTypes.string,
-                    description: PropTypes.string,
-                    icon: PropTypes.string,
-                })
-            ),
-            additionalDetails: PropTypes.string,
-        }),
-        status: PropTypes.string,
-    }),
+    transaction: PropTypes.object.isRequired,
     isEven: PropTypes.bool.isRequired,
 };
 
