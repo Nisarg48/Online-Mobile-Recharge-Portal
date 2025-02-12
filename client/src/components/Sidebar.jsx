@@ -32,17 +32,12 @@ function Sidebar({ isOpen, toggleSidebar }) {
                         className={`w-8 h-8 transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
                     />
                     <span
-                        className={`ml-2 text-white font-bold text-lg transition-all duration-300 ${
-                            isOpen ? "block" : "hidden"
-                        }`}
+                        className={`ml-2 text-white font-bold text-lg transition-all duration-300 ${isOpen ? "block" : "hidden"}`}
                     >
                         M.R. Pay
                     </span>
                 </div>
-                <button
-                    className="text-white"
-                    onClick={toggleSidebar}
-                >
+                <button className="text-white" onClick={toggleSidebar}>
                     {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
                 </button>
             </div>
@@ -98,15 +93,17 @@ function Sidebar({ isOpen, toggleSidebar }) {
             <div className="absolute bottom-0 left-0 right-0 p-4">
                 {isLoggedIn ? (
                     <div className="flex flex-col space-y-5">
-                        <button
+                        {/* Profile Link */}
+                        <Link
+                            to="/profile"
                             className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
-                            onClick={() => setIsLoggedIn(false)}
                         >
                             <FaUserCircle size={25} />
                             <span className={`ml-2 font-semibold ${isOpen ? "block" : "hidden"}`}>
                                 Profile
                             </span>
-                        </button>
+                        </Link>
+
                         <button
                             className="w-full text-white hover:bg-white hover:text-black transition duration-300 rounded p-1 flex items-center hover:scale-105"
                             onClick={() => setIsLoggedIn(false)}
@@ -145,8 +142,3 @@ function Sidebar({ isOpen, toggleSidebar }) {
 }
 
 export default Sidebar;
-
-// use case
-// sequence diagram
-// class diagram
-// system architecture

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Search,
@@ -11,8 +12,9 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import Terms from './terms_condition';
 
-// FAQ data structure
+// FAQ data structure with added descriptions
 const faqCategories = [
   {
     id: 1,
@@ -20,6 +22,7 @@ const faqCategories = [
     icon: Phone,
     color: 'text-blue-500',
     bgColor: 'bg-blue-50',
+    description: 'Get help with failed recharges, pending transactions, and mobile top-ups',
   },
   {
     id: 2,
@@ -27,6 +30,7 @@ const faqCategories = [
     icon: CreditCard,
     color: 'text-red-500',
     bgColor: 'bg-red-50',
+    description: 'Resolve issues with failed payments, refunds, and transaction errors',
   },
   {
     id: 3,
@@ -34,6 +38,7 @@ const faqCategories = [
     icon: Gift,
     color: 'text-green-500',
     bgColor: 'bg-green-50',
+    description: 'Learn about ongoing offers, cashback terms, and reward redemption',
   },
   {
     id: 4,
@@ -41,6 +46,7 @@ const faqCategories = [
     icon: UserCog,
     color: 'text-purple-500',
     bgColor: 'bg-purple-50',
+    description: 'Manage your profile, update details, and handle account settings',
   },
   {
     id: 5,
@@ -48,6 +54,7 @@ const faqCategories = [
     icon: Shield,
     color: 'text-yellow-500',
     bgColor: 'bg-yellow-50',
+    description: 'Get support for security concerns, privacy settings, and data protection',
   },
 ];
 
@@ -94,7 +101,44 @@ function FAQItem({ question, answer }) {
   );
 }
 
+function CategoryCard({ category }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const IconComponent = category.icon;
+
+  return (
+    <div
+      className={`${category.bgColor} rounded-xl overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl cursor-pointer`}
+      style={{ height: isHovered ? '160px' : '88px' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="p-6">
+        <div className="flex items-center space-x-4">
+          <div className={`${category.color} p-3 rounded-lg transition-transform`}>
+            <IconComponent className="h-6 w-6" />
+          </div>
+          <span className="font-medium text-gray-900">{category.title}</span>
+        </div>
+        <div
+          className={`mt-4 text-gray-600 transition-opacity duration-300 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        >
+          <p className="text-sm leading-relaxed">{category.description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Help() {
+  const navigate = useNavigate();
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleBack = () => {
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -102,21 +146,15 @@ function Help() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <button
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                onClick={handleBack}
+              >
                 <ArrowLeft className="h-6 w-6 text-gray-600" />
               </button>
               <h1 className="text-xl font-bold text-gray-900">Help Center</h1>
             </div>
-            <div className="relative flex-1 max-w-lg mx-4">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Search for help"
-              />
-            </div>
+            <div className="relative flex-1 max-w-lg mx-4"></div>
           </div>
         </div>
       </header>
@@ -133,20 +171,9 @@ function Help() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* FAQ Categories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {faqCategories.map((category) => {
-            const IconComponent = category.icon;
-            return (
-              <button
-                key={category.id}
-                className={`${category.bgColor} p-6 rounded-xl flex items-center space-x-4 hover:shadow-md transition-shadow`}
-              >
-                <div className={`${category.color} p-3 rounded-lg`}>
-                  <IconComponent className="h-6 w-6" />
-                </div>
-                <span className="font-medium text-gray-900">{category.title}</span>
-              </button>
-            );
-          })}
+          {faqCategories.map((category) => (
+            <CategoryCard key={category.id} category={category} />
+          ))}
         </div>
 
         {/* Popular Queries */}
@@ -167,20 +194,44 @@ function Help() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex space-x-6">
-              <a href="#" className="text-gray-600 hover:text-gray-900">Contact Us</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">Report a Problem</a>
-              <a href="#" className="text-gray-600 hover:text-gray-900">Terms & Policies</a>
+              <a
+                href="#"
+                className="text-gray-600 hover:text-gray-900"
+                onMouseEnter={() => setIsHovered(true)}
+                
+              >
+                Contact Us
+              </a>
+              <a
+                href="/terms"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/terms');
+                }}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Terms & Policies
+              </a>
             </div>
           </div>
+          {isHovered && (
+            <div className="mt-4 text-gray-600">
+              <p>If you need help, feel free to reach out to our support team at support@example.com.</p>
+            </div>
+          )}
         </div>
       </footer>
-
-      {/* Live Chat Bubble */}
-      <button className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors">
-        <MessageSquareMore className="h-6 w-6" />
-      </button>
     </div>
   );
 }
 
-export default Help;
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Help />} />
+      <Route path="/terms" element={<Terms />} />
+    </Routes>
+  );
+}
+
+export default App;
