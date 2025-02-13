@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import Icon from "../pakages/Icon";
+import { motion } from "framer-motion";
 
 function SignUp() {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -9,72 +9,95 @@ function SignUp() {
     };
 
     return (
-        <div className="min-h-screen 
-                        bg-gradient-to-br from-bg-bg1 via-bg-bg2 via-bg-bg3 via-bg-bg4 via-bg-bg5 to-bg-bg6
-                        flex 
-                        items-center
-                        justify-center
-                        px-4
-                        relative
-                        z-0">
-
-            <div className="absolute inset-0 z-0">
-                <Icon />
-            </div>
-
-            <div className="bg-white text-black rounded-lg shadow-lg max-w-md w-full p-8 border-4 z-10">
-                
-                <h2 className="text-3xl font-semibold mb-6 text-center">Sign Up</h2>
-                
+        <div className="min-h-screen flex items-center justify-center bg-[#121212]">
+            {/* Form Container */}
+            <motion.div
+                className="bg-[#1e1e1e] rounded-lg shadow-lg max-w-md w-full p-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <h2 className="text-4xl font-bold mb-6 text-center text-[#ffffff]">Sign Up</h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Name Field */}
+                    <div>
+                        <label className="block mb-2 text-lg font-medium text-[#ffffff]">Name</label>
+                        <input
+                            type="text"
+                            {...register("name", { required: "Name is required" })}
+                            className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
+                            placeholder="Enter your name"
+                        />
+                        {errors.name && (
+                            <p className="text-red-500 text-sm mt-1">
+                                {errors.name.message}
+                            </p>
+                        )}
+                    </div>
 
                     {/* Email Field */}
                     <div>
-                        <label className="block mb-2 text-md font-medium text-gray-900">Email</label>
+                        <label className="block mb-2 text-lg font-medium text-[#ffffff]">Email</label>
                         <input
                             type="email"
                             {...register("email", {
                                 required: "Email is required",
                                 pattern: {
                                     value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-                                    message: "Invalid email address"
-                                }
+                                    message: "Invalid email address",
+                                },
                             })}
-                            className="w-full px-4 py-3 text-sm rounded-lg border-2 border-bg-bg8 border-opacity-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-bg-bg7 transition-all"
+                            className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
+                            placeholder="Enter your email"
                         />
-                        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                        {errors.email && (
+                            <p className="text-red-500 text-sm mt-1">
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Password Field */}
                     <div>
-                        <label className="block mb-2 text-md font-medium text-gray-900">Password</label>
+                        <label className="block mb-2 text-lg font-medium text-[#ffffff]">Password</label>
                         <input
                             type="password"
                             {...register("password", {
                                 required: "Password is required",
-                                minLength: { value: 6, message: "Password must be at least 6 characters" }
+                                minLength: {
+                                    value: 6,
+                                    message: "Password must be at least 6 characters",
+                                },
                             })}
-                            className="w-full px-4 py-3 text-sm rounded-lg border-2 border-bg-bg8 border-opacity-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-bg-bg7 transition-all"
+                            className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
+                            placeholder="Enter your password"
                         />
-                        {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                        {errors.password && (
+                            <p className="text-red-500 text-sm mt-1">
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
 
-                    <button
+                    {/* Sign Up Button */}
+                    <motion.button
                         type="submit"
-                        className="w-full bg-bg-bg8 text-white py-3 rounded-lg font-bold text-md border-2 border-black shadow-md hover:shadow-lg transition-all hover:bg-bg-bg7 hover:text-black"
+                        className="w-full bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white py-3 rounded-lg font-bold text-md shadow-md hover:shadow-lg transition-transform transform hover:scale-105"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
                     >
                         Sign Up
-                    </button>
+                    </motion.button>
 
-                    <p className="flex justify-center">Already have account? &nbsp;
-                        <Link to={"/login"} className="text-blue-500 hover:underline">Login</Link>
+                    {/* Redirect to Login */}
+                    <p className="text-center text-[#ffffff] mt-4">
+                        Already have an account?&nbsp;
+                        <Link to={"/login"} className="text-[#50c878] hover:underline">
+                            Login
+                        </Link>
                     </p>
-
-                
                 </form>
-            
-            </div>
-        
+            </motion.div>
         </div>
     );
 }

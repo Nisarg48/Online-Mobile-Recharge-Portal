@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+/* eslint-disable react/prop-types */
+import { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,

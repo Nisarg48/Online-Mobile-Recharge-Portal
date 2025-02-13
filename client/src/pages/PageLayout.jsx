@@ -1,29 +1,16 @@
 /* eslint-disable react/prop-types */
-import Sidebar from '../components/Sidebar';
-import { useState } from 'react';
+import Navbar from '../components/NavBar';
 
-function PageLayout({ children, title }) {
-    const [isOpen, setIsOpen] = useState(true); // Sidebar initially open
-
-    const toggleSidebar = () => {
-        setIsOpen(!isOpen);
-    };
-
+function PageLayout({ children, title, isModalOpen }) {
     return (
-        <div className="flex h-screen">
-            {/* Sidebar */}
-            <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+        <div className={`relative flex flex-col min-h-screen bg-[#121212] w-full overflow-hidden ${isModalOpen ? 'backdrop-blur-sm' : ''}`}>
+            {/* Navbar */}
+            <Navbar />
 
             {/* Main Content */}
-            <div
-                className={`flex-grow bg-gray-50 transition-all duration-300 ${
-                    isOpen ? 'ml-64' : 'ml-16'
-                }`}
-            >
-                <div className="p-6">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-6">{title}</h1>
-                    {children}
-                </div>
+            <div className="flex-grow p-6 mt-20 bg-[#1e1e1e] border border-[#50c878] rounded-lg shadow-lg mx-4 my-6 overflow-y-auto z-0">
+                <h3 className="text-4xl font-semibold text-[#ffffff] mb-5 text-center">{title}</h3>
+                {children}
             </div>
         </div>
     );
