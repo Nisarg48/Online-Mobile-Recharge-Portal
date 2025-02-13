@@ -1,0 +1,25 @@
+{
+    "users": [
+      {
+        "_id": "usr001",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "phone_no": "+91-9876543210",
+        "password": "hashedPassword123"
+      },
+      {
+        "_id": "usr002",
+        "name": "Jane Smith",
+        "email": "jane.smith@example.com",
+        "phone_no": "+91-9876543211",
+        "password": "hashedPassword456"
+      },
+      {
+        "_id": "usr003",
+        "name": "Mike Johnson",
+        "email": "mike.j@example.com",
+        "phone_no": "+91-9876543212",
+        "password": "hashedPassword789"
+      }
+    ]
+  }

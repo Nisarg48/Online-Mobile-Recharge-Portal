@@ -6,7 +6,8 @@ import NetworkProvider from "../pages/NetworkProvider";
 import Transaction from "../pages/Transaction";
 import Provider from "../pages/Provider";
 import Help from "../pages/Help";
-
+import Profile from "../pages/Profile";
+import Terms from "../pages/terms_condition";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -36,6 +37,18 @@ const router = createBrowserRouter([
                 path: "/help",
                 element: <Help />,
             },
+
+            {
+                path: "/Profile",
+                element: <Profile />,
+            },
+            {
+                path: "/terms",
+                element: <Terms />,
+               
+            }
+
+
 
         ],
     },
