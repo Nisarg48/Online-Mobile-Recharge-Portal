@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     FaNetworkWired,
     FaExchangeAlt,
@@ -12,7 +12,15 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 
+
+
 function Navbar() {
+    
+const navigate = useNavigate();
+
+const handleBack = () => {
+  navigate('/Profile');
+};
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -77,6 +85,14 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
                                     >
+
+<button
+                                            className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
+                                            onClick={handleBack}
+                                        >
+                                            <FaSignOutAlt className="inline mr-2" />
+                                            View Profile
+                                        </button>
                                         <button
                                             className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
                                             onClick={() => setIsLoggedIn(false)}
@@ -84,6 +100,8 @@ function Navbar() {
                                             <FaSignOutAlt className="inline mr-2" />
                                             Logout
                                         </button>
+
+
                                     </motion.div>
                                 )}
                             </AnimatePresence>
