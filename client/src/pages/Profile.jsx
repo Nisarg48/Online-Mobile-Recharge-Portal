@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Wallet, Save, Edit2, ArrowLeft } from "lucide-react";
+import { Wallet, Save, Edit2, ArrowLeft, Eye, EyeOff, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
@@ -7,7 +7,17 @@ function Profile() {
 
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({ name: "", email: "", phone_no: "" });
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ 
+    name: "", 
+    email: "", 
+    phone_no: "", 
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -19,7 +29,10 @@ function Profile() {
         setFormData({
           name: initialUser.name,
           email: initialUser.email,
-          phone_no: initialUser.phone_no
+          phone_no: initialUser.phone_no,
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: ""
         });
       } catch (error) {
         console.error("Failed to load user data:", error);
@@ -34,12 +47,42 @@ function Profile() {
       ...prev,
       [name]: value
     }));
+
+    // Clear password error when user starts typing
+    if (name.includes('Password')) {
+      setPasswordError("");
+    }
   };
 
   const handleSave = (e) => {
     e.preventDefault();
     setUser(formData);
     setIsEditing(false);
+  };
+
+  const handlePasswordSave = (e) => {
+    e.preventDefault();
+    
+    // Basic password validation
+    if (formData.newPassword !== formData.confirmPassword) {
+      setPasswordError("New passwords don't match");
+      return;
+    }
+    
+    if (formData.newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return;
+    }
+
+    // Here you would typically make an API call to update the password
+    console.log("Password updated successfully");
+    setIsEditingPassword(false);
+    setFormData(prev => ({
+      ...prev,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: ""
+    }));
   };
 
   if (!user) {
@@ -125,6 +168,72 @@ function Profile() {
                   />
                 ) : (
                   <p className="text-lg font-medium text-[#cfcfcf]">{user.phone_no}</p>
+                )}
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium text-[#cfcfcf]">Password</label>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingPassword(!isEditingPassword)}
+                    className="text-[#50c878] hover:text-[#3da861] text-sm flex items-center gap-1"
+                  >
+                    <Lock className="w-4 h-4" />
+                    {isEditingPassword ? 'Cancel' : 'Change Password'}
+                  </button>
+                </div>
+                {!isEditingPassword ? (
+                  <p className="text-lg font-medium text-[#cfcfcf]">••••••••</p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="currentPassword"
+                        value={formData.currentPassword}
+                        onChange={handleInputChange}
+                        placeholder="Current Password"
+                        className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#cfcfcf]"
+                      >
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      </button>
+                    </div>
+                    <input
+                      type="password"
+                      name="newPassword"
+                      value={formData.newPassword}
+                      onChange={handleInputChange}
+                      placeholder="New Password"
+                      className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
+                      required
+                    />
+                    <input
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      placeholder="Confirm New Password"
+                      className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
+                      required
+                    />
+                    {passwordError && (
+                      <p className="text-red-500 text-sm">{passwordError}</p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={handlePasswordSave}
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
+                    >
+                      <Save className="w-5 h-5" /> Update Password
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
