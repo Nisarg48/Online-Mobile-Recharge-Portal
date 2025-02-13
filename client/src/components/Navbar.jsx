@@ -10,6 +10,8 @@ import {
     FaUserPlus,
     FaChevronDown,
 } from "react-icons/fa";
+import { CgProfile } from "react-icons/cg";
+
 import { motion, AnimatePresence } from "framer-motion";
 
 
@@ -90,7 +92,7 @@ const handleBack = () => {
                                             className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
                                             onClick={handleBack}
                                         >
-                                            <FaSignOutAlt className="inline mr-2" />
+                                            <CgProfile className="inline mr-2" />
                                             View Profile
                                         </button>
                                         <button
