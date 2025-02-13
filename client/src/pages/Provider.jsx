@@ -13,7 +13,7 @@ function Provider() {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -115,7 +115,7 @@ function Provider() {
                                     plan={plan}
                                     isLoggedIn={true}
                                     mobileNumber={mobileNumber.length === 10 ? mobileNumber : null}
-                                    onModalOpen={setIsModalOpen} // Pass modal state updater
+                                    onModalOpen={setIsModalOpen}
                                 />
                             ))
                         ) : (

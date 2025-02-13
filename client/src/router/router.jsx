@@ -8,6 +8,7 @@ import Provider from "../pages/Provider";
 import Help from "../pages/Help";
 import Profile from "../pages/Profile";
 import Terms from "../pages/terms_condition";
+import Buy_Plan from "../components/Buy_Plan";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -18,38 +19,38 @@ const router = createBrowserRouter([
                 element: <NetworkProvider />,
             },
             {
-                path: "/NetworkProvider/:provider",
-                element: <Provider/>,
-            },
-            {
-                path: "/transaction",
-                element: <Transaction />,
-            },
-            {
                 path: "/login",
                 element: <Login />,
             },
             {
                 path: "/signup",
                 element: <SignUp />,
+                
             },
             {
-                path: "/help",
-                element: <Help />,
+                path: "/NetworkProvider/:provider",
+                element: <Provider/>,
             },
-
+            {
+                path: "/NetworkProvider/:provider/buy",
+                element: <Buy_Plan />,
+            },
+            {
+                path: "/transaction",
+                element: <Transaction />,
+            },
             {
                 path: "/Profile",
                 element: <Profile />,
             },
             {
+                path: "/help",
+                element: <Help />,
+            },
+            {
                 path: "/terms",
                 element: <Terms />,
-               
             }
-
-
-
         ],
     },
 ]);
