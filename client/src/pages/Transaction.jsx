@@ -27,14 +27,14 @@ function Transaction() {
     }, []);
 
     return (
-        <PageLayout title="Transaction">
+        <PageLayout title="Transaction History">
             <p className="text-lg text-[#ffffff] mb-8 text-center">
                 Below is the list of your recent transactions:
             </p>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             {isLoading ? (
                 <div className="flex justify-center items-center py-10">
-                    <div className="spinner-border animate-spin border-t-4 border-[#50c878] rounded-full w-16 h-16"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#50c878]"></div>
                 </div>
             ) : transactionsList.length > 0 ? (
                 <motion.div
@@ -44,8 +44,8 @@ function Transaction() {
                     transition={{ duration: 0.5 }}
                 >
                     <table className="min-w-full bg-[#1e1e1e] rounded-lg overflow-hidden">
-                        <thead className="bg-[#333333]">
-                            <tr className="text-[#ffffff] text-left">
+                        <thead>
+                            <tr className="text-[#50c878] text-left border-b border-[#333333]">
                                 <th className="px-6 py-3">Transaction ID</th>
                                 <th className="px-6 py-3">Date & Time</th>
                                 <th className="px-6 py-3">Mobile Number</th>
@@ -94,18 +94,18 @@ function TransactionRow({ transaction, isEven }) {
 
     return (
         <motion.tr
-            className={`${isEven ? "bg-[#333333]" : "bg-[#1e1e1e]"} hover:bg-[#444444] transition-colors`}
+            className={`${isEven ? "bg-[#2a2a2a]" : "bg-[#1e1e1e]"} hover:bg-[#333333] transition-colors duration-300`}
             whileHover={{ scale: 1.02 }}
         >
-            <td className="px-6 py-4 border-b border-[#444444]">{transactionId || "N/A"}</td>
-            <td className="px-6 py-4 border-b border-[#444444]">
+            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{transactionId || "N/A"}</td>
+            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">
                 {transactionDateTime ? new Date(transactionDateTime).toLocaleString() : "N/A"}
             </td>
-            <td className="px-6 py-4 border-b border-[#444444]">{mobileNumber || "N/A"}</td>
-            <td className="px-6 py-4 border-b border-[#444444]" title={formattedPlanDetails}>
+            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{mobileNumber || "N/A"}</td>
+            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]" title={formattedPlanDetails}>
                 {plan.provider} - ₹{plan.price} ({plan.validity} days)
             </td>
-            <td className="px-6 py-4 border-b border-[#444444]">₹{plan.price}</td>
+            <td className="px-6 py-4 border-b border-[#444444] text-[#50c878] font-bold">₹{plan.price}</td>
             <td
                 className={`px-6 py-4 border-b border-[#444444] font-medium ${
                     status === "Success"
@@ -127,3 +127,7 @@ TransactionRow.propTypes = {
 };
 
 export default Transaction;
+
+
+
+
