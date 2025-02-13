@@ -43,88 +43,88 @@ function Profile() {
   };
 
   if (!user) {
-    return <div className="text-center text-lg mt-20">Loading...</div>;
+    return <div className="text-center text-[#cfcfcf] text-lg mt-20">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen flex justify-center items-center bg-[#1e1e1e]">
       <div className="w-full max-w-3xl px-6">
-        <div className="bg-white shadow-xl rounded-3xl overflow-hidden border border-blue-100">
+        <div className="bg-[#2a2a2a] shadow-xl rounded-3xl overflow-hidden border border-[#444444]">
           {/* Profile Header */}
-          <div className="bg-blue-600 p-8 text-white relative">
+          <div className="bg-[#333333] p-8 text-[#cfcfcf] relative">
             <button
               onClick={() => navigate(-1)}
-              className="absolute left-4 top-4 bg-white/20 rounded-lg p-1.5 hover:bg-white/30 transition"
+              className="absolute left-4 top-4 bg-[#444444]/20 rounded-lg p-1.5 hover:bg-[#444444]/30 transition"
             >
-              <ArrowLeft className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-5 h-5 text-[#cfcfcf]" />
             </button>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-6">
-                <div className="w-28 h-28 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
-                  <Wallet className="w-16 h-16 text-white" />
+                <div className="w-28 h-28 bg-[#50c878] rounded-full flex items-center justify-center shadow-lg">
+                  <Wallet className="w-16 h-16 text-[#1e1e1e]" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-semibold">{user.name}</h1>
-                  <p className="text-lg text-blue-100">Recharge Portal Profile</p>
+                  <h1 className="text-4xl font-semibold text-[#50c878]">{user.name}</h1>
+                  <p className="text-lg text-[#cfcfcf]">Recharge Portal Profile</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsEditing(!isEditing)}
-                className="bg-white/20 rounded-lg p-2 hover:bg-white/30 transition"
+                className="bg-[#444444]/20 rounded-lg p-2 hover:bg-[#444444]/30 transition"
               >
-                <Edit2 className="w-6 h-6" />
+                <Edit2 className="w-6 h-6 text-[#50c878]" />
               </button>
             </div>
           </div>
 
           {/* Profile Form */}
-          <form onSubmit={handleSave} className="p-8 space-y-8 bg-white">
+          <form onSubmit={handleSave} className="p-8 space-y-8 bg-[#2a2a2a]">
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Full Name</label>
                 {isEditing ? (
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-gray-900">{user.name}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{user.name}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Email Address</label>
                 {isEditing ? (
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-gray-900">{user.email}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{user.email}</p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Phone Number</label>
                 {isEditing ? (
                   <input
                     type="text"
                     name="phone_no"
                     value={formData.phone_no}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-gray-900">{user.phone_no}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{user.phone_no}</p>
                 )}
               </div>
             </div>
@@ -132,7 +132,7 @@ function Profile() {
             {isEditing && (
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
               >
                 <Save className="w-5 h-5" /> Save Changes
               </button>

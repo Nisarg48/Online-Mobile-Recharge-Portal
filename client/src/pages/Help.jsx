@@ -21,40 +21,40 @@ const faqCategories = [
     id: 1,
     title: 'Recharge Issues',
     icon: Phone,
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-50',
-    description: 'Get help with failed recharges, pending transactions, and mobile top-ups',
+    color: 'text-[#50c878]',
+    bgColor: 'bg-[#2a2a2a]',
+    description: ' Get help with failed recharges, pending transactions, and mobile top-ups',
   },
   {
     id: 2,
     title: 'Payment Failures',
     icon: CreditCard,
-    color: 'text-red-500',
-    bgColor: 'bg-red-50',
+    color: 'text-[#50c878]',
+    bgColor: 'bg-[#2a2a2a]',
     description: 'Resolve issues with failed payments, refunds, and transaction errors',
   },
   {
     id: 3,
     title: 'Offers & Cashback',
     icon: Gift,
-    color: 'text-green-500',
-    bgColor: 'bg-green-50',
+    color: 'text-[#50c878]',
+    bgColor: 'bg-[#2a2a2a]',
     description: 'Learn about ongoing offers, cashback terms, and reward redemption',
   },
   {
     id: 4,
     title: 'Account Management',
     icon: UserCog,
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-50',
+    color: 'text-[#50c878]',
+    bgColor: 'bg-[#2a2a2a]',
     description: 'Manage your profile, update details, and handle account settings',
   },
   {
     id: 5,
     title: 'Privacy & Security',
     icon: Shield,
-    color: 'text-yellow-500',
-    bgColor: 'bg-yellow-50',
+    color: 'text-[#50c878]',
+    bgColor: 'bg-[#2a2a2a]',
     description: 'Get support for security concerns, privacy settings, and data protection',
   },
 ];
@@ -81,21 +81,21 @@ function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-200">
+    <div className="border-b border-[#444444]">
       <button
-        className="w-full py-4 px-6 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+        className="w-full py-4 px-6 text-left flex justify-between items-center hover:bg-[#2a2a2a] transition-colors"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="font-medium text-gray-900">{question}</span>
+        <span className="font-medium text-[#cfcfcf]">{question}</span>
         {isOpen ? (
-          <ChevronUp className="h-5 w-5 text-gray-500" />
+          <ChevronUp className="h-5 w-5 text-[#cfcfcf]" />
         ) : (
-          <ChevronDown className="h-5 w-5 text-gray-500" />
+          <ChevronDown className="h-5 w-5 text-[#cfcfcf]" />
         )}
       </button>
       {isOpen && (
-        <div className="px-6 py-4 bg-gray-50">
-          <p className="text-gray-600">{answer}</p>
+        <div className="px-6 py-4 bg-[#2a2a2a]">
+          <p className="text-[#cfcfcf]">{answer}</p>
         </div>
       )}
     </div>
@@ -118,10 +118,10 @@ function CategoryCard({ category }) {
           <div className={`${category.color} p-3 rounded-lg transition-transform`}>
             <IconComponent className="h-6 w-6" />
           </div>
-          <span className="font-medium text-gray-900">{category.title}</span>
+          <span className="font-medium text-[#cfcfcf]">{category.title}</span>
         </div>
         <div
-          className={`mt-4 text-gray-600 transition-opacity duration-300 ${
+          className={`mt-4 text-[#cfcfcf] transition-opacity duration-300 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -141,19 +141,19 @@ function Help() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#1e1e1e]">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-[#2a2a2a] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-[#333333] rounded-full transition-colors"
                 onClick={handleBack}
               >
-                <ArrowLeft className="h-6 w-6 text-gray-600" />
+                <ArrowLeft className="h-6 w-6 text-[#cfcfcf]" />
               </button>
-              <h1 className="text-xl font-bold text-gray-900">Help Center</h1>
+              <h1 className="text-xl font-bold text-[#cfcfcf]">Help Center</h1>
             </div>
             <div className="relative flex-1 max-w-lg mx-4"></div>
           </div>
@@ -161,10 +161,10 @@ function Help() {
       </header>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+      <div className="bg-[#333333]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
-          <h2 className="text-3xl font-bold mb-2">How can we assist you?</h2>
-          <p className="text-blue-100">Find solutions to your issues or contact support</p>
+          <h2 className="text-3xl font-bold mb-2 text-[#50c878]">How can we assist you?</h2>
+          <p className="text-[#cfcfcf]">Find solutions to your issues or contact support</p>
         </div>
       </div>
 
@@ -178,11 +178,11 @@ function Help() {
         </div>
 
         {/* Popular Queries */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-12">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">Popular Queries</h3>
+        <div className="bg-[#2a2a2a] rounded-xl shadow-sm overflow-hidden mb-12">
+          <div className="px-6 py-4 border-b border-[#444444]">
+            <h3 className="text-lg font-semibold text-[#50c878]">Popular Queries</h3>
           </div>
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-[#444444]">
             {popularQueries.map((query) => (
               <FAQItem key={query.id} question={query.question} answer={query.answer} />
             ))}
@@ -191,15 +191,14 @@ function Help() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200">
+      <footer className="bg-[#2a2a2a] border-t border-[#444444]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex space-x-6">
               <a
                 href="#"
-                className="text-gray-600 hover:text-gray-900"
+                className="text-[#cfcfcf] hover:text-[#50c878]"
                 onMouseEnter={() => setIsHovered(true)}
-                
               >
                 Contact Us
               </a>
@@ -209,14 +208,14 @@ function Help() {
                   e.preventDefault();
                   navigate('/terms');
                 }}
-                className="text-gray-600 hover:text-gray-900"
+                className="text-[#cfcfcf] hover:text-[#50c878]"
               >
                 Terms & Policies
               </a>
             </div>
           </div>
           {isHovered && (
-            <div className="mt-4 text-gray-600">
+            <div className="mt-4 text-[#cfcfcf]">
               <p>If you need help, feel free to reach out to our support team at support@example.com.</p>
             </div>
           )}
