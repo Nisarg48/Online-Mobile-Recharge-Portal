@@ -1,22 +1,49 @@
 import { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Buy_Plan() {
     const location = useLocation();
+    const navigate = useNavigate();
     const plan = location.state?.plan;
     const mNumber = location.state?.mNumber;
     const [mobileNumber, setMobileNumber] = useState(mNumber || "");
     const [isModalOpen, setIsModalOpen] = useState(true);
+    const [errorModal, setErrorModal] = useState(false);
 
-    const handleCloseModal = () => setIsModalOpen(false);
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        navigate(-1);
+    };
+
+    const handlePayment = () => {
+        if (!mobileNumber) {
+            setErrorModal(true); // Show error modal if mobile number is empty
+            return;
+        }
+
+        // Generate a unique transaction ID
+        const transactionId = Math.random().toString(36).substr(2, 9).toUpperCase();
+
+        // Create transaction data
+        const transactionData = {
+            plan,
+            mobileNumber,
+            transactionId,
+            timestamp: new Date().toISOString(),
+        };
+
+        // Navigate to receipt page with transaction data
+        navigate('/receipt', { state: { transactionData } });
+    };
 
     return (
         <>
             <AnimatePresence>
                 {isModalOpen && (
                     <>
+                        {/* Background Overlay */}
                         <motion.div
                             className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-sm z-40"
                             initial={{ opacity: 0 }}
@@ -64,19 +91,42 @@ function Buy_Plan() {
                                         Close
                                     </button>
                                     <button
-                                        className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white px-6 py-3 rounded-md hover:from-[#50c878] hover:to-[#6a11cb] transition-all"
-                                        onClick={() => {
-                                            if (!mobileNumber) {
-                                                alert("Please enter a mobile number.");
-                                                return;
-                                            }
-                                            alert(`Payment successful for ${mobileNumber}`);
-                                            handleCloseModal();
-                                        }}
+                                        className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white px-6 py-3 rounded-md hover:opacity-90 transition-opacity"
+                                        onClick={handlePayment}
                                     >
                                         Pay
                                     </button>
                                 </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+
+                {/* Error Modal */}
+                {errorModal && (
+                    <>
+                        <motion.div
+                            className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-md z-40"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
+                        <motion.div
+                            className="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50"
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                        >
+                            <div className="bg-[#2e2e2e] text-white p-6 rounded-lg shadow-xl max-w-md w-full">
+                                <h3 className="text-xl font-bold mb-4 text-red-500">Error</h3>
+                                <p className="mb-4">Please enter a mobile number before proceeding.</p>
+                                <button
+                                    className="w-full bg-[#50c878] text-white px-4 py-2 rounded-md hover:bg-[#6a11cb] transition"
+                                    onClick={() => setErrorModal(false)}
+                                >
+                                    OK
+                                </button>
                             </div>
                         </motion.div>
                     </>

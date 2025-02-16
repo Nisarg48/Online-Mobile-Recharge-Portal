@@ -41,6 +41,17 @@ function Profile() {
     loadUserData();
   }, []);
 
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+        phone_no: user.phone_no
+      }));
+    }
+  }, [isEditing, user]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -48,22 +59,37 @@ function Profile() {
       [name]: value
     }));
 
-    // Clear password error when user starts typing
     if (name.includes('Password')) {
       setPasswordError("");
     }
   };
 
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+        phone_no: user.phone_no
+      }));
+    }
+  };
+
   const handleSave = (e) => {
     e.preventDefault();
-    setUser(formData);
+    setUser({
+      ...user,
+      name: formData.name,
+      email: formData.email,
+      phone_no: formData.phone_no
+    });
     setIsEditing(false);
   };
 
   const handlePasswordSave = (e) => {
     e.preventDefault();
     
-    // Basic password validation
     if (formData.newPassword !== formData.confirmPassword) {
       setPasswordError("New passwords don't match");
       return;
@@ -74,15 +100,37 @@ function Profile() {
       return;
     }
 
-    // Here you would typically make an API call to update the password
+    // Update the user state with the new password
+    setUser(prev => ({
+      ...prev,
+      password: formData.newPassword // Save the new password to user state
+    }));
+
     console.log("Password updated successfully");
     setIsEditingPassword(false);
     setFormData(prev => ({
       ...prev,
-      currentPassword: "",
+      currentPassword: formData.newPassword, // Keep the new password as current password
       newPassword: "",
       confirmPassword: ""
     }));
+  };
+
+  const togglePasswordEdit = () => {
+    setIsEditingPassword(!isEditingPassword);
+    if (!isEditingPassword && user?.password) {
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: user.password
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      }));
+    }
   };
 
   if (!user) {
@@ -107,12 +155,12 @@ function Profile() {
                   <Wallet className="w-16 h-16 text-[#1e1e1e]" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-semibold text-[#50c878]">{user.name}</h1>
+                  <h1 className="text-4xl font-semibold text-[#50c878]">{formData.name}</h1>
                   <p className="text-lg text-[#cfcfcf]">Recharge Portal Profile</p>
                 </div>
               </div>
               <button
-                onClick={() => setIsEditing(!isEditing)}
+                onClick={toggleEdit}
                 className="bg-[#444444]/20 rounded-lg p-2 hover:bg-[#444444]/30 transition"
               >
                 <Edit2 className="w-6 h-6 text-[#50c878]" />
@@ -135,7 +183,7 @@ function Profile() {
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{user.name}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.name}</p>
                 )}
               </div>
 
@@ -151,7 +199,7 @@ function Profile() {
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{user.email}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.email}</p>
                 )}
               </div>
 
@@ -167,7 +215,7 @@ function Profile() {
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{user.phone_no}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.phone_no}</p>
                 )}
               </div>
 
@@ -176,7 +224,7 @@ function Profile() {
                   <label className="block text-sm font-medium text-[#cfcfcf]">Password</label>
                   <button
                     type="button"
-                    onClick={() => setIsEditingPassword(!isEditingPassword)}
+                    onClick={togglePasswordEdit}
                     className="text-[#50c878] hover:text-[#3da861] text-sm flex items-center gap-1"
                   >
                     <Lock className="w-4 h-4" />
