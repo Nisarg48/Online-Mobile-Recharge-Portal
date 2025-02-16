@@ -3,13 +3,11 @@ import { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
-  Search,
   Phone,
   CreditCard,
   Gift,
   UserCog,
   Shield,
-  MessageSquareMore,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
@@ -137,7 +135,7 @@ function Help() {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleBack = () => {
-    navigate('/');
+    navigate(-1);
   };
 
   return (

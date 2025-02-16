@@ -9,6 +9,8 @@ import Help from "../pages/Help";
 import Profile from "../pages/Profile";
 import Terms from "../pages/terms_condition";
 import Buy_Plan from "../components/Buy_Plan";
+import Forgot_Password from "../pages/Forgot_Password";
+
 const router = createBrowserRouter([
     {
         path: "/",
@@ -16,16 +18,24 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <NetworkProvider />,
+                element: <Login />,
             },
             {
                 path: "/login",
                 element: <Login />,
             },
             {
+                path: "/forgot-password",
+                element: <Forgot_Password />,
+            },
+            {
                 path: "/signup",
                 element: <SignUp />,
                 
+            },
+            {
+                path: "/NetworkProvider",
+                element: <NetworkProvider />,
             },
             {
                 path: "/NetworkProvider/:provider",

@@ -2,15 +2,21 @@ import { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Buy_Plan() {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const plan = location.state?.plan;
     const mNumber = location.state?.mNumber;
     const [mobileNumber, setMobileNumber] = useState(mNumber || "");
     const [isModalOpen, setIsModalOpen] = useState(true);
 
-    const handleCloseModal = () => setIsModalOpen(false);
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        navigate(-1)
+    };
 
     return (
         <>

@@ -5,7 +5,8 @@ import { FaDatabase, FaPhoneAlt, FaSms } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-function Recharge_Plan_Card({ plan, isLoggedIn, mobileNumber }) {
+function Recharge_Plan_Card({ plan, mobileNumber }) {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
     const [showMore, setShowMore] = useState(false);
     const navigate = useNavigate();
 

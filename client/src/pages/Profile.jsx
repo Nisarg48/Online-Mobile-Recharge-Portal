@@ -1,89 +1,50 @@
 import { useState, useEffect } from "react";
 import { Wallet, Save, Edit2, ArrowLeft, Eye, EyeOff, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import API from "../Utils/API";
 
 function Profile() {
   const navigate = useNavigate();
 
-  const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ 
-    name: "", 
-    email: "", 
-    phone_no: "", 
+  const [isEditingPassword, setIsEditingPassword] = useState(false);
+
+  // Initialize user state as null
+  const [user, setUser] = useState(null);
+  // Initialize formData with default empty values
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone_no: "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
   });
   const [passwordError, setPasswordError] = useState("");
 
+  // Fetch user data using the API instance
   useEffect(() => {
-    const loadUserData = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await fetch("/users.json");
-        const data = await response.json();
-        const initialUser = data.users[0];
-        setUser(initialUser);
+        const { data } = await API.get("/user/getUser");
+        setUser(data);
+        
         setFormData({
-          name: initialUser.name,
-          email: initialUser.email,
-          phone_no: initialUser.phone_no,
-          currentPassword: "",
+          name: data.name,
+          email: data.email,
+          phone_no: data.phone_no,
+          currentPassword: data.password,
           newPassword: "",
           confirmPassword: ""
         });
       } catch (error) {
-        console.error("Failed to load user data:", error);
+        console.error("Error fetching user data:", error);
       }
     };
-    loadUserData();
+
+    fetchUserData();
   }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // Clear password error when user starts typing
-    if (name.includes('Password')) {
-      setPasswordError("");
-    }
-  };
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    setUser(formData);
-    setIsEditing(false);
-  };
-
-  const handlePasswordSave = (e) => {
-    e.preventDefault();
-    
-    // Basic password validation
-    if (formData.newPassword !== formData.confirmPassword) {
-      setPasswordError("New passwords don't match");
-      return;
-    }
-    
-    if (formData.newPassword.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
-      return;
-    }
-
-    // Here you would typically make an API call to update the password
-    console.log("Password updated successfully");
-    setIsEditingPassword(false);
-    setFormData(prev => ({
-      ...prev,
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: ""
-    }));
-  };
 
   if (!user) {
     return <div className="text-center text-[#cfcfcf] text-lg mt-20">Loading...</div>;
@@ -121,7 +82,7 @@ function Profile() {
           </div>
 
           {/* Profile Form */}
-          <form onSubmit={handleSave} className="p-8 space-y-8 bg-[#2a2a2a]">
+          <form onSubmit={(e) => { e.preventDefault(); setUser(formData); setIsEditing(false); }} className="p-8 space-y-8 bg-[#2a2a2a]">
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Full Name</label>
@@ -130,7 +91,7 @@ function Profile() {
                     type="text"
                     name="name"
                     value={formData.name}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
@@ -146,7 +107,7 @@ function Profile() {
                     type="email"
                     name="email"
                     value={formData.email}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
@@ -162,7 +123,7 @@ function Profile() {
                     type="text"
                     name="phone_no"
                     value={formData.phone_no}
-                    onChange={handleInputChange}
+                    onChange={(e) => setFormData({ ...formData, phone_no: e.target.value })}
                     className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
@@ -192,7 +153,7 @@ function Profile() {
                         type={showPassword ? "text" : "password"}
                         name="currentPassword"
                         value={formData.currentPassword}
-                        onChange={handleInputChange}
+                        onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
                         placeholder="Current Password"
                         className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                         required
@@ -209,7 +170,7 @@ function Profile() {
                       type="password"
                       name="newPassword"
                       value={formData.newPassword}
-                      onChange={handleInputChange}
+                      onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
                       placeholder="New Password"
                       className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                       required
@@ -218,7 +179,7 @@ function Profile() {
                       type="password"
                       name="confirmPassword"
                       value={formData.confirmPassword}
-                      onChange={handleInputChange}
+                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                       placeholder="Confirm New Password"
                       className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                       required
@@ -228,7 +189,25 @@ function Profile() {
                     )}
                     <button
                       type="button"
-                      onClick={handlePasswordSave}
+                      onClick={() => {
+                        // Handle password update validation and API call here if needed
+                        if (formData.newPassword !== formData.confirmPassword) {
+                          setPasswordError("New passwords don't match");
+                          return;
+                        }
+                        if (formData.newPassword.length < 8) {
+                          setPasswordError("Password must be at least 8 characters long");
+                          return;
+                        }
+                        console.log("Password updated successfully");
+                        setIsEditingPassword(false);
+                        setFormData(prev => ({
+                          ...prev,
+                          currentPassword: "",
+                          newPassword: "",
+                          confirmPassword: ""
+                        }));
+                      }}
                       className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
                     >
                       <Save className="w-5 h-5" /> Update Password
