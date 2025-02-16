@@ -43,8 +43,39 @@ function Profile() {
       }
     };
 
+    
+
     fetchUserData();
   }, []);
+
+  const toggleEdit = () => {
+    setIsEditing(!isEditing);
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name,
+        email: user.email,
+        phone_no: user.phone_no
+      }));
+    }
+  };
+
+  const togglePasswordEdit = () => {
+    setIsEditingPassword(!isEditingPassword);
+    if (!isEditingPassword && user?.password) {
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: user.password
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: ""
+      }));
+    }
+  };
 
   if (!user) {
     return <div className="text-center text-[#cfcfcf] text-lg mt-20">Loading...</div>;

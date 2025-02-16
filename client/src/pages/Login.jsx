@@ -1,7 +1,8 @@
-import { useForm, useState } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import API from "../Utils/API";
+import { useState } from "react";
 
 function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
