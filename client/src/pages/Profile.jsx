@@ -68,12 +68,12 @@ function Profile() {
                   <Wallet className="w-16 h-16 text-[#1e1e1e]" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-semibold text-[#50c878]">{user.name}</h1>
+                  <h1 className="text-4xl font-semibold text-[#50c878]">{formData.name}</h1>
                   <p className="text-lg text-[#cfcfcf]">Recharge Portal Profile</p>
                 </div>
               </div>
               <button
-                onClick={() => setIsEditing(!isEditing)}
+                onClick={toggleEdit}
                 className="bg-[#444444]/20 rounded-lg p-2 hover:bg-[#444444]/30 transition"
               >
                 <Edit2 className="w-6 h-6 text-[#50c878]" />
@@ -96,7 +96,7 @@ function Profile() {
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{user.name}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.name}</p>
                 )}
               </div>
 
@@ -112,7 +112,7 @@ function Profile() {
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{user.email}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.email}</p>
                 )}
               </div>
 
@@ -128,7 +128,7 @@ function Profile() {
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{user.phone_no}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.phone_no}</p>
                 )}
               </div>
 
@@ -137,7 +137,7 @@ function Profile() {
                   <label className="block text-sm font-medium text-[#cfcfcf]">Password</label>
                   <button
                     type="button"
-                    onClick={() => setIsEditingPassword(!isEditingPassword)}
+                    onClick={togglePasswordEdit}
                     className="text-[#50c878] hover:text-[#3da861] text-sm flex items-center gap-1"
                   >
                     <Lock className="w-4 h-4" />
