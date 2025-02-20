@@ -2,12 +2,10 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import API from "../Utils/API";
-import { useState } from "react";
 
 function Login() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const onSubmit = async (data) => {
         try {
@@ -19,8 +17,6 @@ function Login() {
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
 
-            setIsLoggedIn(true);
-            localStorage.setItem('isLoggedIn', isLoggedIn);
             // Redirect the user after login
             navigate("/NetworkProvider", { replace: true });
         } catch (error) {
@@ -102,13 +98,15 @@ function Login() {
                     </p>
 
                     {/* Forgot Password */}
-                    <Link 
-                        to={"/forgot-password"} 
-                        className="text-[#50c878] hover:underline"
-                        aria-label="Reset your password"
-                    >
-                        Reset Password
-                    </Link>
+                    <div className="text-center">
+                        <Link 
+                            to={"/forgot-password"} 
+                            className="text-[#50c878] hover:underline"
+                            aria-label="Reset your password"
+                        >
+                            Reset Password
+                        </Link>
+                    </div>
                 </form>
             </motion.div>
         </div>

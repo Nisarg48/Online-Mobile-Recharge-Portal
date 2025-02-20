@@ -15,14 +15,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function Navbar() {
     const navigate = useNavigate();
-
-    const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn"));
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+
+    const accessToken = localStorage.getItem("accessToken");
 
     const Logout = () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        setIsLoggedIn(false);
+        navigate('/NetworkProvider', { replace: true });
     };
 
     return (
@@ -44,14 +44,16 @@ function Navbar() {
                         <FaNetworkWired size={20} />
                         <span className="ml-2">Network Provider</span>
                     </Link>
-                    <Link
-                        to="/transaction"
-                        className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
-                        title="Transactions"
-                    >
-                        <FaExchangeAlt size={20} />
-                        <span className="ml-2">Transactions</span>
-                    </Link>
+                    {accessToken &&
+                        <Link
+                            to="/transaction"
+                            className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
+                            title="Transactions"
+                        >
+                            <FaExchangeAlt size={20} />
+                            <span className="ml-2">Transactions</span>
+                        </Link>
+                    }
                     <Link
                         to="/help"
                         className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
@@ -64,7 +66,7 @@ function Navbar() {
 
                 {/* Login/Logout/Profile (Right) */}
                 <div className="flex space-x-6 relative">
-                    {isLoggedIn ? (
+                    {accessToken ? (
                         <>
                             <button
                                 className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"

@@ -2,6 +2,7 @@ import PageLayout from "./PageLayout";
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
+import API from "../Utils/API";
 
 function Transaction() {
     const [transactionsList, setTransactionsList] = useState([]);
@@ -9,21 +10,35 @@ function Transaction() {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch("/Transaction_List.json")
-            .then((res) => {
-                if (!res.ok) throw new Error("Failed to fetch transactions.");
-                return res.json();
-            })
-            .then((data) => {
-                setTransactionsList(data);
-                setError(null);
+        const fetchTransactions = async () => {
+            try{
+                const response = await API.get('/transactions/getUserTransaction_List');
+                console.log(response.data);
+                setTransactionsList(response.data);
                 setIsLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching transactions:", error);
-                setError(error.message);
-                setIsLoading(false);
-            });
+            } 
+            catch(error){
+                setError(error);
+            }
+        }
+
+        fetchTransactions()
+        
+        // fetch("/Transaction_List.json")
+        //     .then((res) => {
+        //         if (!res.ok) throw new Error("Failed to fetch transactions.");
+        //         return res.json();
+        //     })
+        //     .then((data) => {
+        //         setTransactionsList(data);
+        //         setError(null);
+        //         setIsLoading(false);
+        //     })
+        //     .catch((error) => {
+        //         console.error("Error fetching transactions:", error);
+        //         setError(error.message);
+        //         setIsLoading(false);
+        //     });
     }, []);
 
     return (
@@ -57,7 +72,7 @@ function Transaction() {
                         <tbody>
                             {transactionsList.map((transaction, index) => (
                                 <TransactionRow
-                                    key={transaction.transactionId}
+                                    key={transaction._id}
                                     transaction={transaction}
                                     isEven={index % 2 === 0}
                                 />
@@ -74,15 +89,15 @@ function Transaction() {
 
 function TransactionRow({ transaction, isEven }) {
     const {
-        transactionId,
+        _id: transactionId,
         transactionDateTime,
-        mobileNumber,
+        mobile_number: mobileNumber,
         plan = {},
         status = "Unknown",
     } = transaction;
 
     const formattedPlanDetails = `
-        Provider: ${plan.provider || "N/A"}, 
+        Provider: ${plan.platform || "N/A"}, 
         Category: ${plan.category || "N/A"}, 
         Price: ₹${plan.price || 0}, 
         Validity: ${plan.validity || "N/A"} days, 
@@ -103,7 +118,7 @@ function TransactionRow({ transaction, isEven }) {
             </td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{mobileNumber || "N/A"}</td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]" title={formattedPlanDetails}>
-                {plan.provider} - ₹{plan.price} ({plan.validity} days)
+                {plan.platform} - ₹{plan.price} ({plan.validity} days)
             </td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#50c878] font-bold">₹{plan.price}</td>
             <td
