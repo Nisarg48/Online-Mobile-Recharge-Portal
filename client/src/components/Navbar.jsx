@@ -85,7 +85,7 @@ function Navbar() {
 
                                         <button
                                             className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
-                                            onClick={ () => navigate('/profile') }
+                                            onClick={ () => navigate('/Profile') }
                                         >
                                             <CgProfile className="inline mr-2" />
                                             View Profile
