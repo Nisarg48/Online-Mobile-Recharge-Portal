@@ -10,6 +10,7 @@ import Buy_Plan from "./components/Buy_Plan";
 import Provider from "./pages/Provider";
 import Help from "./pages/Help";
 import Terms from "./pages/terms_condition";
+import Receipt from "./components/Receipt";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/change-password" element={<ForgotPassword />} />
         <Route path="/Help" element={<Help />} />
         <Route path="/NetworkProvider/:provider/buy" element={<Buy_Plan />} />
+        <Route path="/receipt" element={<Receipt />} />
       </Routes>
     </Router>
   );
