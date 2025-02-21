@@ -1,27 +1,21 @@
 import { useState, useEffect } from "react";
-import { Wallet, Save, Edit2, ArrowLeft, Eye, EyeOff, Lock } from "lucide-react";
+import { Wallet, Save, Edit2, ArrowLeft} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../Utils/API";
 
 function Profile() {
   const navigate = useNavigate();
-
   const [isEditing, setIsEditing] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isEditingPassword, setIsEditingPassword] = useState(false);
 
   // Initialize user state as null
   const [user, setUser] = useState(null);
+
   // Initialize formData with default empty values
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone_no: "",
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
+    mobile_no: "",
   });
-  const [passwordError, setPasswordError] = useState("");
 
   // Fetch user data using the API instance
   useEffect(() => {
@@ -33,17 +27,12 @@ function Profile() {
         setFormData({
           name: data.name,
           email: data.email,
-          phone_no: data.phone_no,
-          currentPassword: data.password,
-          newPassword: "",
-          confirmPassword: ""
+          mobile_no: data.mobile_no,
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-    };
-
-    
+    };    
 
     fetchUserData();
   }, []);
@@ -51,29 +40,31 @@ function Profile() {
   const toggleEdit = () => {
     setIsEditing(!isEditing);
     if (user) {
-      setFormData(prev => ({
-        ...prev,
+      setFormData(() => ({
         name: user.name,
         email: user.email,
-        phone_no: user.phone_no
+        mobile_no: user.mobile_no
       }));
     }
   };
 
-  const togglePasswordEdit = () => {
-    setIsEditingPassword(!isEditingPassword);
-    if (!isEditingPassword && user?.password) {
-      setFormData(prev => ({
-        ...prev,
-        currentPassword: user.password
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: ""
-      }));
+  const updateUser = async () => {
+    try {
+        const payload = {
+            name: formData.name,
+            email: formData.email,
+            mobile_no: formData.mobile_no, 
+        };
+
+        console.log("Updating User with:", payload);
+
+        const { data } = await API.put("/user/updateUser", payload);
+        setUser(data);
+        setIsEditing(false);
+        alert("Profile updated successfully");
+    } catch (error) {
+        console.error("Error updating profile:", error.response?.data || error.message);
+        alert("Failed to update profile");
     }
   };
 
@@ -113,7 +104,11 @@ function Profile() {
           </div>
 
           {/* Profile Form */}
-          <form onSubmit={(e) => { e.preventDefault(); setUser(formData); setIsEditing(false); }} className="p-8 space-y-8 bg-[#2a2a2a]">
+          <form onSubmit={(e) => { 
+                  e.preventDefault();
+                  updateUser(formData);
+                }} 
+                className="p-8 space-y-8 bg-[#2a2a2a]">
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Full Name</label>
@@ -153,109 +148,32 @@ function Profile() {
                   <input
                     type="text"
                     name="phone_no"
-                    value={formData.phone_no}
-                    onChange={(e) => setFormData({ ...formData, phone_no: e.target.value })}
+                    value={formData.mobile_no}
+                    onChange={(e) => setFormData({ ...formData, mobile_no: e.target.value })}
                     className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
                     required
                   />
                 ) : (
-                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.phone_no}</p>
+                  <p className="text-lg font-medium text-[#cfcfcf]">{formData.mobile_no}</p>
                 )}
               </div>
 
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium text-[#cfcfcf]">Password</label>
-                  <button
-                    type="button"
-                    onClick={togglePasswordEdit}
-                    className="text-[#50c878] hover:text-[#3da861] text-sm flex items-center gap-1"
-                  >
-                    <Lock className="w-4 h-4" />
-                    {isEditingPassword ? 'Cancel' : 'Change Password'}
-                  </button>
-                </div>
-                {!isEditingPassword ? (
-                  <p className="text-lg font-medium text-[#cfcfcf]">••••••••</p>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        name="currentPassword"
-                        value={formData.currentPassword}
-                        onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                        placeholder="Current Password"
-                        className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#cfcfcf]"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
-                    <input
-                      type="password"
-                      name="newPassword"
-                      value={formData.newPassword}
-                      onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                      placeholder="New Password"
-                      className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
-                      required
-                    />
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      placeholder="Confirm New Password"
-                      className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg focus:ring-2 focus:ring-[#50c878] focus:border-[#50c878] text-[#cfcfcf]"
-                      required
-                    />
-                    {passwordError && (
-                      <p className="text-red-500 text-sm">{passwordError}</p>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        // Handle password update validation and API call here if needed
-                        if (formData.newPassword !== formData.confirmPassword) {
-                          setPasswordError("New passwords don't match");
-                          return;
-                        }
-                        if (formData.newPassword.length < 8) {
-                          setPasswordError("Password must be at least 8 characters long");
-                          return;
-                        }
-                        console.log("Password updated successfully");
-                        setIsEditingPassword(false);
-                        setFormData(prev => ({
-                          ...prev,
-                          currentPassword: "",
-                          newPassword: "",
-                          confirmPassword: ""
-                        }));
-                      }}
-                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
-                    >
-                      <Save className="w-5 h-5" /> Update Password
-                    </button>
-                  </div>
-                )}
+              {isEditing && (
+                <button
+                    type="submit"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition">
+                    <Save className="w-5 h-5" /> Save Changes
+                </button>
+              )}
+
+              <div className="flex justify-center items-center mb-2">
+                <button 
+                      className="text-[#50c878] hover:text-[#3da861] text-lg flex items-center"
+                      onClick={() => navigate('/change-password')}>
+                  Change Password
+                </button>
               </div>
             </div>
-
-            {isEditing && (
-              <button
-                type="submit"
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
-              >
-                <Save className="w-5 h-5" /> Save Changes
-              </button>
-            )}
           </form>
         </div>
       </div>
