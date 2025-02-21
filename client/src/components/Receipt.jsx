@@ -70,7 +70,7 @@ function Receipt() {
                 <div className="mt-8 flex justify-center">
                     <button
                         className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white px-6 py-3 rounded-md hover:opacity-90 transition-all"
-                        onClick={() => navigate("/")}
+                        onClick={() => navigate("/NetworkProvider")}
                     >
                         Back to Home
                     </button>
