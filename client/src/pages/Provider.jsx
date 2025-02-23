@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import PageLayout from "./PageLayout";
 import Recharge_Plan_Card from "../components/Recharge_Plan_Card";
+import API from "../Utils/API";
 
 function Provider() {
     const { provider } = useParams();
@@ -17,18 +18,17 @@ function Provider() {
 
     useEffect(() => {
         setLoading(true);
-        fetch("/Recharge_Plan.json")
-            .then((res) => res.json())
-            .then((data) => {
-                setRechargePlan(data);
-                const uniqueCategories = Array.from(new Set(data.map(plan => plan.category)));
-                setCategories(uniqueCategories);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching recharge plans:", error);
-                setLoading(false);
-            });
+
+        const fetchRechargePlans = async () => {
+            const response = await API.get("/getRecharge_Plan");
+            console.log(response.data[0]);
+            setRechargePlan(response.data);
+            const uniqueCategories = Array.from(new Set(response.data.map(plan => plan.category)));
+            setCategories(uniqueCategories);
+            setLoading(false);
+        }
+
+        fetchRechargePlans();
     }, []);
 
     const filteredPlans = rechargePlan.filter((plan) => {
