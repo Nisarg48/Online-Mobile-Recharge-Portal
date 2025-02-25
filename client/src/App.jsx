@@ -11,12 +11,16 @@ import Provider from "./pages/Provider";
 import Help from "./pages/Help";
 import Terms from "./pages/terms_condition";
 import Receipt from "./components/Receipt";
+import Dashboard from "./pages/Dashboard";
+import Edit_Recharge_Plan from "./components/Edit_Recharge_Plan";
+import Add_Recharge_Plan from "./components/Add_Recharge_Plan";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route element={<Layout />}>
+          <Route path='/dashboard' element={<Dashboard />} />
           <Route path="/NetworkProvider" element={<NetworkProvider />} />
           <Route path="/NetworkProvider/:provider" element={<Provider />} />
           <Route path="/Transaction" element={<Transaction />} />
@@ -31,6 +35,8 @@ function App() {
         <Route path="/Help" element={<Help />} />
         <Route path="/NetworkProvider/:provider/buy" element={<Buy_Plan />} />
         <Route path="/receipt" element={<Receipt />} />
+        <Route path="/NetworkProvider/:provider/edit_plan/:planId" element={<Edit_Recharge_Plan />} />
+        <Route path="/NetworkProvider/:provider/add_plan" element={<Add_Recharge_Plan />} />
       </Routes>
     </Router>
   );

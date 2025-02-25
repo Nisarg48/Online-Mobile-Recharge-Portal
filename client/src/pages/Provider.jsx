@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import PageLayout from "./PageLayout";
 import Recharge_Plan_Card from "../components/Recharge_Plan_Card";
 import API from "../Utils/API";
 
 function Provider() {
+    const navigate = useNavigate();
     const { provider } = useParams();
     const [mobileNumber, setMobileNumber] = useState("");
     const [amount, setAmount] = useState("");
@@ -30,6 +31,24 @@ function Provider() {
 
         fetchRechargePlans();
     }, []);
+
+    const [role, setRole] = useState(null);
+    const accessToken = localStorage.getItem("accessToken");
+
+    useEffect(() => {
+        const decodeToken = () => {
+            if (accessToken) {
+                try {
+                    setRole(JSON.parse(atob(accessToken.split('.')[1])).role);
+                    console.log(role);
+                } catch (error) {
+                    console.error('Error decoding token:', error);
+                    return null;
+                }
+            }
+        };
+        decodeToken();
+    }, [accessToken, role]);
 
     const filteredPlans = rechargePlan.filter((plan) => {
         const isProviderMatch = plan.platform.toLowerCase() === provider.toLowerCase();
@@ -79,26 +98,38 @@ function Provider() {
 
                 {/* Category Selection & Available Plans */}
                 <div className="w-full flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0 md:space-x-4">
-                    {/* Category Selection */}
-                    <div className="w-full md:w-1/4 bg-[#1e1e1e] shadow-lg rounded-lg p-4 border border-white backdrop-blur-sm bg-opacity-30">
-                        <h3 className="text-lg font-semibold mb-4 text-[#ffffff]">Select Category:</h3>
-                        <div className="flex flex-col space-y-2">
-                            <button
-                                onClick={() => setSelectedCategory('All')}
-                                className={`px-4 py-2 rounded-md ${selectedCategory === 'All' ? 'bg-[#50c878] text-white' : 'bg-[#333333] text-[#ffffff] hover:bg-[#444444]'} transition duration-200 ease-in-out`}
-                            >
-                                All
-                            </button>
-                            {categories.map((category) => (
+                    <div className="w-full md:w-1/4 bg-[#1e1e1e] shadow-lg backdrop-blur-sm bg-opacity-30">
+                        {/* Category Selection */}
+                        <div className="rounded-lg p-4 border border-white">
+                            <h3 className="text-lg font-semibold mb-4 text-[#ffffff]">Select Category:</h3>
+                            <div className="flex flex-col space-y-2">
                                 <button
-                                    key={category}
-                                    onClick={() => setSelectedCategory(category)}
-                                    className={`px-4 py-2 rounded-md ${selectedCategory === category ? 'bg-[#50c878] text-white' : 'bg-[#333333] text-[#ffffff] hover:bg-[#444444]'} transition duration-200 ease-in-out`}
+                                    onClick={() => setSelectedCategory('All')}
+                                    className={`px-4 py-2 rounded-md ${selectedCategory === 'All' ? 'bg-[#50c878] text-white' : 'bg-[#333333] text-[#ffffff] hover:bg-[#444444]'} transition duration-200 ease-in-out`}
                                 >
-                                    {category}
+                                    All
                                 </button>
-                            ))}
+                                {categories.map((category) => (
+                                    <button
+                                        key={category}
+                                        onClick={() => setSelectedCategory(category)}
+                                        className={`px-4 py-2 rounded-md ${selectedCategory === category ? 'bg-[#50c878] text-white' : 'bg-[#333333] text-[#ffffff] hover:bg-[#444444]'} transition duration-200 ease-in-out`}
+                                    >
+                                        {category}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
+                        {/* Add Recharge Plan */}
+                        {accessToken && role === 'admin' &&
+                            <div className="mt-4">
+                                <button 
+                                    className="w-full bg-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 hover:text-white hover:border border-white transition duration-200 ease-in-out"
+                                    onClick={() => navigate(`/NetworkProvider/${provider}/add_plan`)}>
+                                    Add Recharge Plan
+                                </button>
+                            </div>
+                        }
                     </div>
 
                     {/* Available Plans */}
@@ -111,10 +142,10 @@ function Provider() {
                         ) : filteredPlans.length > 0 ? (
                             filteredPlans.map((plan) => (
                                 <Recharge_Plan_Card
-                                    key={plan.planId}
+                                    key={plan._id}
                                     plan={plan}
-                                    isLoggedIn={true}
                                     mobileNumber={mobileNumber.length === 10 ? mobileNumber : null}
+                                    role={role}
                                     onModalOpen={setIsModalOpen}
                                 />
                             ))

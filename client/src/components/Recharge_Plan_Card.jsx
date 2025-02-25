@@ -4,11 +4,14 @@ import { useState } from 'react';
 import { FaDatabase, FaPhoneAlt, FaSms } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import API from '../Utils/API';
+import Swal from "sweetalert2";
 
-function Recharge_Plan_Card({ plan, mobileNumber }) {
-    const isLoggedIn = localStorage.getItem("isLoggedIn");
+function Recharge_Plan_Card({ plan, mobileNumber, role }) {
     const [showMore, setShowMore] = useState(false);
     const navigate = useNavigate();
+
+    const accessToken = localStorage.getItem('accessToken');
 
     const toggleMore = () => setShowMore(!showMore);
     const handleBuyClick = () => {
@@ -19,7 +22,41 @@ function Recharge_Plan_Card({ plan, mobileNumber }) {
             },
         });
     };
-    
+
+    const deleteRechargePlan = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                API.delete(`/deleteRecharge_Plan/${id}`)
+                    .then((response) => {
+                        console.log(response.data);
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "The recharge plan has been deleted.",
+                            icon: "success"
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Something went wrong. Please try again.",
+                            icon: "error"
+                        });
+                    });
+            }
+        });
+    };
 
     return (
         <motion.div
@@ -28,14 +65,34 @@ function Recharge_Plan_Card({ plan, mobileNumber }) {
         >
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-white">{plan.platform} {plan.category}</h2>
-                {isLoggedIn && (
-                    <button
-                        className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white rounded-md px-4 py-2 hover:from-[#6a11cb] hover:to-[#50c878] transition-all duration-200"
-                        onClick={handleBuyClick}
-                    >
-                        Buy
-                    </button>
-                )}
+                <div className='flex space-x-5'>
+                    {accessToken && role === 'admin' && (
+                        <button
+                            className="text-white text-md border-4 rounded-md border-white px-4 py-1 hover:border-blue hover:text-black hover:bg-white hover:font-bold transition-all duration-200"
+                            onClick={() => navigate(`/NetworkProvider/${plan.platform}/edit_plan/${plan._id}`)}
+                        >
+                            Edit
+                        </button>
+                    )}
+
+                    {accessToken && role === 'admin' && (
+                        <button
+                            className="text-white text-md border-4 rounded-md border-red-500 px-4 py-1 hover:border-blue hover:text-white hover:bg-red-700 hover:font-bold transition-all duration-200"
+                            onClick={() => deleteRechargePlan(plan._id)}
+                        >
+                            Delete
+                        </button>
+                    )}
+
+                    {accessToken && (
+                        <button
+                            className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white font-bold rounded-md px-4 py-2 hover:from-[#6a11cb] hover:to-[#50c878] transition-all duration-200"
+                            onClick={handleBuyClick}
+                        >
+                            Buy
+                        </button>
+                    )}
+                </div>
             </div>
 
             <p className="text-lg text-white mb-2">
