@@ -12,12 +12,12 @@ import Help from "./pages/Help";
 import Terms from "./pages/terms_condition";
 import Receipt from "./components/Receipt";
 
-
 function App() {
   return (
     <Router>
       <Routes>
         <Route element={<Layout />}>
+          <Route path='/dashboard' element={<Dashboard />} />
           <Route path="/NetworkProvider" element={<NetworkProvider />} />
           <Route path="/NetworkProvider/:provider" element={<Provider />} />
           <Route path="/Transaction" element={<Transaction />} />
@@ -32,9 +32,6 @@ function App() {
         <Route path="/Help" element={<Help />} />
         <Route path="/NetworkProvider/:provider/buy" element={<Buy_Plan />} />
         <Route path="/receipt" element={<Receipt />} />
-        <Route path="/receipt" element={<Receipt />} />
-        <Route path="/Admin" element={<Admin />} />
-        
       </Routes>
     </Router>
   );

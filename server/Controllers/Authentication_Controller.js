@@ -9,7 +9,8 @@ let refreshTokens = [];
 // Signup User
 const SignupUser = async (req, res) => {
     try {
-        const { name, email, mobile_no, password } = req.body;
+        console.log(req.body);
+        const { name, email, mobile_no, password, role } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ message: "User already exists" });
@@ -19,7 +20,7 @@ const SignupUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         // Save the user with the hashed password
-        const newUser = new User({ name, email, mobile_no, password: hashedPassword });
+        const newUser = new User({ name, email, mobile_no, password: hashedPassword, role });
         await newUser.save();
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
@@ -27,7 +28,6 @@ const SignupUser = async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 };
-
 
 // Login User
 const LoginUser = async (req, res) => {

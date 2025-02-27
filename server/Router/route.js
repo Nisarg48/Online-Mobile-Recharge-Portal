@@ -3,7 +3,8 @@ const router = express.Router();
 const userController = require("../Controllers/User_Controller");
 const verifyToken = require("../Middleware/authMiddleware");
 
-const { getRecharge_Plan, 
+const { getRecharge_Plan,
+        getRecharge_PlanById, 
         addRecharge_Plan, 
         updateRecharge_Plan, 
         deleteRecharge_Plan } = require("../Controllers/Recharge_Plan_Controller");
@@ -26,7 +27,8 @@ router.use('/auth', authRoutes);
 
 
 // Recharge Plan
-router.get('/getRecharge_Plan', verifyToken, getRecharge_Plan);
+router.get('/getRecharge_Plan', getRecharge_Plan);
+router.get('/getRecharge_PlanById/:id',verifyToken, getRecharge_PlanById);
 router.post('/addRecharge_Plan', verifyToken, addRecharge_Plan);
 router.put('/updateRecharge_Plan/:id', verifyToken, updateRecharge_Plan);
 router.delete('/deleteRecharge_Plan/:id', verifyToken, deleteRecharge_Plan);

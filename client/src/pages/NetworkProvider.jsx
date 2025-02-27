@@ -5,7 +5,7 @@ function NetworkProvider() {
     return (
         <PageLayout title="Network Provider">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6 ">
-                {["JIO", "Airtel", "VI"].map((provider) => (
+                {["Jio", "Airtel", "Vi"].map((provider) => (
                     <Link
                         to={`/NetworkProvider/${provider}`}
                         key={provider}
