@@ -3,10 +3,6 @@ const bcrypt = require("bcrypt")
 
 
 
-
-
-
-
 // Get User Data For Profile Page
 const getUser = async (req, res) => {
     try {
