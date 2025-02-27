@@ -13,7 +13,7 @@ const Recharge_Plan_Schema = new mongoose.Schema({
     calls: { type: String, required: true },
     sms: { type: String, required: true },
     extraBenefits: [
-        {
+        {   
             type: { type: String, required: true },
             description: { type: String, required: false },
             icon: { type: String, required: false },

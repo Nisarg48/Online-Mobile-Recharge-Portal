@@ -10,6 +10,7 @@ import {
   Shield,
   ChevronDown,
   ChevronUp,
+  Send,
 } from 'lucide-react';
 import Terms from './terms_condition';
 
@@ -130,6 +131,41 @@ function CategoryCard({ category }) {
   );
 }
 
+function ContactForm() {
+  const [feedback, setFeedback] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Feedback submitted:', feedback);
+    setFeedback('');
+  };
+
+  return (
+    <div className="bg-[#2a2a2a] rounded-xl shadow-sm p-6">
+      <h3 className="text-lg font-semibold text-[#50c878] mb-4">Send Us Your Feedback</h3>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <textarea
+            value={feedback}
+            onChange={(e) => setFeedback(e.target.value)}
+            rows="4"
+            className="w-full px-4 py-2 rounded-lg bg-[#1e1e1e] border border-[#444444] text-[#cfcfcf] focus:outline-none focus:border-[#50c878]"
+            placeholder="Share your feedback with us..."
+            required
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          className="flex items-center justify-center space-x-2 w-full px-6 py-3 bg-[#50c878] text-white rounded-lg hover:bg-[#45b06a] transition-colors"
+        >
+          <Send className="h-5 w-5" />
+          <span>Submit Feedback</span>
+        </button>
+      </form>
+    </div>
+  );
+}
+
 function Help() {
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
@@ -186,6 +222,9 @@ function Help() {
             ))}
           </div>
         </div>
+
+        {/* Contact Form */}
+        <ContactForm />
       </main>
 
       {/* Footer */}
