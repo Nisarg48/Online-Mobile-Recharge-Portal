@@ -17,7 +17,6 @@ function App() {
     <Router>
       <Routes>
         <Route element={<Layout />}>
-          <Route path='/dashboard' element={<Dashboard />} />
           <Route path="/NetworkProvider" element={<NetworkProvider />} />
           <Route path="/NetworkProvider/:provider" element={<Provider />} />
           <Route path="/Transaction" element={<Transaction />} />
