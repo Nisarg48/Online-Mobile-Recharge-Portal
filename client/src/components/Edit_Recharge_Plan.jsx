@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import API from '../Utils/api';
+import API from '../Utils/API';
 import { FaArrowLeft } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,9 +11,17 @@ function Edit_Recharge_Plan() {
     const [originalPlan, setOriginalPlan] = useState(null);
     const navigate = useNavigate();
 
+    console.log("Provider:", provider); // Debugging log
+    console.log("Plan ID:", planId);    // Debugging log
+
     useEffect(() => {
         const fetchPlan = async () => {
             try {
+                if (!planId) {
+                    console.error("Plan ID is undefined");
+                    toast.error("Plan ID is missing.");
+                    return;
+                }
                 const response = await API.get(`/getRecharge_PlanById/${planId}`);
                 setPlan(response.data);
                 setOriginalPlan(response.data);
@@ -50,6 +58,12 @@ function Edit_Recharge_Plan() {
                     [child]: value,
                 },
             });
+        } else if (name === 'extraBenefits') {
+            // Handle extraBenefits as an array
+            setPlan({
+                ...plan,
+                extraBenefits: value.split(',').map(item => item.trim()),
+            });
         } else {
             setPlan({ ...plan, [name]: value });
         }
@@ -84,35 +98,24 @@ function Edit_Recharge_Plan() {
                     {[
                         { label: 'Platform', name: 'platform', readOnly: true },
                         { label: 'Category', name: 'category', readOnly: true },
-                        { label: 'Price', name: 'price' },
-                        { label: 'Validity (Days)', name: 'validity' },
-                        { label: 'Daily Data Limit (GB)', name: 'data.dailyLimit' },
+                        { label: 'Price', name: 'price', type: 'number' },
+                        { label: 'Validity (Days)', name: 'validity', type: 'number' },
+                        { label: 'Daily Data Limit (GB)', name: 'data.dailyLimit', type: 'number' },
                         { label: 'Total Data (GB)', value: totalData, readOnly: true },
-                        { label: 'Post Limit Speed', name: 'data.postLimitSpeed' },
                         { label: 'Calls', name: 'calls' },
                         { label: 'SMS', name: 'sms' },
-                        { label: 'Additional Details', name: 'additionalDetails', textarea: true }
-                    ].map(({ label, name, readOnly, textarea, value }, index) => (
+                        { label: 'Extra Benefits (comma separated)', name: 'extraBenefits' }
+                    ].map(({ label, name, readOnly, type, value }, index) => (
                         <div key={index}>
                             <label className="block text-lg font-medium text-green-300 mb-2">{label}</label>
-                            {textarea ? (
-                                <textarea
-                                    name={name}
-                                    value={name.includes('.') ? name.split('.').reduce((o, i) => (o ? o[i] : ''), plan) : plan[name] || ''}
-                                    onChange={handleChange}
-                                    className="w-full p-4 rounded-lg border border-gray-700 bg-gray-800 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400"
-                                    rows="3"
-                                />
-                            ) : (
-                                <input
-                                    type="text"
-                                    name={name}
-                                    value={value !== undefined ? value : (name.includes('.') ? name.split('.').reduce((o, i) => (o ? o[i] : ''), plan) : plan[name] || '')}
-                                    onChange={handleChange}
-                                    className="w-full p-4 rounded-lg border border-gray-700 bg-gray-800 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400"
-                                    readOnly={readOnly}
-                                />
-                            )}
+                            <input
+                                type={type || 'text'}
+                                name={name}
+                                value={value !== undefined ? value : (name.includes('.') ? name.split('.').reduce((o, i) => (o ? o[i] : ''), plan) : plan[name] || '')}
+                                onChange={handleChange}
+                                className="w-full p-4 rounded-lg border border-gray-700 bg-gray-800 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400"
+                                readOnly={readOnly}
+                            />
                         </div>
                     ))}
                     <div className="flex justify-end space-x-6">

@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-
 import { useState } from 'react';
 import { FaDatabase, FaPhoneAlt, FaSms } from 'react-icons/fa';
 import { motion } from 'framer-motion';
@@ -10,10 +9,10 @@ import Swal from "sweetalert2";
 function Recharge_Plan_Card({ plan, mobileNumber, role }) {
     const [showMore, setShowMore] = useState(false);
     const navigate = useNavigate();
-
     const accessToken = localStorage.getItem('accessToken');
 
     const toggleMore = () => setShowMore(!showMore);
+
     const handleBuyClick = () => {
         navigate(`/NetworkProvider/${plan.platform}/buy`, {
             state: {
@@ -36,8 +35,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role }) {
         }).then((result) => {
             if (result.isConfirmed) {
                 API.delete(`/deleteRecharge_Plan/${id}`)
-                    .then((response) => {
-                        console.log(response.data);
+                    .then(() => {
                         Swal.fire({
                             title: "Deleted!",
                             text: "The recharge plan has been deleted.",
@@ -46,8 +44,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role }) {
                             window.location.reload();
                         });
                     })
-                    .catch((error) => {
-                        console.log(error);
+                    .catch(() => {
                         Swal.fire({
                             title: "Error!",
                             text: "Something went wrong. Please try again.",
@@ -64,7 +61,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role }) {
             whileHover={{ scale: 1.02 }}
         >
             <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-white">{plan.platform} {plan.category}</h2>
+                <h2 className="text-2xl font-bold text-white">{plan.category}</h2>
                 <div className='flex space-x-5'>
                     {accessToken && role === 'admin' && (
                         <button
@@ -95,7 +92,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role }) {
                 </div>
             </div>
 
-            <p className="text-lg text-white mb-2">
+            <p className="text-xl text-white mb-2">
                 <span className="font-bold">₹{plan.price}</span> - 
                 <span className="italic"> Valid for {plan.validity} days</span>
             </p>
@@ -103,7 +100,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role }) {
             <div className="text-white space-y-1">
                 <div className="flex items-center">
                     <FaDatabase className="mr-2 text-[#50c878]" />
-                    <p>Data: {plan.data.dailyLimit ? `${plan.data.dailyLimit} GB/day` : `${plan.data.totalData} GB`}</p>
+                    <p>Data: {plan.data.dailyLimit ? `${plan.data.dailyLimit} GB/day` : `${plan.data.totalData || 0} GB`}</p>
                 </div>
                 <div className="flex items-center">
                     <FaPhoneAlt className="mr-2 text-[#50c878]" />
@@ -115,23 +112,26 @@ function Recharge_Plan_Card({ plan, mobileNumber, role }) {
                 </div>
             </div>
 
-            <button
-                className="text-[#50c878] mt-4 underline text-md hover:text-[#6a11cb] transition-colors text-left"
-                onClick={toggleMore}
-            >
-                {showMore ? "See less" : "See more"}
-            </button>
+            {plan.extraBenefits.length > 0 && (
+                <>
+                    <button
+                        className="text-[#50c878] mt-4 underline text-md hover:text-[#6a11cb] transition-colors text-left"
+                        onClick={toggleMore}
+                    >
+                        {showMore ? "See less" : "See more"}
+                    </button>
 
-            {showMore && (
-                <div className="mt-4 text-white">
-                    <h4 className="text-md font-medium underline">Extra Benefits:</h4>
-                    <ul className="list-disc ml-5">
-                        {plan.extraBenefits.map((benefit, index) => (
-                            <li key={index} className="mt-1">{benefit.description}</li>
-                        ))}
-                    </ul>
-                    <p>{plan.additionalDetails}</p>
-                </div>
+                    {showMore && (
+                        <div className="mt-4 text-white">
+                            <h4 className="text-md font-medium underline">Extra Benefits:</h4>
+                            <ul className="list-disc ml-5">
+                                {plan.extraBenefits.map((benefit, index) => (
+                                    <li key={index} className="mt-1">{benefit}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </>
             )}
         </motion.div>
     );

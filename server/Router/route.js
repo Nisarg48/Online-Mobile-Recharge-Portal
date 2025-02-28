@@ -4,14 +4,14 @@ const userController = require("../Controllers/User_Controller");
 const verifyToken = require("../Middleware/authMiddleware");
 
 const { getRecharge_Plan,
-        getRecharge_PlanById, 
-        addRecharge_Plan, 
-        updateRecharge_Plan, 
+        getRecharge_PlanById,
+        addRecharge_Plan,
+        updateRecharge_Plan,
         deleteRecharge_Plan } = require("../Controllers/Recharge_Plan_Controller");
 
-const { getUserTransaction_List, 
-        addInTransaction_List, 
-        deleteFromTransaction_List, 
+const { getUserTransaction_List,
+        addInTransaction_List,
+        deleteFromTransaction_List,
         updateTransaction } = require("../Controllers/Transaction_Controller");
 
 const { getUser,
@@ -22,13 +22,9 @@ const { getUser,
 const authRoutes = require("./authRoute");
 router.use('/auth', authRoutes);
 
-
-
-
-
 // Recharge Plan
 router.get('/getRecharge_Plan', getRecharge_Plan);
-router.get('/getRecharge_PlanById/:id',verifyToken, getRecharge_PlanById);
+router.get('/getRecharge_PlanById/:id', verifyToken, getRecharge_PlanById);
 router.post('/addRecharge_Plan', verifyToken, addRecharge_Plan);
 router.put('/updateRecharge_Plan/:id', verifyToken, updateRecharge_Plan);
 router.delete('/deleteRecharge_Plan/:id', verifyToken, deleteRecharge_Plan);

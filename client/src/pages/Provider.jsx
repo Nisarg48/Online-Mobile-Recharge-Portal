@@ -23,14 +23,25 @@ function Provider() {
         const fetchRechargePlans = async () => {
             const response = await API.get("/getRecharge_Plan");
             console.log(response.data[0]);
-            setRechargePlan(response.data);
-            const uniqueCategories = Array.from(new Set(response.data.map(plan => plan.category)));
+
+            // Filter plans by provider
+            const providerPlans = response.data.filter(
+                (plan) => plan.platform.toLowerCase() === provider.toLowerCase()
+            );
+
+            setRechargePlan(providerPlans);
+
+            // Extract unique categories for the selected provider
+            const uniqueCategories = Array.from(
+                new Set(providerPlans.map((plan) => plan.category))
+            );
             setCategories(uniqueCategories);
+
             setLoading(false);
-        }
+        };
 
         fetchRechargePlans();
-    }, []);
+    }, [provider]); // Add `provider` as a dependency
 
     const [role, setRole] = useState(null);
     const accessToken = localStorage.getItem("accessToken");
