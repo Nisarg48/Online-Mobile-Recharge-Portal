@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
     FaNetworkWired,
@@ -9,15 +9,33 @@ import {
     FaUserCircle,
     FaUserPlus,
     FaChevronDown,
+    FaEnvelope,
 } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { motion, AnimatePresence } from "framer-motion";
+import API from "../Utils/API"; // Assuming you have an API utility
 
 function Navbar() {
     const navigate = useNavigate();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [showQueryInbox, setShowQueryInbox] = useState(false);
+    const [feedbackList, setFeedbackList] = useState([]); // State to store feedback
 
     const accessToken = localStorage.getItem("accessToken");
+
+    // Fetch feedback on component mount and when showQueryInbox changes
+    useEffect(() => {
+        const fetchFeedback = async () => {
+            try {
+                const response = await API.get("/feedback");
+                setFeedbackList(response.data.feedback);
+            } catch (error) {
+                console.error("Error fetching feedback:", error);
+            }
+        };
+
+        fetchFeedback();
+    }, [showQueryInbox]); // Refresh feedback list when the query inbox is opened
 
     const Logout = () => {
         localStorage.removeItem("accessToken");
@@ -54,14 +72,64 @@ function Navbar() {
                             <span className="ml-2">Transactions</span>
                         </Link>
                     }
-                    <Link
-                        to="/help"
-                        className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
-                        title="Help"
-                    >
-                        <FaQuestionCircle size={20} />
-                        <span className="ml-2">Help</span>
-                    </Link>
+                    <div className="flex items-center">
+                        <Link
+                            to="/help"
+                            className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
+                            title="Help"
+                        >
+                            <FaQuestionCircle size={20} />
+                            <span className="ml-2">Help</span>
+                        </Link>
+                        <div className="relative">
+                            <button
+                                className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
+                                onClick={() => setShowQueryInbox(!showQueryInbox)}
+                            >
+                                <FaEnvelope size={20} />
+                                <span className="ml-2">Query</span>
+                                {feedbackList.length > 0 && (
+                                    <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
+                                        {feedbackList.length}
+                                    </span>
+                                )}
+                            </button>
+                            <AnimatePresence>
+                                {showQueryInbox && (
+                                    <motion.div
+                                        className="absolute top-12 right-0 bg-[#1e1e1e] rounded-lg shadow-lg w-96 overflow-hidden border border-[#333333]"
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -10 }}
+                                    >
+                                        <div className="p-4 border-b border-[#333333]">
+                                            <h3 className="text-lg font-semibold text-[#ffffff]">Feedback Inbox</h3>
+                                            <p className="text-sm text-[#666666]">
+                                                {feedbackList.length} unread messages
+                                            </p>
+                                        </div>
+                                        <div className="max-h-96 overflow-y-auto">
+                                            {feedbackList.length > 0 ? (
+                                                feedbackList.map((feedback) => (
+                                                    <div
+                                                        key={feedback._id}
+                                                        className="p-4 border-b border-[#333333] hover:bg-[#333333] transition duration-300"
+                                                    >
+                                                        <p className="text-sm text-[#ffffff]">{feedback.message}</p>
+                                                        <p className="text-xs text-[#666666] mt-1">
+                                                            {new Date(feedback.timestamp).toLocaleString()}
+                                                        </p>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <p className="p-4 text-sm text-[#666666]">No feedback available.</p>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Login/Logout/Profile (Right) */}
@@ -84,10 +152,9 @@ function Navbar() {
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: -10 }}
                                     >
-
                                         <button
                                             className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
-                                            onClick={ () => navigate('/Profile') }
+                                            onClick={() => navigate('/Profile')}
                                         >
                                             <CgProfile className="inline mr-2" />
                                             View Profile
@@ -99,8 +166,6 @@ function Navbar() {
                                             <FaSignOutAlt className="inline mr-2" />
                                             Logout
                                         </button>
-
-
                                     </motion.div>
                                 )}
                             </AnimatePresence>
