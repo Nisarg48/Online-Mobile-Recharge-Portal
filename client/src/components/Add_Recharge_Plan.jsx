@@ -13,10 +13,10 @@ function Add_Recharge_Plan() {
         category: '',
         price: '',
         validity: '',
-        data: { dailyLimit: '', totalData: '', postLimitSpeed: '' },
+        data: { dailyLimit: '', totalData: '' },
         calls: '',
         sms: '',
-        additionalDetails: ''
+        extraBenefits: []
     });
 
     const handleChange = (e) => {
@@ -29,6 +29,12 @@ function Add_Recharge_Plan() {
                     ...plan[parent],
                     [child]: value,
                 },
+            });
+        } else if (name === 'extraBenefits') {
+            // Handle extraBenefits as an array
+            setPlan({
+                ...plan,
+                extraBenefits: value.split(',').map(item => item.trim()),
             });
         } else {
             setPlan({ ...plan, [name]: value });
@@ -73,35 +79,24 @@ function Add_Recharge_Plan() {
                     {[
                         { label: 'Platform', name: 'platform', readOnly: true },
                         { label: 'Category', name: 'category' },
-                        { label: 'Price', name: 'price' },
-                        { label: 'Validity (Days)', name: 'validity' },
-                        { label: 'Daily Data Limit (GB)', name: 'data.dailyLimit' },
+                        { label: 'Price', name: 'price', type: 'number' },
+                        { label: 'Validity (Days)', name: 'validity', type: 'number' },
+                        { label: 'Daily Data Limit (GB)', name: 'data.dailyLimit', type: 'number' },
                         { label: 'Total Data (GB)', value: plan.data.dailyLimit * plan.validity, readOnly: true },
-                        { label: 'Post Limit Speed', name: 'data.postLimitSpeed' },
                         { label: 'Calls', name: 'calls' },
                         { label: 'SMS', name: 'sms' },
-                        { label: 'Additional Details', name: 'additionalDetails', textarea: true }
-                    ].map(({ label, name, readOnly, textarea, value }, index) => (
+                        { label: 'Extra Benefits (comma separated)', name: 'extraBenefits' }
+                    ].map(({ label, name, readOnly, type, value }, index) => (
                         <div key={index}>
                             <label className="block text-lg font-medium text-green-300 mb-2">{label}</label>
-                            {textarea ? (
-                                <textarea
-                                    name={name}
-                                    value={plan[name] || ''}
-                                    onChange={handleChange}
-                                    className="w-full p-4 rounded-lg border border-gray-700 bg-gray-800 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400"
-                                    rows="3"
-                                />
-                            ) : (
-                                <input
-                                    type="text"
-                                    name={name}
-                                    value={value !== undefined ? value : name.includes('.') ? name.split('.').reduce((o, i) => (o ? o[i] : ''), plan) : plan[name] || ''}
-                                    onChange={handleChange}
-                                    className="w-full p-4 rounded-lg border border-gray-700 bg-gray-800 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400"
-                                    readOnly={readOnly}
-                                />
-                            )}
+                            <input
+                                type={type || 'text'}
+                                name={name}
+                                value={value !== undefined ? value : name.includes('.') ? name.split('.').reduce((o, i) => (o ? o[i] : ''), plan) : plan[name] || ''}
+                                onChange={handleChange}
+                                className="w-full p-4 rounded-lg border border-gray-700 bg-gray-800 text-white focus:border-green-400 focus:ring-2 focus:ring-green-400"
+                                readOnly={readOnly}
+                            />
                         </div>
                     ))}
                     <div className="flex justify-end space-x-6">

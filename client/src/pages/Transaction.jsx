@@ -1,6 +1,6 @@
+/* eslint-disable react/prop-types */
 import PageLayout from "./PageLayout";
 import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { motion } from "framer-motion";
 import API from "../Utils/API";
 
@@ -11,34 +11,17 @@ function Transaction() {
 
     useEffect(() => {
         const fetchTransactions = async () => {
-            try{
+            try {
                 const response = await API.get('/transactions/getUserTransaction_List');
-                console.log(response.data);
                 setTransactionsList(response.data);
                 setIsLoading(false);
-            } 
-            catch(error){
-                setError(error);
+            } catch (error) {
+                setError(error.message);
+                setIsLoading(false);
             }
-        }
+        };
 
-        fetchTransactions()
-        
-        // fetch("/Transaction_List.json")
-        //     .then((res) => {
-        //         if (!res.ok) throw new Error("Failed to fetch transactions.");
-        //         return res.json();
-        //     })
-        //     .then((data) => {
-        //         setTransactionsList(data);
-        //         setError(null);
-        //         setIsLoading(false);
-        //     })
-        //     .catch((error) => {
-        //         console.error("Error fetching transactions:", error);
-        //         setError(error.message);
-        //         setIsLoading(false);
-        //     });
+        fetchTransactions();
     }, []);
 
     return (
@@ -61,7 +44,6 @@ function Transaction() {
                     <table className="min-w-full bg-[#1e1e1e] rounded-lg overflow-hidden">
                         <thead>
                             <tr className="text-[#50c878] text-left border-b border-[#333333]">
-                                <th className="px-6 py-3">Transaction ID</th>
                                 <th className="px-6 py-3">Date & Time</th>
                                 <th className="px-6 py-3">Mobile Number</th>
                                 <th className="px-6 py-3">Plan</th>
@@ -88,23 +70,13 @@ function Transaction() {
 }
 
 function TransactionRow({ transaction, isEven }) {
-    const {
-        _id: transactionId,
-        transactionDateTime,
-        mobile_number: mobileNumber,
-        plan = {},
-        status = "Unknown",
-    } = transaction;
+    const { transaction_date_time, mobile_number, plan, status } = transaction;
 
     const formattedPlanDetails = `
-        Provider: ${plan.platform || "N/A"}, 
-        Category: ${plan.category || "N/A"}, 
-        Price: ₹${plan.price || 0}, 
-        Validity: ${plan.validity || "N/A"} days, 
-        Calls: ${plan.calls || "N/A"}, 
-        SMS: ${plan.sms || "N/A"},
-        Data: ${plan.data?.dailyLimit ? `${plan.data.dailyLimit}GB/day` : "Unlimited"} 
-        ${plan.data?.postLimitSpeed ? `(Post-limit: ${plan.data.postLimitSpeed})` : ""}
+        ${plan.platform} - ₹${plan.price} (${plan.validity} days),
+        ${plan.data?.dailyLimit ? `${plan.data.dailyLimit}GB/day` : "Unlimited Data"},
+        Calls: ${plan.calls}, SMS: ${plan.sms},
+        Extra: ${plan.extraBenefits?.join(", ") || "None"}
     `;
 
     return (
@@ -112,11 +84,10 @@ function TransactionRow({ transaction, isEven }) {
             className={`${isEven ? "bg-[#2a2a2a]" : "bg-[#1e1e1e]"} hover:bg-[#333333] transition-colors duration-300`}
             whileHover={{ scale: 1.02 }}
         >
-            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{transactionId || "N/A"}</td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">
-                {transactionDateTime ? new Date(transactionDateTime).toLocaleString() : "N/A"}
+                {transaction_date_time}
             </td>
-            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{mobileNumber || "N/A"}</td>
+            <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{mobile_number}</td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]" title={formattedPlanDetails}>
                 {plan.platform} - ₹{plan.price} ({plan.validity} days)
             </td>
@@ -136,13 +107,4 @@ function TransactionRow({ transaction, isEven }) {
     );
 }
 
-TransactionRow.propTypes = {
-    transaction: PropTypes.object.isRequired,
-    isEven: PropTypes.bool.isRequired,
-};
-
 export default Transaction;
-
-
-
-

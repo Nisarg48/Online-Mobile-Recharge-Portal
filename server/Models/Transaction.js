@@ -12,23 +12,23 @@ const Transaction_Schema = new mongoose.Schema({
         data: {
             dailyLimit: { type: Number, required: true },
             totalData: { type: Number, required: false },
-            postLimitSpeed: { type: String, required: true },
         },
         calls: { type: String, required: true },
         sms: { type: String, required: true },
-        extraBenefits: [
-            {
-                type: { type: String, required: true },
-                description: { type: String, required: false },
-                icon: { type: String, required: false },
-            },
-        ],
-        additionalDetails: { type: String, required: false },
+        extraBenefits: [{ type: String, required: false }],
     },
-    transaction_date_time: { type: String, required: false },
-    status: { type: String, required: true, enum:['Success', 'Pending', 'Failed'] },
-    payment_method: { type: String, required: false },
+    transaction_date_time: { 
+        type: String, 
+        required: true, 
+        default: () => {
+            const now = new Date();
+            return `Date :- ${now.getDate().toString().padStart(2, "0")}/${(now.getMonth() + 1).toString().padStart(2, "0")}/${now.getFullYear()}, Time:- ${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
+        } 
+    },
+    status: { type: String, required: true, enum: ['Success', 'Pending', 'Failed'], default: 'Pending' },
+    payment_method: { type: String, required: false, default: 'Card' },
 });
+
 
 const Transaction = mongoose.model("Transaction", Transaction_Schema);
 module.exports = Transaction;

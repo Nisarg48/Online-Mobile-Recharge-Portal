@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
     FaNetworkWired,
@@ -16,6 +16,7 @@ import { motion, AnimatePresence } from "framer-motion";
 function Navbar() {
     const navigate = useNavigate();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [role, setRole] = useState(null);
 
     const accessToken = localStorage.getItem("accessToken");
 
@@ -24,6 +25,21 @@ function Navbar() {
         localStorage.removeItem("refreshToken");
         navigate('/NetworkProvider', { replace: true });
     };
+
+    useEffect(() => {
+        const decodeToken = () => {
+            if (accessToken) {
+                try {
+                    setRole(JSON.parse(atob(accessToken.split('.')[1])).role);
+                    console.log(role);
+                } catch (error) {
+                    console.error('Error decoding token:', error);
+                    return null;
+                }
+            }
+        };
+        decodeToken();
+    }, [accessToken, role]);
 
     return (
         <div className="bg-[#1e1e1e] fixed top-0 left-0 w-full shadow-lg z-50">
@@ -46,7 +62,7 @@ function Navbar() {
                     </Link>
                     {accessToken &&
                         <Link
-                            to="/transaction"
+                            to="/Transaction"
                             className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
                             title="Transactions"
                         >
