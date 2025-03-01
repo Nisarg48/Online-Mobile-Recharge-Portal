@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
     FaNetworkWired,
@@ -13,12 +13,15 @@ import {
 } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { motion, AnimatePresence } from "framer-motion";
-import API from "../Utils/API"; // Assuming you have an API utility
+import API from "../Utils/API";
 
 function Navbar() {
     const navigate = useNavigate();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-
+    const [showQueryInbox, setShowQueryInbox] = useState(false);
+    const [feedbackList, setFeedbackList] = useState([]);
+    const [role, setRole] = useState(null);
+    
     const accessToken = localStorage.getItem("accessToken");
 
     // Fetch feedback on component mount and when showQueryInbox changes
@@ -33,7 +36,7 @@ function Navbar() {
         };
 
         fetchFeedback();
-    }, [showQueryInbox]); // Refresh feedback list when the query inbox is opened
+    }, [showQueryInbox]);
 
     const Logout = () => {
         localStorage.removeItem("accessToken");
@@ -45,16 +48,16 @@ function Navbar() {
         const decodeToken = () => {
             if (accessToken) {
                 try {
-                    setRole(JSON.parse(atob(accessToken.split('.')[1])).role);
-                    console.log(role);
+                    const decoded = JSON.parse(atob(accessToken.split('.')[1]));
+                    setRole(decoded.role);
+                    console.log(decoded.role);
                 } catch (error) {
                     console.error('Error decoding token:', error);
-                    return null;
                 }
             }
         };
         decodeToken();
-    }, [accessToken, role]);
+    }, [accessToken]);
 
     return (
         <div className="bg-[#1e1e1e] fixed top-0 left-0 w-full shadow-lg z-50">
@@ -159,23 +162,12 @@ function Navbar() {
                             </button>
                             <AnimatePresence>
                                 {showProfileDropdown && (
-                                    <motion.div
-                                        className="absolute top-12 right-0 bg-[#1e1e1e] rounded-lg shadow-lg w-48 overflow-hidden border border-[#333333]"
-                                        initial={{ opacity: 0, y: -10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                    >
-                                        <button
-                                            className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
-                                            onClick={() => navigate('/Profile')}
-                                        >
+                                    <motion.div className="absolute top-12 right-0 bg-[#1e1e1e] rounded-lg shadow-lg w-48 overflow-hidden border border-[#333333]">
+                                        <button className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300" onClick={() => navigate('/Profile')}>
                                             <CgProfile className="inline mr-2" />
                                             View Profile
                                         </button>
-                                        <button
-                                            className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300"
-                                            onClick={() => Logout()}
-                                        >
+                                        <button className="w-full text-left px-4 py-2 text-[#ffffff] hover:bg-[#333333] transition duration-300" onClick={Logout}>
                                             <FaSignOutAlt className="inline mr-2" />
                                             Logout
                                         </button>
@@ -185,20 +177,8 @@ function Navbar() {
                         </>
                     ) : (
                         <>
-                            <Link
-                                className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
-                                to='/login'
-                            >
-                                <FaSignInAlt size={20} />
-                                <span className="ml-2">Login</span>
-                            </Link>
-                            <Link
-                                to="/signup"
-                                className="text-[#ffffff] hover:text-[#50c878] transition duration-300 rounded p-2 flex items-center"
-                            >
-                                <FaUserPlus size={20} />
-                                <span className="ml-2">Sign Up</span>
-                            </Link>
+                            <Link to='/login' className="text-[#ffffff] hover:text-[#50c878] transition duration-300">Login</Link>
+                            <Link to="/signup" className="text-[#ffffff] hover:text-[#50c878] transition duration-300">Sign Up</Link>
                         </>
                     )}
                 </div>
