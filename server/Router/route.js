@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../Controllers/User_Controller");
 const verifyToken = require("../Middleware/authMiddleware");
 
+
 const { getRecharge_Plan,
         getRecharge_PlanById,
         addRecharge_Plan,
@@ -21,6 +22,12 @@ const { getUser,
 // Auth Routes
 const authRoutes = require("./authRoute");
 router.use('/auth', authRoutes);
+
+const { submitFeedback, getFeedback } = require('../Controllers/feedbackController'); 
+router.post('/feedback', submitFeedback);
+
+// Fetch all feedback
+router.get('/feedback', getFeedback);
 
 // Recharge Plan
 router.get('/getRecharge_Plan', getRecharge_Plan);

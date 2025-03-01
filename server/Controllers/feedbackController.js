@@ -1,44 +1,53 @@
-const Feedback = require("../Models/Feedback");
+const Feedback = require('../Models/Feedback');
 
 // Submit feedback
-exports.submitFeedback = async (req, res) => {
+const submitFeedback = async (req, res) => {
+    const { message } = req.body;
+    if (!message || message.length < 10 || message.length > 500) {
+        return res.status(400).json({ error: 'Feedback must be between 10 and 500 characters.' });
+    }
+
     try {
-        const { message } = req.body;
-
-        const feedback = new Feedback({
-            message,
-        });
-
-        await feedback.save();
-
-        res.status(201).json({
-            success: true,
-            message: "Feedback submitted successfully",
-            feedback,
-        });
+        const newFeedback = new Feedback({ message });
+        await newFeedback.save();
+        res.status(201).json(newFeedback);
     } catch (error) {
-        console.error("Error submitting feedback:", error);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
+        res.status(500).json({ error: 'Error saving feedback.' });
     }
 };
 
-// Get all feedback
-exports.getFeedback = async (req, res) => {
+// Fetch all feedback
+const getFeedback = async (req, res) => {
     try {
-        const feedback = await Feedback.find().sort({ createdAt: -1 }); // Use createdAt if timestamps are enabled
-
-        res.status(200).json({
-            success: true,
-            feedback,
-        });
+        const feedbackList = await Feedback.find().sort({ timestamp: -1 });
+        res.status(200).json(feedbackList);
     } catch (error) {
-        console.error("Error fetching feedback:", error);
-        res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
+        res.status(500).json({ error: 'Error fetching feedback.' });
     }
 };
+
+// Mark feedback as read
+const markFeedbackAsRead = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const feedback = await Feedback.findById(id);
+
+        if (!feedback) {
+            return res.status(404).json({ message: "Feedback not found" });
+        }
+
+        // Update the read status only if it's currently unread
+        if (!feedback.read) {
+            feedback.read = true;
+            await feedback.save();
+        }
+
+        res.json({ success: true, message: "Marked as read" });
+    } catch (error) {
+        console.error("Error marking feedback as read:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
+
+// Export all functions properly
+module.exports = { submitFeedback, getFeedback, markFeedbackAsRead };

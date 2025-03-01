@@ -12,7 +12,7 @@ app.use(cors());
 // Enable JSON middleware
 app.use(express.json());
 
-app.use("/feedback", feedbackRoutes);
+app.use("/api", feedbackRoutes);
 
 
 // Routes

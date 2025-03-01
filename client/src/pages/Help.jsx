@@ -13,6 +13,7 @@ import {
   Send,
 } from 'lucide-react';
 import Terms from './terms_condition';
+import axios from "axios";
 
 
 // FAQ categories
@@ -71,7 +72,7 @@ function CategoryCard({ category }) {
 }
 
 function ContactForm() {
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,92 +83,50 @@ function ContactForm() {
     }
 
     try {
-      // Save feedback to Firestore
-      await addDoc(collection(db, 'feedback'), {
-        message: feedback,
-        timestamp: new Date().toISOString(),
-      });
-      console.log('Feedback submitted:', feedback);
-      setFeedback('');
+      await axios.post("http://localhost:5000/api/feedback", { message: feedback });
+      alert("Feedback submitted successfully!");
+      setFeedback("");
     } catch (error) {
-      console.error('Error submitting feedback:', error);
+      console.error("Error submitting feedback:", error);
+      alert("Failed to submit feedback.");
     }
   };
 
   return (
-    <div className="bg-[#2a2a2a] rounded-xl shadow-sm p-6">
-      <h3 className="text-lg font-semibold text-[#50c878] mb-4">Send Us Your Feedback</h3>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <textarea
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            rows="4"
-            maxLength="500"
-            minLength="5"
-            className="w-full px-4 py-2 rounded-lg bg-[#1e1e1e] border border-[#444444] text-[#cfcfcf] focus:outline-none focus:border-[#50c878]"
-            placeholder="Share your feedback (10-500 characters)..."
-            required
-          ></textarea>
-        </div>
-        <button type="submit" className={`flex items-center justify-center space-x-2 w-full px-6 py-3 rounded-lg transition-colors ${feedback.trim().length >= 10 ? "bg-[#50c878] hover:bg-[#45b06a]" : "bg-gray-500 cursor-not-allowed"}`} disabled={feedback.trim().length < 10}>
-          <Send className="h-5 w-5" />
-          <span>Submit Feedback</span>
+    <div className="bg-[#1e1e1e] p-6 rounded-lg shadow-lg border border-[#444444]">
+      <h2 className="text-[#50c878] text-lg font-semibold mb-4">Send Us Your Query</h2>
+
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          rows="4"
+          maxLength="500"
+          minLength="10"
+          className="w-full px-4 py-2 rounded-lg bg-[#1e1e1e] border border-[#444444] text-[#cfcfcf] focus:outline-none focus:border-[#50c878]"
+          placeholder="Share your feedback (10-500 characters)..."
+          required
+        />
+
+        <button
+          type="submit"
+          className={`w-full mt-4 px-4 py-2 rounded-lg text-white font-semibold transition duration-300 ${
+            feedback.trim().length >= 10 ? "bg-[#50c878] hover:bg-[#45b06a]" : "bg-gray-500 cursor-not-allowed"
+          }`}
+          disabled={feedback.trim().length < 10}
+        >
+          Submit Feedback
         </button>
       </form>
     </div>
   );
 }
 
-function QueryInbox() {
-  const [feedbackList, setFeedbackList] = useState([]);
 
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, 'feedback'));
-        const feedbackData = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setFeedbackList(feedbackData);
-      } catch (error) {
-        console.error('Error fetching feedback:', error);
-      }
-    };
 
-    fetchFeedback();
-  }, []);
 
-  return (
-    <div className="absolute top-12 right-0 bg-[#1e1e1e] rounded-lg shadow-lg w-96 overflow-hidden border border-[#333333]">
-      <div className="p-4 border-b border-[#333333]">
-        <h3 className="text-lg font-semibold text-[#ffffff]">Feedback Inbox</h3>
-        <p className="text-sm text-[#666666]">{feedbackList.length} unread messages</p>
-      </div>
-      <div className="max-h-96 overflow-y-auto">
-        {feedbackList.length > 0 ? (
-          feedbackList.map((feedback) => (
-            <div key={feedback.id} className="p-4 border-b border-[#333333] hover:bg-[#333333] transition duration-300">
-              <p className="text-sm text-[#ffffff]">{feedback.message}</p>
-              <p className="text-xs text-[#666666] mt-1">{feedback.timestamp}</p>
-            </div>
-          ))
-        ) : (
-          <p className="p-4 text-sm text-[#666666]">No feedback available.</p>
-        )}
-      </div>
-      <div className="p-4 border-t border-[#333333]">
-        <button
-          className="w-full bg-[#50c878] text-[#1e1e1e] py-2 px-4 rounded hover:bg-[#40a060] transition duration-300"
-          onClick={() => setShowQueryInbox(false)}
-        >
-          Close Inbox
-        </button>
-      </div>
-    </div>
-  );
-}
+
+
 
 function Help() {
   const navigate = useNavigate();
