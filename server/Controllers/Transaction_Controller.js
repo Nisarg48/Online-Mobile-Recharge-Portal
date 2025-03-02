@@ -13,6 +13,17 @@ const getUserTransaction_List = async (req, res) => {
     }
 }
 
+// Get Transaction by ID
+const getTransactionById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const transaction = await Transaction.findById(id);
+        res.status(200).json(transaction);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
 // Add in Transaction
 const addInTransaction_List = async (req, res) => {
     try {
@@ -47,7 +58,8 @@ const updateTransaction = async (req, res) => {
 }
 
 module.exports = { 
-                    getUserTransaction_List, 
+                    getUserTransaction_List,
+                    getTransactionById, 
                     addInTransaction_List, 
                     deleteFromTransaction_List, 
                     updateTransaction

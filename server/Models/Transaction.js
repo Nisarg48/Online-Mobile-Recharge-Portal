@@ -17,6 +17,7 @@ const Transaction_Schema = new mongoose.Schema({
         sms: { type: String, required: true },
         extraBenefits: [{ type: String, required: false }],
     },
+    platformCharge: { type: Number, required: true },
     transaction_date_time: { 
         type: String, 
         required: true, 

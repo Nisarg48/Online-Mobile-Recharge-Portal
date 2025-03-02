@@ -13,6 +13,8 @@ import Terms from "./pages/terms_condition";
 import Receipt from "./components/Receipt";
 import Add_Recharge_Plan from "./components/Add_Recharge_Plan";
 import Edit_Recharge_Plan from "./components/Edit_Recharge_Plan";
+import Payment_Details from "./pages/Payment_Details";
+import OTP_Verification from "./pages/OTP_Verification";
 
 function App() {
   return (
@@ -35,6 +37,8 @@ function App() {
         <Route path="/NetworkProvider/:provider/add_plan" element={<Add_Recharge_Plan />} />
         <Route path="/NetworkProvider/:provider/edit_plan/:planId" element={<Edit_Recharge_Plan />} />
         <Route path="/receipt" element={<Receipt />} />
+        <Route path="/payment-details" element={<Payment_Details />} />
+        <Route path="/otp-verification" element={<OTP_Verification />} />
       </Routes>
     </Router>
   );

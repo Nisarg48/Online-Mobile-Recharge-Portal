@@ -1,15 +1,55 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useLocation, useNavigate } from "react-router-dom";
+import API from "../Utils/API";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 function Receipt() {
     const location = useLocation();
     const navigate = useNavigate();
-    const transactionData = location.state?.transactionData;
+    const transaction_id = location.state.transaction_id;
+    const [transactionData, setTransactionData] = useState({
+        transaction_id: transaction_id,
+        user_id: '',
+        mobile_number: '',
+        plan_id: '',
+        plan: {
+            platform: '',
+            category: '',
+            price: '',
+            validity: '',
+            data: {
+                dailyLimit: '',
+                totalData: '',
+            },
+            calls: '',
+            sms: '',
+            extraBenefits: '',
+        },
+        platformCharge: '',
+        transaction_date_time: '',
+        status: '',
+        payment_method: '',
+    });
 
-    if (!transactionData) {
+    if (!transaction_id) {
         navigate("/");
         return null;
     }
+
+    useEffect(() => {
+        const fetchTransactionData = async () => {
+            try {
+                const response = await API.get(`/transactions/getTransactionById/${transaction_id}`);
+                console.log(response.data);
+                setTransactionData(response.data);
+            } catch (error) {
+                    console.error(error);
+            }
+        }
+
+        fetchTransactionData();
+    }, []);
 
     return (
         <motion.div
@@ -55,15 +95,15 @@ function Receipt() {
                     </div>
                     <div className="flex justify-between border-b border-gray-700 pb-2">
                         <p><b>Mobile Number:</b></p>
-                        <p>{transactionData.mobileNumber}</p>
+                        <p>{transactionData.mobile_number}</p>
                     </div>
                     <div className="flex justify-between border-b border-gray-700 pb-2">
                         <p><b>Transaction ID:</b></p>
-                        <p>{transactionData.transactionId}</p>
+                        <p>{transaction_id}</p>
                     </div>
                     <div className="flex justify-between">
                         <p><b>Date:</b></p>
-                        <p>{new Date(transactionData.timestamp).toLocaleString()}</p>
+                        <p>{transactionData.transaction_date_time}</p>
                     </div>
                 </div>
 
