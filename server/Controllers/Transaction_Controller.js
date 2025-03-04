@@ -1,4 +1,5 @@
 const Transaction = require("../Models/Transaction");
+const RechargePlan = require("../Models/Recharge_Plan");
 
 // Get Transaction
 const getUserTransaction_List = async (req, res) => {
@@ -57,10 +58,96 @@ const updateTransaction = async (req, res) => {
     }
 }
 
+// Function to get the most popular plans based on past transactions
+const getPopularPlans = async (provider) => {
+    try {
+        const transactions = await Transaction.find({ "plan.platform": provider });
+        const planCount = {};
+
+        // Count how many times each plan was purchased
+        transactions.forEach(transaction => {
+            if (transaction.plan_id) {
+                planCount[transaction.plan_id] = (planCount[transaction.plan_id] || 0) + 1;
+            }
+        });
+
+        // Sort plans by popularity and get the top 3
+        const sortedPlanIds = Object.keys(planCount).sort((a, b) => planCount[b] - planCount[a]).slice(0, 3);
+
+        // Fetch details of the popular plans
+        const popularPlans = await RechargePlan.find({ _id: { $in: sortedPlanIds } });
+        return popularPlans;
+    } catch (error) {
+        console.error("Error fetching popular plans:", error);
+        return [];
+    }
+};
+
+// Function to get the recommended plan based on the user's last transaction
+const getRecommendedPlan = async (userId, provider) => {
+    try {
+        const lastTransaction = await Transaction.findOne({ user_id: userId, "plan.platform": provider }).sort({ transaction_date_time: -1 });
+        if (lastTransaction) {
+            const lastPlan = await RechargePlan.findById(lastTransaction.plan_id);
+            if (lastPlan) {
+                // Find similar plans based on the last plan's category and price range
+                const similarPlans = await RechargePlan.find({
+                    platform: provider,
+                    category: lastPlan.category,
+                    price: { $gte: lastPlan.price - 50, $lte: lastPlan.price + 50 },
+                    _id: { $ne: lastPlan._id }
+                }).limit(3);
+                return similarPlans;
+            }
+        }
+        return [];
+    } catch (error) {
+        console.error("Error fetching recommended plans:", error);
+        return [];
+    }
+};
+
+// Function to get suggested plans (combines recommended and popular plans)
+const getSuggestedPlans = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const provider = req.query.provider;
+
+        if (!provider) {
+            return res.status(400).json({ error: "Provider is required" });
+        }
+
+        console.log("Fetching suggested plans for user:", userId, "and provider:", provider);
+
+        // Fetch recommended plans based on user's last transaction
+        const recommendedPlans = await getRecommendedPlan(userId, provider);
+        console.log("Recommended Plans:", recommendedPlans);
+
+        // Fetch popular plans based on all users' transactions
+        const popularPlans = await getPopularPlans(provider);
+        console.log("Popular Plans:", popularPlans);
+
+        // Prepare the response
+        const response = {
+            suggestedFromHistory: recommendedPlans,
+            popularPlans: popularPlans,
+            hasTransactionHistory: recommendedPlans.length > 0
+        };
+
+        console.log("Final Response:", response);
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.error("Error fetching suggested plans:", error);
+        res.status(500).json({ error: "Error fetching suggested plans" });
+    }
+};
+
 module.exports = { 
                     getUserTransaction_List,
                     getTransactionById, 
                     addInTransaction_List, 
                     deleteFromTransaction_List, 
-                    updateTransaction
+                    updateTransaction,
+                    getSuggestedPlans
                 };

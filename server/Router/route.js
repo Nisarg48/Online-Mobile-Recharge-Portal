@@ -14,7 +14,8 @@ const { getUserTransaction_List,
         getTransactionById,
         addInTransaction_List,
         deleteFromTransaction_List,
-        updateTransaction } = require("../Controllers/Transaction_Controller");
+        updateTransaction,
+        getSuggestedPlans } = require("../Controllers/Transaction_Controller");
 
 const { getUser,
         updateUser,
@@ -47,6 +48,7 @@ router.get('/transactions/getTransactionById/:id', verifyToken, getTransactionBy
 router.post('/transactions/addInTransaction_List', verifyToken, addInTransaction_List);
 router.delete('/transactions/deleteFromTransaction_List/:id', verifyToken, deleteFromTransaction_List);
 router.put('/transactions/updateTransaction/:id', verifyToken, updateTransaction);
+router.get('/transactions/getSuggestedPlans', verifyToken, getSuggestedPlans);
 
 // User
 router.get('/user/getUser', verifyToken, getUser);
