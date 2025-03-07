@@ -15,6 +15,7 @@ import Add_Recharge_Plan from "./components/Add_Recharge_Plan";
 import Edit_Recharge_Plan from "./components/Edit_Recharge_Plan";
 import Payment_Details from "./pages/Payment_Details";
 import OTP_Verification from "./pages/OTP_Verification";
+import User_Management from "./pages/User_Management";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/NetworkProvider" element={<NetworkProvider />} />
           <Route path="/NetworkProvider/:provider" element={<Provider />} />
           <Route path="/Transaction" element={<Transaction />} />
+          <Route path="/User_Management" element={<User_Management />} />
           <Route path="/terms" element={<Terms />} />
         </Route>
         <Route path="/" element={<Login />} />

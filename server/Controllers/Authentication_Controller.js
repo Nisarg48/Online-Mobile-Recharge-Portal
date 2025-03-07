@@ -40,6 +40,11 @@ const LoginUser = async (req, res) => {
             return res.status(401).json({ message: "Invalid Credentials" });
         }
 
+        // Check if user is active
+        if (!user.isActive) {
+            return res.status(403).json({ message: "Your account is deactivated. Please contact support." });
+        }
+
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
@@ -50,7 +55,7 @@ const LoginUser = async (req, res) => {
         const accessToken = jwt.sign(
             { userId: user._id, role: user.role },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '15m' }
+            { expiresIn: '1d' }
         );
         const refreshToken = jwt.sign(
             { userId: user._id },
@@ -60,6 +65,11 @@ const LoginUser = async (req, res) => {
 
         // Store refresh token in DB or Cache in Production
         refreshTokens.push(refreshToken);
+
+        // Update last login time
+        user.lastLogin = new Date();
+        await user.save();
+
         res.status(200).json({ accessToken, refreshToken });
     } catch (error) {
         console.error("Login Error:", error);

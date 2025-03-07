@@ -17,9 +17,14 @@ const { getUserTransaction_List,
         updateTransaction,
         getSuggestedPlans } = require("../Controllers/Transaction_Controller");
 
-const { getUser,
+const { getAllUsers,
+        getUser,
         updateUser,
-        forgetPassword } = require("../Controllers/User_Controller");
+        forgetPassword,
+        deleteUser,
+        changeUserRole,
+        toggleUserStatus,
+        updateLastLogin } = require("../Controllers/User_Controller");
 
 const { verify_card_details,
         verify_otp, 
@@ -51,9 +56,16 @@ router.put('/transactions/updateTransaction/:id', verifyToken, updateTransaction
 router.get('/transactions/getSuggestedPlans', verifyToken, getSuggestedPlans);
 
 // User
+router.get('/users/getAllUsers', getAllUsers);
 router.get('/user/getUser', verifyToken, getUser);
 router.put('/user/updateUser', verifyToken, updateUser);
 router.put('/user/forgetPassword', forgetPassword);
+router.put('/user/updateLastLogin', verifyToken, updateLastLogin);
+
+// Admin Routes
+router.delete('/user/deleteUser/:id', verifyToken, deleteUser);
+router.put('/user/changeUserRole/:id', verifyToken, changeUserRole);
+router.put('/user/toggleUserStatus/:id', verifyToken, toggleUserStatus);
 
 // Card Paymet
 router.post('/verify_card_details', verifyToken, verify_card_details);

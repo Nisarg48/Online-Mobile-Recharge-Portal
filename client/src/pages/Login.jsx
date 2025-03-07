@@ -20,8 +20,8 @@ function Login() {
             // Redirect the user after login
             navigate("/NetworkProvider", { replace: true });
         } catch (error) {
-            console.error("Login Error:", error.response.data);
-            alert(error.response.data.message || "Login failed. Please try again.");
+            console.error("Login Error:", error.response?.data);
+            alert(error.response?.data.message || "Login failed. Please try again.");
         }
     };
 
