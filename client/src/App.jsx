@@ -16,6 +16,7 @@ import Edit_Recharge_Plan from "./components/Edit_Recharge_Plan";
 import Payment_Details from "./pages/Payment_Details";
 import OTP_Verification from "./pages/OTP_Verification";
 import User_Management from "./pages/User_Management";
+import QueryPage from './components/Query'; 
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/NetworkProvider/:provider/edit_plan/:planId" element={<Edit_Recharge_Plan />} />
         <Route path="/receipt" element={<Receipt />} />
         <Route path="/payment-details" element={<Payment_Details />} />
+        <Route path="/query" element={<QueryPage />} />
         <Route path="/otp-verification" element={<OTP_Verification />} />
       </Routes>
     </Router>

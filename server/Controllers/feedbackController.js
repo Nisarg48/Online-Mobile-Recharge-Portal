@@ -1,18 +1,17 @@
 const Feedback = require('../Models/Feedback');
 
-// Submit feedback
 const submitFeedback = async (req, res) => {
+    // Extract message from request body, default user to "Anonymous" if not provided
     const { message } = req.body;
-    if (!message || message.length < 10 || message.length > 500) {
-        return res.status(400).json({ error: 'Feedback must be between 10 and 500 characters.' });
-    }
+    const user = req.body.user || "Anonymous";
 
     try {
-        const newFeedback = new Feedback({ message });
+        const newFeedback = new Feedback({ message, user });
         await newFeedback.save();
         res.status(201).json(newFeedback);
     } catch (error) {
-        res.status(500).json({ error: 'Error saving feedback.' });
+        console.error("Error submitting feedback:", error);
+        res.status(500).json({ message: 'Error submitting feedback', error: error.message });
     }
 };
 
@@ -49,5 +48,24 @@ const markFeedbackAsRead = async (req, res) => {
     }
 };
 
-// Export all functions properly
-module.exports = { submitFeedback, getFeedback, markFeedbackAsRead };
+const replyToFeedback = async (req, res) => {
+    const { id } = req.params;
+    const { reply } = req.body;
+
+    try {
+        const feedback = await Feedback.findById(id);
+        if (!feedback) {
+            return res.status(404).json({ message: 'Feedback not found' });
+        }
+
+        feedback.replies.push(reply);
+        feedback.read = true; // Mark as read when a reply is sent
+        await feedback.save();
+
+        res.status(200).json(feedback);
+    } catch (error) {
+        res.status(500).json({ message: 'Error replying to feedback', error: error.message });
+    }
+};
+
+module.exports = { submitFeedback, getFeedback, markFeedbackAsRead, replyToFeedback };
