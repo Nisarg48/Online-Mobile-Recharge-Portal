@@ -109,9 +109,9 @@ const verify_card_details = async (req, res) => {
 // Verify OTP
 const verify_otp = async (req, res) => {
     try {
-        const { transaction_id, otp } = req.body;
+        const { transaction_id, otp, card_details } = req.body;
 
-        if (!transaction_id || !otp) {
+        if (!transaction_id || !otp || !card_details) {
             return res.status(400).json({ message: "Missing required fields!" });
         }
 
@@ -132,8 +132,32 @@ const verify_otp = async (req, res) => {
             return res.status(400).json({ message: "Incorrect OTP! Try again." });
         }
 
-        // If OTP is correct → Success
+        const transaction = await Transaction.findById(transaction_id);
+        if (!transaction) {
+            return res.status(400).json({ message: "Transaction not found!" });
+        }
+
+        const card = await Card.findOne({
+            cardNumber: card_details.cardNumber,
+            expiryDate: card_details.expiryDate,
+            cvv: card_details.cvv,
+            cardholderName: card_details.cardholderName,
+        });
+
+        if (!card) {
+            return res.status(400).json({ message: "Card not found!" });
+        }
+
+        if (card.balance < transaction.amount_to_pay) {
+            await Transaction.findByIdAndUpdate(transaction_id, { status: "Failed" });
+            return res.status(400).json({ message: "Insufficient balance!" });
+        }
+
+        card.balance -= transaction.plan.price + transaction.platformCharge;
+        await card.save();
+
         await Transaction.findByIdAndUpdate(transaction_id, { status: "Success" });
+
         return res
             .status(200)
             .json({ success: true, message: "Transaction successful!" });

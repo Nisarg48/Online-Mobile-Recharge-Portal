@@ -5,7 +5,7 @@ import API from "../Utils/API";
 function OTP_Verification() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { transaction_id } = location.state;
+    const { transaction_id, card_details } = location.state;
 
     console.log(transaction_id);
     
@@ -60,12 +60,13 @@ function OTP_Verification() {
             const response = await API.post("/verify_otp", {
                 transaction_id: transaction_id,
                 otp: otp.join(""),
+                card_details: card_details // Pass card details to the backend
             });
 
             if (response.data.success) {
                 navigate("/receipt", {   
-                        state: { transaction_id: transaction_id },
-                        replace: true
+                    state: { transaction_id: transaction_id },
+                    replace: true
                 });
             }
         } catch (error) {

@@ -3,8 +3,6 @@ const router = express.Router();
 const userController = require("../Controllers/User_Controller");
 const verifyToken = require("../Middleware/authMiddleware");
 
-
-
 const { getRecharge_Plan,
         getRecharge_PlanById,
         addRecharge_Plan,
@@ -30,6 +28,12 @@ const { getAllUsers,
 const { verify_card_details,
         verify_otp, 
         cancel_transaction } = require("../Controllers/Card_Controller");
+
+const { submitQuery, 
+        getAllQueries, 
+        getQueryById, 
+        updateQuery, 
+        deleteQuery } = require("../Controllers/Query_Controller");
 
 // Auth Routes
 const authRoutes = require("./authRoute");
@@ -72,5 +76,12 @@ router.put('/user/toggleUserStatus/:id', verifyToken, toggleUserStatus);
 router.post('/verify_card_details', verifyToken, verify_card_details);
 router.post('/verify_otp', verifyToken, verify_otp);
 router.post('/cancel_transaction', verifyToken, cancel_transaction);
+
+// Query
+router.post('/query/submitQuery', verifyToken, submitQuery);
+router.get('/query/getAllQueries', verifyToken, getAllQueries);
+router.get('/query/getQueryById/:id', verifyToken, getQueryById);
+router.put('/query/updateQuery/:id', verifyToken, updateQuery);
+router.delete('/query/deleteQuery/:id', verifyToken, deleteQuery);
 
 module.exports = router;

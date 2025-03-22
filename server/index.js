@@ -19,7 +19,7 @@ app.use('/Mobile-Recharge-Portal', userRoutes);
 
 // Home route for testing
 app.get('/', (req, res) => {
-  res.send('Server is running');
+    res.send('Server is running');
 });
 
 // Start server

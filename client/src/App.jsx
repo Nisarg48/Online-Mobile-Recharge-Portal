@@ -11,12 +11,12 @@ import Provider from "./pages/Provider";
 import Help from "./pages/Help";
 import Terms from "./pages/terms_condition";
 import Receipt from "./components/Receipt";
-import Add_Recharge_Plan from "./components/Add_Recharge_Plan";
-import Edit_Recharge_Plan from "./components/Edit_Recharge_Plan";
+import Add_Recharge_Plan from "./pages/Add_Recharge_Plan";
+import Edit_Recharge_Plan from "./pages/Edit_Recharge_Plan";
 import Payment_Details from "./pages/Payment_Details";
 import OTP_Verification from "./pages/OTP_Verification";
 import User_Management from "./pages/User_Management";
-import QueryPage from './components/Query'; 
+import QueryPage from './pages/Query_Page'; 
 
 function App() {
   return (
@@ -28,6 +28,8 @@ function App() {
           <Route path="/Transaction" element={<Transaction />} />
           <Route path="/User_Management" element={<User_Management />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/Help" element={<Help />} />
+          <Route path="/query" element={<QueryPage />} />
         </Route>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
@@ -35,13 +37,11 @@ function App() {
         <Route path="/Profile" element={<Profile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ForgotPassword />} />
-        <Route path="/Help" element={<Help />} />
         <Route path="/NetworkProvider/:provider/buy" element={<Buy_Plan />} />
         <Route path="/NetworkProvider/:provider/add_plan" element={<Add_Recharge_Plan />} />
         <Route path="/NetworkProvider/:provider/edit_plan/:planId" element={<Edit_Recharge_Plan />} />
         <Route path="/receipt" element={<Receipt />} />
         <Route path="/payment-details" element={<Payment_Details />} />
-        <Route path="/query" element={<QueryPage />} />
         <Route path="/otp-verification" element={<OTP_Verification />} />
       </Routes>
     </Router>
