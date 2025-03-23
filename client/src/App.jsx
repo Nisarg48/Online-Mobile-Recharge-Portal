@@ -16,7 +16,7 @@ import Edit_Recharge_Plan from "./pages/Edit_Recharge_Plan";
 import Payment_Details from "./pages/Payment_Details";
 import OTP_Verification from "./pages/OTP_Verification";
 import User_Management from "./pages/User_Management";
-import QueryPage from './pages/Query_Page'; 
+import QueryPage from './pages/Query_Page';
 
 function App() {
   return (

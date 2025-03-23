@@ -10,6 +10,7 @@ const { getRecharge_Plan,
         deleteRecharge_Plan } = require("../Controllers/Recharge_Plan_Controller");
 
 const { getUserTransaction_List,
+        getLastTransaction,
         getTransactionById,
         addInTransaction_List,
         deleteFromTransaction_List,
@@ -23,7 +24,8 @@ const { getAllUsers,
         deleteUser,
         changeUserRole,
         toggleUserStatus,
-        updateLastLogin } = require("../Controllers/User_Controller");
+        updateLastLogin,
+        toggleAutoRecharge } = require("../Controllers/User_Controller");
 
 const { verify_card_details,
         verify_otp, 
@@ -54,6 +56,7 @@ router.delete('/deleteRecharge_Plan/:id', verifyToken, deleteRecharge_Plan);
 
 // Transaction
 router.get('/transactions/getUserTransaction_List', verifyToken, getUserTransaction_List);
+router.get('/transactions/getLastTransaction', verifyToken, getLastTransaction);
 router.get('/transactions/getTransactionById/:id', verifyToken, getTransactionById);
 router.post('/transactions/addInTransaction_List', verifyToken, addInTransaction_List);
 router.delete('/transactions/deleteFromTransaction_List/:id', verifyToken, deleteFromTransaction_List);
@@ -66,6 +69,7 @@ router.get('/user/getUser', verifyToken, getUser);
 router.put('/user/updateUser', verifyToken, updateUser);
 router.put('/user/forgetPassword', forgetPassword);
 router.put('/user/updateLastLogin', verifyToken, updateLastLogin);
+router.put("/user/toggleAutoRecharge", verifyToken, toggleAutoRecharge);
 
 // Admin Routes
 router.delete('/user/deleteUser/:id', verifyToken, deleteUser);

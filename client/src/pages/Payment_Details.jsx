@@ -5,7 +5,7 @@ import API from "../Utils/API";
 function Payment_Details() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { plan, mobileNumber } = location.state || {};
+    const { plan, transactionType, mobileNumber } = location.state || {};
 
     const [cardNumber, setCardNumber] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
@@ -14,8 +14,8 @@ function Payment_Details() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const platformCharge = 10; 
-    const totalAmount = plan.price + platformCharge;
+    const platformCharge = transactionType === "recharge" ? 10 : 0;
+    const totalAmount = transactionType === "recharge" ? plan.price + platformCharge : plan;
 
     const handlePayment = async () => {
         setError("");
@@ -34,49 +34,56 @@ function Payment_Details() {
 
         setLoading(true);
         try {
-
             const transaction_details = {
-                mobile_number: mobileNumber,
-                plan_id: plan._id,
-                platformCharge: platformCharge,
+                mobile_number: transactionType === "recharge" ? mobileNumber : null,
+                plan_id: transactionType === "recharge" ? plan._id : null,
+                platformCharge: transactionType === "recharge" ? platformCharge : 0,
                 amount_to_pay: totalAmount,
                 cardNumber: cardNumber,
                 expiryDate: expiryDate,
                 cvv: cvv,
                 cardholderName: cardholderName,
-            }
-
+                transactionType: transactionType,
+            };
+    
+            // console.log("Sending transaction details:", transaction_details);
+    
             const card_details = {
                 cardNumber: cardNumber,
                 expiryDate: expiryDate,
                 cvv: cvv,
-                cardholderName: cardholderName
-            }
-
+                cardholderName: cardholderName,
+            };
+    
             const response = await API.post("/verify_card_details", transaction_details);
-
+    
             if (response.data.success) {
                 navigate("/otp-verification", {
-                    state: { transaction_id: response.data.transaction_id, card_details: card_details },
-                    replace: true
+                    state: { 
+                        transaction_id: response.data.transaction_id, 
+                        card_details: card_details,
+                        transactionType: transactionType,
+                    },
+                    replace: true,
                 });
                 console.log(response.data);
             } else {
                 throw new Error("Payment failed");
             }
         } catch (error) {
+            console.error("Payment error:", error.response?.data || error.message);
             setError("⚠ Payment failed. Please check your details.");
-            setLoading(false);
-            console.log(error);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="w-full h-screen flex items-center justify-center bg-gray-900">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-white w-full max-w-lg border border-gray-700">
-                <h2 className="text-2xl mb-6 text-green-400 font-bold text-center">Payment</h2>
+        <div className="w-full h-screen flex items-center justify-center bg-black">
+            <div className="bg-black-800 p-8 rounded-lg shadow-lg text-white w-full max-w-lg border border-green-700">
+                <h2 className="text-2xl mb-6 text-green-400 font-bold text-center">
+                    {transactionType === "wallet" ? "Add Money to Wallet" : "Payment"}
+                </h2>
                 <div className="mb-4">
                     <label className="block text-gray-400 text-sm mb-2">Cardholder Name</label>
                     <input
@@ -122,9 +129,13 @@ function Payment_Details() {
                     </div>
                 </div>
                 <div className="mb-4">
-                    <p className="text-gray-300">Amount: <span className="text-green-400">₹{plan.price}</span></p>
-                    <p className="text-gray-300">Platform Charge: <span className="text-green-400">₹{platformCharge}</span></p>
-                    <p className="text-gray-300 font-bold">Total: <span className="text-green-400">₹{totalAmount}</span></p>
+                    <p className="text-gray-300">Amount: <span className="text-green-400">₹{transactionType === "recharge" ? plan.price : plan}</span></p>
+                    {transactionType === "recharge" && (
+                        <>
+                            <p className="text-gray-300">Platform Charge: <span className="text-green-400">₹{platformCharge}</span></p>
+                            <p className="text-gray-300 font-bold">Total: <span className="text-green-400">₹{totalAmount}</span></p>
+                        </>
+                    )}
                 </div>
                 {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
                 <button

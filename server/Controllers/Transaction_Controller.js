@@ -6,13 +6,41 @@ const getUserTransaction_List = async (req, res) => {
     try {
         const userId = req.user.userId;
         console.log(userId);
-        const Transaction_List = await Transaction.find({ user_id: userId });
+        const Transaction_List = await Transaction.find({ user_id: userId }).populate('plan_id');
         console.log(Transaction_List);
         res.status(200).json(Transaction_List);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }
-}
+};
+
+// Get Last Transaction for a User
+const getLastTransaction = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const mobileNumber = req.query.mobileNumber;
+
+        console.log("Fetching last transaction for user:", userId, "with mobile number:", mobileNumber);
+
+        const lastTransaction = await Transaction.findOne({ 
+            user_id: userId,
+            mobile_number: mobileNumber, 
+            status: "Success",
+            transactionType: "recharge"
+        }).sort({ createdAt: -1 });
+
+        console.log("Last transaction found:", lastTransaction);
+
+        if (!lastTransaction) {
+            return res.status(404).json({ message: "No recharge transaction found" });
+        }
+
+        res.status(200).json(lastTransaction);
+    } catch (error) {
+        console.error("Error fetching last transaction:", error);
+        res.status(500).json({ message: error.message });
+    }
+};
 
 // Get Transaction by ID
 const getTransactionById = async (req, res) => {
@@ -145,6 +173,7 @@ const getSuggestedPlans = async (req, res) => {
 
 module.exports = { 
                     getUserTransaction_List,
+                    getLastTransaction,
                     getTransactionById, 
                     addInTransaction_List, 
                     deleteFromTransaction_List, 

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import API from "../Utils/API";
 
 function Buy_Plan() {
   const location = useLocation();
@@ -14,69 +13,11 @@ function Buy_Plan() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [showError, setShowError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const accessToken = localStorage.getItem("accessToken");
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     navigate(-1);
   };
-
-  // const handlePayment = async () => {
-  //   if (!mobileNumber) {
-  //     setShowError("⚠ Please enter a mobile number!");
-  //     return;
-  //   }
-  //   if (!/^\d{10}$/.test(mobileNumber)) {
-  //     setShowError("⚠ Mobile number must be exactly 10 digits!");
-  //     return;
-  //   }
-
-  //   setIsLoading(true);
-
-  //   try {
-  //     // Simulate payment (replace with actual payment gateway integration)
-  //     const paymentSuccess = await simulatePayment();
-  //     if (!paymentSuccess) {
-  //       throw new Error("Payment failed");
-  //     }
-
-  //     // Prepare transaction data
-  //     const transactionData = {
-  //       user_id: JSON.parse(atob(accessToken.split('.')[1])).userId,
-  //       mobile_number: mobileNumber,
-  //       plan_id: plan._id,
-  //       plan: {
-  //         platform: plan.platform,
-  //         category: plan.category,
-  //         price: plan.price,
-  //         validity: plan.validity,
-  //         data: {
-  //           dailyLimit: plan.data.dailyLimit,
-  //           totalData: plan.data.totalData,
-  //         },
-  //         calls: plan.calls,
-  //         sms: plan.sms,
-  //         extraBenefits: plan.extraBenefits,
-  //       },
-  //       status: "Success",
-  //       payment_method: "Card",
-  //     };
-
-  //     // Save transaction to the database
-  //     const response = await API.post("/transactions/addInTransaction_List", transactionData);
-  //     if (!response.data) {
-  //       throw new Error("Failed to save transaction");
-  //     }
-
-  //     // Navigate to receipt page
-  //     navigate("/receipt", { state: { transactionData: response.data } });
-  //   } catch (error) {
-  //     console.error("Payment error:", error);
-  //     setShowError("⚠ Payment failed. Please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const handleProceedToPayment = () => {
     if (!mobileNumber) {
@@ -87,19 +28,14 @@ function Buy_Plan() {
       setShowError("⚠ Mobile number must be exactly 10 digits!");
       return;
     }
-  
+
     // Redirect to payment page with details
     navigate("/payment-details", {
-      state: { plan, mobileNumber }
-    });
-  };
-
-  // Simulate payment (replace with actual payment gateway integration)
-  const simulatePayment = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true); // Simulate successful payment
-      }, 2000);
+      state: {
+        plan, // Pass the selected plan
+        mobileNumber, // Pass the mobile number
+        transactionType: "recharge", // Pass the transaction type
+      },
     });
   };
 
@@ -152,7 +88,6 @@ function Buy_Plan() {
           </button>
           <button
             className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white px-6 py-3 rounded-md hover:opacity-90 transition-all"
-            // onClick={handlePayment}
             onClick={handleProceedToPayment}
             disabled={isLoading}
           >

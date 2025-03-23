@@ -17,12 +17,12 @@ const getUser = async (req, res) => {
         const user = await User.findById(req.user.userId);
         res.status(200).json(user);
     } catch (error) {
-        console.log("GetUser Controller Error:", error);      
-        res.status(404).json({ message: error.message }); 
+        console.log("GetUser Controller Error:", error);
+        res.status(404).json({ message: error.message });
     }
 };
 
-// Update User Profile (Self Update)
+// Update User Profile
 const updateUser = async (req, res) => {
     try {
         if (!req.user || !req.user.userId) {
@@ -30,8 +30,19 @@ const updateUser = async (req, res) => {
         }
 
         const userId = req.user.userId;
-        const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true });
-        
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    name: req.body.name,
+                    email: req.body.email,
+                    mobile_no: req.body.mobile_no,
+                },
+            },
+            { new: true }
+        );
+
         if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -43,11 +54,34 @@ const updateUser = async (req, res) => {
     }
 };
 
+// Toggle Auto Recharge
+const toggleAutoRecharge = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { autoRechargeEnabled } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { autoRechargeEnabled },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        console.error("Toggle Auto Recharge Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 // Forget Password
 const forgetPassword = async (req, res) => {
     try {
         const { email, password } = req.body;
-        
+
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: "User Not Found" });
@@ -67,7 +101,7 @@ const forgetPassword = async (req, res) => {
 
 // Delete User (Admin)
 const deleteUser = async (req, res) => {
-    if(req.user.role !== 'admin')
+    if (req.user.role !== 'admin')
         return res.status(401).json({ message: "Unauthorized" });
 
     try {
@@ -81,7 +115,7 @@ const deleteUser = async (req, res) => {
 
 // Change User Role (Admin)
 const changeUserRole = async (req, res) => {
-    if(req.user.role !== 'admin')
+    if (req.user.role !== 'admin')
         return res.status(401).json({ message: "Unauthorized" });
 
     try {
@@ -101,7 +135,7 @@ const changeUserRole = async (req, res) => {
 
 // Enable/Disable User (Admin)
 const toggleUserStatus = async (req, res) => {
-    if(req.user.role !== 'admin') 
+    if (req.user.role !== 'admin')
         return res.status(401).json({ message: "Unauthorized" });
 
     try {
@@ -126,7 +160,7 @@ const updateLastLogin = async (req, res) => {
     try {
         const userId = req.user.userId;
         const user = await User.findById(userId);
-        
+
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -140,7 +174,7 @@ const updateLastLogin = async (req, res) => {
     }
 };
 
-module.exports = { 
+module.exports = {
     getAllUsers,
     getUser,
     updateUser,
@@ -148,5 +182,6 @@ module.exports = {
     deleteUser,
     changeUserRole,
     toggleUserStatus,
-    updateLastLogin
+    updateLastLogin,
+    toggleAutoRecharge
 };

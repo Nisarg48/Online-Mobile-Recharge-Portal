@@ -21,7 +21,12 @@ const User_Schema = new mongoose.Schema({
 
     isActive: { type: Boolean, default: true },
     lastLogin: { type: Date },
-    
+
+    wallet: { type: Number, default: 0 },
+    autoRechargeEnabled: { type: Boolean, default: false },
+    selectedPlan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+    planExpiryDate: { type: Date },
+
 }, {
     timestamps: true,
     toJSON: { virtuals: true },

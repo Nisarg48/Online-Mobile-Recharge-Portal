@@ -70,14 +70,17 @@ function Transaction() {
 }
 
 function TransactionRow({ transaction, isEven }) {
-    const { transaction_date_time, mobile_number, plan, status } = transaction;
+    const { transaction_date_time, mobile_number, plan, status, transactionType, amount_to_pay } = transaction;
 
-    const formattedPlanDetails = `
-        ${plan.platform} - ₹${plan.price} (${plan.validity} days),
-        ${plan.data?.dailyLimit ? `${plan.data.dailyLimit}GB/day` : "Unlimited Data"},
-        Calls: ${plan.calls}, SMS: ${plan.sms},
-        Extra: ${plan.extraBenefits?.join(", ") || "None"}
-    `;
+    // Handle null or undefined plan
+    const formattedPlanDetails = plan
+        ? `
+            ${plan.platform} - ₹${plan.price} (${plan.validity} days),
+            ${plan.data?.dailyLimit ? `${plan.data.dailyLimit}GB/day` : "Unlimited Data"},
+            Calls: ${plan.calls}, SMS: ${plan.sms},
+            Extra: ${plan.extraBenefits?.join(", ") || "None"}
+        `
+        : "No plan details available";
 
     return (
         <motion.tr
@@ -89,9 +92,15 @@ function TransactionRow({ transaction, isEven }) {
             </td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{mobile_number}</td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]" title={formattedPlanDetails}>
-                {plan.platform} - ₹{plan.price} ({plan.validity} days)
+                {transactionType === "recharge"
+                    ? plan
+                        ? `${plan.platform} - ₹${plan.price} (${plan.validity} days)`
+                        : "No plan details"
+                    : "Wallet Transaction"}
             </td>
-            <td className="px-6 py-4 border-b border-[#444444] text-[#50c878] font-bold">₹{plan.price}</td>
+            <td className="px-6 py-4 border-b border-[#444444] text-[#50c878] font-bold">
+                ₹{amount_to_pay}
+            </td>
             <td
                 className={`px-6 py-4 border-b border-[#444444] font-medium ${
                     status === "Success"
