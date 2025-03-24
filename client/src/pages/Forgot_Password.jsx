@@ -9,7 +9,6 @@ function Forgot_Password() {
 
     const onSubmit = async (data) => {
         try {
-            // Check if email exists and update the password
             const response = await API.put("/user/forgetPassword", {
                 email: data.email,
                 password: data.password

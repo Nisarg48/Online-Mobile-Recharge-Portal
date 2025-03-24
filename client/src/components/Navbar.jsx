@@ -6,12 +6,12 @@ import {
 } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
-import API from '../Utils/API'; // Import your API utility
+import API from '../Utils/API';
 
 function Navbar() {
     const navigate = useNavigate();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
-    const [unrepliedCount, setUnrepliedCount] = useState(0); // State for unreplied queries count
+    const [unrepliedCount, setUnrepliedCount] = useState(0);
     const [role, setRole] = useState(null);
 
     const accessToken = localStorage.getItem('accessToken');
@@ -34,10 +34,9 @@ function Navbar() {
     // Fetch unreplied queries count
     const fetchUnrepliedQueries = async () => {
         try {
-            const response = await API.get('/query/getAllQueries'); // Fetch all queries
+            const response = await API.get('/query/getAllQueries');
             const queries = response.data;
 
-            // Count queries with status "Pending"
             const unreplied = queries.filter(query => query.status === "Pending").length;
             setUnrepliedCount(unreplied);
         } catch (error) {
@@ -45,10 +44,9 @@ function Navbar() {
         }
     };
 
-    // Fetch unreplied queries count on component mount and set up polling
     useEffect(() => {
         fetchUnrepliedQueries();
-        const interval = setInterval(fetchUnrepliedQueries, 10000); // Poll every 10 seconds
+        const interval = setInterval(fetchUnrepliedQueries, 10000);
         return () => clearInterval(interval);
     }, []);
 
@@ -56,7 +54,7 @@ function Navbar() {
     const Logout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userRole'); // Clear role on logout
+        localStorage.removeItem('userRole');
         navigate('/NetworkProvider', { replace: true });
     };
 
@@ -65,8 +63,8 @@ function Navbar() {
             <div className="container mx-auto flex justify-between items-center p-4">
                 {/* Logo */}
                 <div className="flex items-center">
-                    <img src="/Logo.png" alt="Logo" className="w-8 h-8" />
-                    <span className="ml-2 text-[#50c878] font-bold text-lg">M.R. Pay</span>
+                    <img src="/Logo.png" alt="Logo" className="w-12 h-12 border-2 border-[#50c878] rounded-full" />
+                    <span className="ml-2 text-[#50c878] font-bold text-lg">RechargeHub</span>
                 </div>
 
                 {/* Navigation Links */}

@@ -1,5 +1,4 @@
-import React from "react";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 
 export default function Terms() {

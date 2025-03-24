@@ -41,7 +41,6 @@ function Provider() {
         setLoading(true);
         const fetchData = async () => {
             try {
-                // Fetch all recharge plans for the provider
                 const planResponse = await API.get("/getRecharge_Plan");
                 const providerPlans = planResponse.data.filter(
                     (plan) => plan.platform.toLowerCase() === provider.toLowerCase()

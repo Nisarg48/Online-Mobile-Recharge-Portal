@@ -37,15 +37,12 @@ const { submitQuery,
         updateQuery, 
         deleteQuery } = require("../Controllers/Query_Controller");
 
+const { createFeedback,
+        getAllFeedback } = require("../Controllers/Feedback_Controller");
+
 // Auth Routes
 const authRoutes = require("./authRoute");
 router.use('/auth', authRoutes);
-
-const { submitFeedback, getFeedback } = require('../Controllers/feedbackController'); 
-router.post('/feedback', submitFeedback);
-
-// Fetch all feedback
-router.get('/feedback', getFeedback);
 
 // Recharge Plan
 router.get('/getRecharge_Plan', getRecharge_Plan);
@@ -87,5 +84,9 @@ router.get('/query/getAllQueries', verifyToken, getAllQueries);
 router.get('/query/getQueryById/:id', verifyToken, getQueryById);
 router.put('/query/updateQuery/:id', verifyToken, updateQuery);
 router.delete('/query/deleteQuery/:id', verifyToken, deleteQuery);
+
+// Feedback
+router.post('/feedback/createFeedback', verifyToken, createFeedback);
+router.get('/feedback/getAllFeedback', verifyToken, getAllFeedback);
 
 module.exports = router;

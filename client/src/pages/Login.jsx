@@ -9,15 +9,12 @@ function Login() {
 
     const onSubmit = async (data) => {
         try {
-            // Use API instance to send login request
             const response = await API.post("/auth/login", data);
             console.log("Login Success:", response.data);
 
-            // Store the tokens from the response
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
 
-            // Redirect the user after login
             navigate("/NetworkProvider", { replace: true });
         } catch (error) {
             console.error("Login Error:", error.response?.data);

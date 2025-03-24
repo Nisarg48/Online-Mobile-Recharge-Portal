@@ -32,9 +32,9 @@ function Buy_Plan() {
     // Redirect to payment page with details
     navigate("/payment-details", {
       state: {
-        plan, // Pass the selected plan
-        mobileNumber, // Pass the mobile number
-        transactionType: "recharge", // Pass the transaction type
+        plan,
+        mobileNumber,
+        transactionType: "recharge",
       },
     });
   };

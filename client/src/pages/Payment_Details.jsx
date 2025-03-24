@@ -31,7 +31,7 @@ function Payment_Details() {
             setError("⚠ CVV must be 3 digits!");
             return;
         }
-
+    
         setLoading(true);
         try {
             const transaction_details = {
@@ -46,27 +46,22 @@ function Payment_Details() {
                 transactionType: transactionType,
             };
     
-            // console.log("Sending transaction details:", transaction_details);
-    
-            const card_details = {
-                cardNumber: cardNumber,
-                expiryDate: expiryDate,
-                cvv: cvv,
-                cardholderName: cardholderName,
-            };
-    
             const response = await API.post("/verify_card_details", transaction_details);
     
             if (response.data.success) {
                 navigate("/otp-verification", {
                     state: { 
                         transaction_id: response.data.transaction_id, 
-                        card_details: card_details,
+                        card_details: {
+                            cardNumber: cardNumber,
+                            expiryDate: expiryDate,
+                            cvv: cvv,
+                            cardholderName: cardholderName,
+                        },
                         transactionType: transactionType,
                     },
                     replace: true,
                 });
-                console.log(response.data);
             } else {
                 throw new Error("Payment failed");
             }

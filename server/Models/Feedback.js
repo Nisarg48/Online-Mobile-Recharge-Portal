@@ -7,17 +7,23 @@ const feedbackSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 500
     },
+    rating: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5
+    },
     user: {
-        type: String,
-        default: "Anonymous"  // Set default value to "Anonymous"
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null
     },
     read: {
         type: Boolean,
         default: false
     },
     replies: [{
-        type: String,
-        default: []
+        type: String
     }],
     timestamp: {
         type: Date,

@@ -11,8 +11,8 @@ function Edit_Recharge_Plan() {
     const [originalPlan, setOriginalPlan] = useState(null);
     const navigate = useNavigate();
 
-    console.log("Provider:", provider); // Debugging log
-    console.log("Plan ID:", planId);    // Debugging log
+    // console.log("Provider:", provider);
+    // console.log("Plan ID:", planId);
 
     useEffect(() => {
         const fetchPlan = async () => {
@@ -59,7 +59,6 @@ function Edit_Recharge_Plan() {
                 },
             });
         } else if (name === 'extraBenefits') {
-            // Handle extraBenefits as an array
             setPlan({
                 ...plan,
                 extraBenefits: value.split(',').map(item => item.trim()),
@@ -80,7 +79,6 @@ function Edit_Recharge_Plan() {
 
     if (!plan) return <div className="text-center py-10 text-white">Loading...</div>;
 
-    // Compute totalData dynamically
     const totalData = plan?.data?.dailyLimit && plan?.validity ? plan.data.dailyLimit * plan.validity : '';
 
     return (

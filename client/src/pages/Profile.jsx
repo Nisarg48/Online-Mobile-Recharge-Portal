@@ -35,11 +35,10 @@ function Profile() {
                     autoRechargeEnabled: userData.autoRechargeEnabled,
                 });
 
-                // Fetch last transaction for the user's own mobile number
                 const { data: transactionData } = await API.get("/transactions/getLastTransaction", {
                     params: { mobileNumber: userData.mobile_no },
                 });
-                console.log("Last transaction data:", transactionData); // Log the transaction data
+                console.log("Last transaction data:", transactionData);
                 setLastTransaction(transactionData);
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -142,7 +141,7 @@ function Profile() {
                     </div>
                     <div className="flex justify-between">
                         <p><b>Expiry Date:</b></p>
-                        <p>{new Date(lastTransaction.planExpiryDate).toLocaleDateString()}</p>
+                        <p>{lastTransaction.planExpiryDate}</p>
                     </div>
                 </div>
             </div>

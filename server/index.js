@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const connectDB = require("./DBConnection/connect");
 const userRoutes = require("./Router/route");
 const cors = require("cors");
-const feedbackRoutes = require("./Router/feedbackRoutes");
 const cron = require("node-cron");
 const autoRecharge = require("./Controllers/AutoRecharge_Controller");
 const User = require("./Models/User");
@@ -16,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 
 // API Routes
-app.use("/api", feedbackRoutes);
 app.use('/Mobile-Recharge-Portal', userRoutes);
 
 app.get('/', (req, res) => {
