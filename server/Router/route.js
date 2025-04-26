@@ -35,7 +35,8 @@ const { submitQuery,
         getAllQueries, 
         getQueryById, 
         updateQuery, 
-        deleteQuery } = require("../Controllers/Query_Controller");
+        deleteQuery,
+        fetchUserQueries } = require("../Controllers/Query_Controller");
 
 const { createFeedback,
         getAllFeedback } = require("../Controllers/Feedback_Controller");
@@ -84,6 +85,7 @@ router.get('/query/getAllQueries', verifyToken, getAllQueries);
 router.get('/query/getQueryById/:id', verifyToken, getQueryById);
 router.put('/query/updateQuery/:id', verifyToken, updateQuery);
 router.delete('/query/deleteQuery/:id', verifyToken, deleteQuery);
+router.get('/query/fetchUserQueries', verifyToken, fetchUserQueries);
 
 // Feedback
 router.post('/feedback/createFeedback', verifyToken, createFeedback);

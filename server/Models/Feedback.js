@@ -5,30 +5,40 @@ const feedbackSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 10,
-        maxlength: 500
+        maxlength: 200,
+        trim: true
     },
     rating: {
         type: Number,
         required: true,
         min: 1,
-        max: 5
+        max: 5,
+        validate: {
+            validator: Number.isInteger,
+            message: 'Rating must be a whole number (1-5)'
+        }
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        default: null
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
     },
-    read: {
-        type: Boolean,
-        default: false
-    },
-    replies: [{
-        type: String
-    }],
-    timestamp: {
+    createdAt: {
         type: Date,
         default: Date.now
     }
+}, { 
+    toJSON: { virtuals: true }
 });
+
+// Index for faster sorting
+feedbackSchema.index({ createdAt: -1 });
+feedbackSchema.index({ rating: 1 });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);
