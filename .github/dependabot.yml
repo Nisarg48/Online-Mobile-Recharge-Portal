@@ -1,0 +1,52 @@
+# Dependabot configuration for Online Mobile Recharge Portal
+# This file configures Dependabot to automatically check for and create pull requests
+# for dependency updates in both the client and server directories.
+
+version: 2
+updates:
+  # Enable version updates for npm dependencies in the client directory
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    labels:
+      - "dependencies"
+      - "client"
+    commit-message:
+      prefix: "chore(client)"
+      include: "scope"
+
+  # Enable version updates for npm dependencies in the server directory
+  - package-ecosystem: "npm"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    labels:
+      - "dependencies"
+      - "server"
+    commit-message:
+      prefix: "chore(server)"
+      include: "scope"
+
+  # Enable version updates for GitHub Actions (if any are added in the future)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
