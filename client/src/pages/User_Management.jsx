@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import PageLayout from "./PageLayout";
 import { FaSearch, FaEye, FaTimes, FaTrash, FaUserEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import API from "../Utils/api";
+import { formatDateTime } from "../Utils/format";
 import Swal from "sweetalert2";
 
 function User_Management() {
@@ -221,12 +222,12 @@ function User_Management() {
                                     <tbody>
                                         {transactions.map((txn, index) => (
                                             <tr key={index} className="border-b border-[#50c878]">
-                                                <td className="p-2">{txn.transaction_date_time}</td>
-                                                <td className="p-2">{txn.plan.platform} - {txn.plan.category}</td>
-                                                <td className="p-2">₹{txn.plan.price} + ₹{txn.platformCharge}</td>
-                                                <td className="p-2">{txn.plan.validity} Days</td>
-                                                <td className="p-2">{txn.plan.data.dailyLimit}GB/day</td>
-                                                <td className="p-2">{txn.plan.calls}</td>
+                                                <td className="p-2">{formatDateTime(txn.transaction_date_time)}</td>
+                                                <td className="p-2">{txn.plan ? `${txn.plan.platform} - ${txn.plan.category}` : "Wallet"}</td>
+                                                <td className="p-2">₹{txn.amount_to_pay}</td>
+                                                <td className="p-2">{txn.plan ? `${txn.plan.validity} Days` : "-"}</td>
+                                                <td className="p-2">{txn.plan?.data?.dailyLimit ? `${txn.plan.data.dailyLimit}GB/day` : "-"}</td>
+                                                <td className="p-2">{txn.plan?.calls || "-"}</td>
                                                 <td className="p-2">{txn.payment_method}</td>
                                                 <td className={`p-2 ${txn.status === "Success" ? "text-green-400" : txn.status === "Failed" ? "text-red-400" : "text-yellow-400"}`}>{txn.status}</td>
                                             </tr>

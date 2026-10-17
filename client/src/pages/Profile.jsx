@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Wallet, Save, Edit2, ArrowLeft, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../Utils/api";
+import { formatDate } from "../Utils/format";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Profile() {
@@ -141,7 +142,7 @@ function Profile() {
                     </div>
                     <div className="flex justify-between">
                         <p><b>Expiry Date:</b></p>
-                        <p>{lastTransaction.planExpiryDate}</p>
+                        <p>{formatDate(lastTransaction.planExpiryDate)}</p>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import { FaDatabase, FaPhoneAlt, FaSms, FaThumbsUp, FaStar, FaFire, FaGem, FaAwa
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import API from '../Utils/api';
+import { benefitLabel } from '../Utils/format';
 import Swal from "sweetalert2";
 
 function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
@@ -198,7 +199,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
                             <h4 className="text-md font-medium underline">Extra Benefits:</h4>
                             <ul className="list-disc ml-5">
                                 {plan.extraBenefits.map((benefit, index) => (
-                                    <li key={index} className="mt-1">{benefit}</li>
+                                    <li key={index} className="mt-1">{benefitLabel(benefit)}</li>
                                 ))}
                             </ul>
                         </div>

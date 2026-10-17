@@ -3,6 +3,7 @@ import PageLayout from "./PageLayout";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import API from "../Utils/api";
+import { formatDateTime, benefitLabel } from "../Utils/format";
 
 function Transaction() {
     const [transactionsList, setTransactionsList] = useState([]);
@@ -78,7 +79,7 @@ function TransactionRow({ transaction, isEven }) {
             ${plan.platform} - ₹${plan.price} (${plan.validity} days),
             ${plan.data?.dailyLimit ? `${plan.data.dailyLimit}GB/day` : "Unlimited Data"},
             Calls: ${plan.calls}, SMS: ${plan.sms},
-            Extra: ${plan.extraBenefits?.join(", ") || "None"}
+            Extra: ${plan.extraBenefits?.map(benefitLabel).join(", ") || "None"}
         `
         : "No plan details available";
 
@@ -88,7 +89,7 @@ function TransactionRow({ transaction, isEven }) {
             whileHover={{ scale: 1.02 }}
         >
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">
-                {transaction_date_time}
+                {formatDateTime(transaction_date_time)}
             </td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]">{mobile_number}</td>
             <td className="px-6 py-4 border-b border-[#444444] text-[#cfcfcf]" title={formattedPlanDetails}>

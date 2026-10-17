@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import API from "../Utils/api";
+import { formatDateTime } from "../Utils/format";
 import { motion } from "framer-motion";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -77,7 +78,7 @@ function Receipt() {
 
         const transactionDetails = [
             ["Transaction ID", transactionData._id],
-            ["Date", transactionData.transaction_date_time],
+            ["Date", formatDateTime(transactionData.transaction_date_time)],
             ["Mobile Number", transactionData.mobile_number],
             ["Status", transactionData.status],
             ["Payment Method", transactionData.payment_method],
@@ -246,7 +247,7 @@ function Receipt() {
                             <p>
                                 <b>Date:</b>
                             </p>
-                            <p>{transactionData.transaction_date_time}</p>
+                            <p>{formatDateTime(transactionData.transaction_date_time)}</p>
                         </div>
                     </div>
 
