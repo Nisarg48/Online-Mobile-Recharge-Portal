@@ -1,1 +1,5 @@
 .vscode
+
+# Local-only project docs (never push)
+ROADMAP.md
+PROJECT_CONTEXT.md
