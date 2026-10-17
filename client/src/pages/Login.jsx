@@ -14,6 +14,7 @@ function Login() {
 
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('refreshToken', response.data.refreshToken);
+            localStorage.setItem('userRole', response.data.role || 'user');
 
             navigate("/NetworkProvider", { replace: true });
         } catch (error) {
@@ -63,7 +64,7 @@ function Login() {
                                 required: "Password is required",
                                 minLength: {
                                     value: 8,
-                                    message: "Password must be at least 6 characters",
+                                    message: "Password must be at least 8 characters",
                                 },
                             })}
                             className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"

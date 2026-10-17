@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "http://localhost:5000/Mobile-Recharge-Portal",
+    baseURL: "http://localhost:4848/Mobile-Recharge-Portal",
 });
 
 // Request interceptor to add the access token
@@ -24,11 +24,12 @@ API.interceptors.response.use(
                 try {
                     // Call your refresh token endpoint
                     const { data } = await axios.post(
-                        "http://localhost:5000/Mobile-Recharge-Portal/auth/refresh-token",
+                        "http://localhost:4848/Mobile-Recharge-Portal/auth/refresh-token",
                         { refreshToken }
                     );
-                    // Update the access token in local storage
+                    // Update tokens in local storage (refresh token is rotated by the server)
                     localStorage.setItem('accessToken', data.accessToken);
+                    if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
                     originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
                     return axios(originalRequest);
                 } catch (refreshError) {

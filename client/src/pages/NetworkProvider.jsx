@@ -12,7 +12,7 @@ function NetworkProvider() {
     useEffect(() => {
         const fetchTopFeedback = async () => {
             try {
-                const response = await API.get("/feedback/getAllFeedback");
+                const response = await API.get("/feedback/public");
                 const topRated = response.data.data.filter(
                     (feedback) => feedback.rating === 5 || feedback.rating === 4
                 );

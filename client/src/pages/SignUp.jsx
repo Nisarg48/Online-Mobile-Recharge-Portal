@@ -9,7 +9,7 @@ function SignUp() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post("http://localhost:5000/Mobile-Recharge-Portal/auth/signup", data);
+            const response = await axios.post("http://localhost:4848/Mobile-Recharge-Portal/auth/signup", data);
             console.log("Signup Success:", response.data);
             alert("Account created successfully!");
             navigate("/login");

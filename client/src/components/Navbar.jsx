@@ -48,10 +48,11 @@ function Navbar() {
     };
 
     useEffect(() => {
+        if (role !== 'admin') return undefined;
         fetchUnrepliedQueries();
-        const interval = setInterval(fetchUnrepliedQueries, 10000);
+        const interval = setInterval(fetchUnrepliedQueries, 30000);
         return () => clearInterval(interval);
-    }, []);
+    }, [role]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
