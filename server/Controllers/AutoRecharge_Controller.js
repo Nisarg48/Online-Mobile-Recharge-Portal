@@ -26,20 +26,10 @@ const autoRecharge = async (userId) => {
             return;
         }
 
-        // Parse the transaction_date_time into a valid Date object
-        const transactionDateTime = lastTransaction.transaction_date_time;
-        const dateTimeParts = transactionDateTime.match(/(\d{2})\/(\d{2})\/(\d{4}), Time: (\d{2}):(\d{2}):(\d{2})/);
-
-        if (!dateTimeParts) {
-            console.error("Invalid transaction_date_time format:", transactionDateTime);
-            return;
-        }
-
-        const [_, day, month, year, hours, minutes, seconds] = dateTimeParts;
-        const createdAt = new Date(`${year}-${month}-${day}T${hours}:${minutes}:${seconds}`);
-
+        // transaction_date_time is stored as a native Date.
+        const createdAt = new Date(lastTransaction.transaction_date_time);
         if (isNaN(createdAt.getTime())) {
-            console.error("Invalid transaction_date_time value:", transactionDateTime);
+            console.error("Invalid transaction_date_time value:", lastTransaction.transaction_date_time);
             return;
         }
 
@@ -88,6 +78,10 @@ const autoRecharge = async (userId) => {
             await user.save();
 
             // Create new transaction entry
+            const now = new Date();
+            const planExpiryDate = new Date(now);
+            planExpiryDate.setDate(planExpiryDate.getDate() + plan.validity);
+
             const newTransaction = new Transaction({
                 user_id: user._id,
                 mobile_number: user.mobile_no,
@@ -99,13 +93,17 @@ const autoRecharge = async (userId) => {
                     validity: plan.validity,
                     data: {
                         dailyLimit: plan.data.dailyLimit,
-                        totalData: plan.data.totalData || null,
+                        totalData: plan.data.totalData,
+                        postLimitSpeed: plan.data.postLimitSpeed,
                     },
                     calls: plan.calls,
                     sms: plan.sms,
                     extraBenefits: plan.extraBenefits,
+                    additionalDetails: plan.additionalDetails,
                 },
                 platformCharge: 0,
+                transaction_date_time: now,
+                planExpiryDate,
                 status: "Success",
                 payment_method: "Wallet",
                 transactionType: "recharge",

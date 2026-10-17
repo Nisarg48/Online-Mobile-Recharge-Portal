@@ -3,6 +3,7 @@ const Joi = require("joi");
 const email = Joi.string().email().lowercase().trim().required();
 const mobileNo = Joi.string().pattern(/^[6-9]\d{9}$/).required();
 const password = Joi.string().min(8).max(72).required();
+const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 
 // Auth
 const signupSchema = Joi.object({
@@ -47,13 +48,13 @@ const changeUserRoleSchema = Joi.object({
     role: Joi.string().valid("user", "admin").required(),
 });
 
-// Recharge Plan (kept permissive until Phase 2 schema alignment)
+// Recharge Plan
 const rechargePlanSchema = Joi.object({
     platform: Joi.string().trim().required(),
     category: Joi.string().trim().required(),
     planId: Joi.string().trim(),
     price: Joi.number().min(0).required(),
-    validity: Joi.number().min(0).required(),
+    validity: Joi.number().min(0).required(), // days
     data: Joi.object({
         dailyLimit: Joi.number().allow(null),
         totalData: Joi.number().allow(null),
@@ -61,7 +62,14 @@ const rechargePlanSchema = Joi.object({
     }).unknown(true),
     calls: Joi.string().allow(null, ""),
     sms: Joi.string().allow(null, ""),
-    extraBenefits: Joi.array().items(Joi.alternatives().try(Joi.string(), Joi.object())),
+    extraBenefits: Joi.array().items(Joi.alternatives().try(
+        Joi.string(),
+        Joi.object({
+            type: Joi.string().allow(""),
+            description: Joi.string().allow(""),
+            icon: Joi.string().allow(""),
+        }).unknown(true)
+    )),
     additionalDetails: Joi.string().allow(null, ""),
 }).unknown(true);
 
@@ -75,7 +83,7 @@ const cardDetailsSchema = Joi.object({
 
 const verifyCardDetailsSchema = Joi.object({
     mobile_number: Joi.string().pattern(/^[6-9]\d{9}$/).allow(null, ""),
-    plan_id: Joi.string().trim().allow(null, ""),
+    plan_id: objectId.allow(null, ""),
     platformCharge: Joi.number().min(0).default(0),
     amount_to_pay: Joi.number().positive().required(),
     cardNumber: Joi.string().trim().required(),
@@ -86,14 +94,14 @@ const verifyCardDetailsSchema = Joi.object({
 });
 
 const verifyOtpSchema = Joi.object({
-    transaction_id: Joi.string().trim().required(),
+    transaction_id: objectId.required(),
     otp: Joi.alternatives().try(Joi.string(), Joi.number()).required(),
     card_details: cardDetailsSchema.required(),
     transactionType: Joi.string().valid("recharge", "wallet").required(),
 });
 
 const cancelTransactionSchema = Joi.object({
-    transaction_id: Joi.string().trim().required(),
+    transaction_id: objectId.required(),
 });
 
 // Query & Feedback

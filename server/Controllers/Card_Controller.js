@@ -67,34 +67,12 @@ const verify_card_details = async (req, res) => {
         }
 
         const currentDate = new Date();
-        const formattedDate = currentDate.toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-        const formattedTime = currentDate.toLocaleTimeString('en-GB', {
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        });
-        const transaction_date_time = `Date: ${formattedDate}, Time: ${formattedTime}`;
 
+        // Plan validity is expressed in days.
         let planExpiryDate = null;
         if (transactionType === "recharge" && plan && plan.validity) {
-            const expiryDate = new Date(currentDate);
-            expiryDate.setMinutes(expiryDate.getMinutes() + plan.validity);
-
-            const formattedExpiryDate = expiryDate.toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-            });
-            const formattedExpiryTime = expiryDate.toLocaleTimeString('en-GB', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            });
-            planExpiryDate = `Date: ${formattedExpiryDate}, Time: ${formattedExpiryTime}`;
+            planExpiryDate = new Date(currentDate);
+            planExpiryDate.setDate(planExpiryDate.getDate() + plan.validity);
         }
 
         const newTransaction = new Transaction({
@@ -107,7 +85,7 @@ const verify_card_details = async (req, res) => {
             status: "Pending",
             transactionType,
             planExpiryDate,
-            transaction_date_time,
+            transaction_date_time: currentDate,
         });
 
         await newTransaction.save();
@@ -119,7 +97,7 @@ const verify_card_details = async (req, res) => {
         const newOtp = new OTP({
             transaction_id: newTransaction._id,
             user_id,
-            otp: otpCode,
+            otp: String(otpCode),
             expiresAt: expiryTime,
         });
 
@@ -185,7 +163,7 @@ const verify_otp = async (req, res) => {
                 .json({ message: "OTP expired! Transaction failed." });
         }
 
-        if (otpRecord.otp !== otp) {
+        if (String(otpRecord.otp) !== String(otp)) {
             return res.status(400).json({ message: "Incorrect OTP! Try again." });
         }
 
