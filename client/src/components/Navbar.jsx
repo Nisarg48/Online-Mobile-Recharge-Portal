@@ -7,7 +7,7 @@ import {
 } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
-import API from '../Utils/API';
+import API from '../Utils/api';
 
 function Navbar() {
     const navigate = useNavigate();

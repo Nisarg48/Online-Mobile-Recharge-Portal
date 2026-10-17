@@ -2,7 +2,7 @@
 import PageLayout from "./PageLayout";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import API from "../Utils/API";
+import API from "../Utils/api";
 
 function Transaction() {
     const [transactionsList, setTransactionsList] = useState([]);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FaReply, FaCheckCircle, FaClock } from 'react-icons/fa';
-import API from '../Utils/API';
+import API from '../Utils/api';
 import PageLayout from './PageLayout';
 
 function Query_Page() {

@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import API from "../Utils/API";
+import API from "../Utils/api";
 
 function Forgot_Password() {
     const { register, handleSubmit, formState: { errors } } = useForm();

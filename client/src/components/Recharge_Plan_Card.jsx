@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FaDatabase, FaPhoneAlt, FaSms, FaThumbsUp, FaStar, FaFire, FaGem, FaAward, FaHeart } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import API from '../Utils/API';
+import API from '../Utils/api';
 import Swal from "sweetalert2";
 
 function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import PageLayout from "./PageLayout";
 import { FaSearch, FaEye, FaTimes, FaTrash, FaUserEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";
-import API from "../Utils/API";
+import API from "../Utils/api";
 import Swal from "sweetalert2";
 
 function User_Management() {

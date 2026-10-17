@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Wallet, Save, Edit2, ArrowLeft, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import API from "../Utils/API";
+import API from "../Utils/api";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Profile() {

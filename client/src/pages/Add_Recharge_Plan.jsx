@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import API from '../Utils/API';
+import API from '../Utils/api';
 import { FaArrowLeft } from 'react-icons/fa';
 import { toast, ToastContainer } from 'react-toastify';
 

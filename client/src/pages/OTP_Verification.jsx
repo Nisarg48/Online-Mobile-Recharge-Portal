@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import API from "../Utils/API";
+import API from "../Utils/api";
 
 function OTP_Verification() {
     const navigate = useNavigate();

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import API from "../Utils/API";
+import API from "../Utils/api";
 import PageLayout from "./PageLayout";
 
 const faqCategories = [

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import API from "../Utils/API";
+import API from "../Utils/api";
 
 function Payment_Details() {
     const location = useLocation();

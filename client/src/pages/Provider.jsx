@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import PageLayout from "./PageLayout";
 import Recharge_Plan_Card from "../components/Recharge_Plan_Card";
-import API from "../Utils/API";
+import API from "../Utils/api";
 import Swal from "sweetalert2";
 
 function Provider() {
