@@ -24,7 +24,7 @@ const User_Schema = new mongoose.Schema({
 
     wallet: { type: Number, default: 0 },
     autoRechargeEnabled: { type: Boolean, default: false },
-    selectedPlan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+    selectedPlan: { type: mongoose.Schema.Types.ObjectId, ref: "Recharge_Plan" },
     planExpiryDate: { type: Date },
 
     // Refresh-token session (hashed) and password-reset token (hashed)

@@ -6,8 +6,8 @@ const Card_Schema = new mongoose.Schema({
     cvv: { type: String, required: true },
     cardholderName: { type: String, required: true },
     bankName: { type: String, required: true },
-    balance: { type: Number, required: true },
-    mobile_number: { type: Number, length: 10, required: true },
+    balance: { type: Number, required: true, min: 0 },
+    mobile_number: { type: String, required: true, match: /^[6-9]\d{9}$/ },
 });
 
 const Card = mongoose.model("Card", Card_Schema);
