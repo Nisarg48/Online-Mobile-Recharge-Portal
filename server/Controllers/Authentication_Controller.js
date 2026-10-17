@@ -9,7 +9,6 @@ let refreshTokens = [];
 // Signup User
 const SignupUser = async (req, res) => {
     try {
-        console.log(req.body);
         const { name, email, mobile_no, password, role } = req.body;
 
         const existingUser = await User.findOne({ email });

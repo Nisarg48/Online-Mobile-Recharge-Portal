@@ -21,8 +21,6 @@ const verify_card_details = async (req, res) => {
             transactionType,
         } = req.body;
 
-        console.log(req.body);
-
         if (
             !amount_to_pay ||
             !cardNumber ||
@@ -137,8 +135,6 @@ const verify_card_details = async (req, res) => {
             messageBody = `Your OTP for adding ₹${amount_to_pay} to your wallet is ${otpCode}. Please do not share this OTP with anyone. It is valid for 5 minutes. - Mobile Recharge Portal`;
         }
 
-        console.log("OTP Message:", messageBody);
-
         // Uncomment the following code to send OTP via Twilio (ensure Twilio credentials are set up)
         /*
         const client = twilio(
@@ -169,7 +165,6 @@ const verify_card_details = async (req, res) => {
 
 // Verify OTP
 const verify_otp = async (req, res) => {
-    console.log("Request Body:", req.body);
     try {
         const { transaction_id, otp, card_details, transactionType } = req.body;
 

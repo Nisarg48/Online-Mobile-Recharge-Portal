@@ -5,9 +5,7 @@ const RechargePlan = require("../Models/Recharge_Plan");
 const getUserTransaction_List = async (req, res) => {
     try {
         const userId = req.user.userId;
-        console.log(userId);
         const Transaction_List = await Transaction.find({ user_id: userId }).populate('plan_id');
-        console.log(Transaction_List);
         res.status(200).json(Transaction_List);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -20,16 +18,12 @@ const getLastTransaction = async (req, res) => {
         const userId = req.user.userId;
         const mobileNumber = req.query.mobileNumber;
 
-        console.log("Fetching last transaction for user:", userId, "with mobile number:", mobileNumber);
-
         const lastTransaction = await Transaction.findOne({ 
             user_id: userId,
             mobile_number: mobileNumber, 
             status: "Success",
             transactionType: "recharge"
         }).sort({ createdAt: -1 });
-
-        console.log("Last transaction found:", lastTransaction);
 
         if (!lastTransaction) {
             return res.status(404).json({ message: "No recharge transaction found" });
@@ -145,15 +139,11 @@ const getSuggestedPlans = async (req, res) => {
             return res.status(400).json({ error: "Provider is required" });
         }
 
-        console.log("Fetching suggested plans for user:", userId, "and provider:", provider);
-
         // Fetch recommended plans based on user's last transaction
         const recommendedPlans = await getRecommendedPlan(userId, provider);
-        console.log("Recommended Plans:", recommendedPlans);
 
         // Fetch popular plans based on all users' transactions
         const popularPlans = await getPopularPlans(provider);
-        console.log("Popular Plans:", popularPlans);
 
         // Prepare the response
         const response = {
@@ -161,8 +151,6 @@ const getSuggestedPlans = async (req, res) => {
             popularPlans: popularPlans,
             hasTransactionHistory: recommendedPlans.length > 0
         };
-
-        console.log("Final Response:", response);
 
         res.status(200).json(response);
     } catch (error) {
