@@ -15,7 +15,7 @@ const User_Schema = new mongoose.Schema({
         unique: true,
         match: /^[6-9]\d{9}$/
     },
-    password: { type: String, required: true, minLength: 8 },
+    password: { type: String, required: true, minLength: 8, select: false },
 
     role: { type: String, enum: ["user", "admin"], default: "user" },
 
@@ -26,6 +26,12 @@ const User_Schema = new mongoose.Schema({
     autoRechargeEnabled: { type: Boolean, default: false },
     selectedPlan: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
     planExpiryDate: { type: Date },
+
+    // Refresh-token session (hashed) and password-reset token (hashed)
+    refreshTokenHash: { type: String, select: false },
+    refreshTokenExpiresAt: { type: Date, select: false },
+    passwordResetToken: { type: String, select: false },
+    passwordResetExpires: { type: Date, select: false },
 
 }, {
     timestamps: true,

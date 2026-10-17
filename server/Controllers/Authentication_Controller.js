@@ -1,26 +1,34 @@
+const crypto = require("crypto");
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { generateAccessToken, generateRefreshToken } = require("../Utils/jwtHelper");
 
-// Store in DB or Cache in Production
-let refreshTokens = []; 
+const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
 
 // Signup User
 const SignupUser = async (req, res) => {
     try {
-        const { name, email, mobile_no, password, role } = req.body;
+        const { name, email, mobile_no, password } = req.body;
 
-        const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "User already exists" });
+        const existingUser = await User.findOne({ $or: [{ email }, { mobile_no }] });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
 
-        // Hash the password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Save the user with the hashed password
-        const newUser = new User({ name, email, mobile_no, password: hashedPassword, role });
+        // Role is never taken from the client: every signup is a normal user.
+        const newUser = new User({
+            name,
+            email,
+            mobile_no,
+            password: hashedPassword,
+            role: "user",
+        });
         await newUser.save();
+
         res.status(201).json({ message: "User registered successfully" });
     } catch (error) {
         console.error("Signup Error:", error);
@@ -33,61 +41,72 @@ const LoginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if user exists
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password");
         if (!user) {
             return res.status(401).json({ message: "Invalid Credentials" });
         }
 
-        // Check if user is active
         if (!user.isActive) {
             return res.status(403).json({ message: "Your account is deactivated. Please contact support." });
         }
 
-        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid Credentials" });
         }
 
-        // Generate Tokens
-        const accessToken = jwt.sign(
-            { userId: user._id, role: user.role },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '1d' }
-        );
-        const refreshToken = jwt.sign(
-            { userId: user._id },
-            process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '7d' }
-        );
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
 
-        // Store refresh token in DB or Cache in Production
-        refreshTokens.push(refreshToken);
-
-        // Update last login time
+        // Persist a hash of the refresh token so it can be validated/rotated/revoked.
+        user.refreshTokenHash = hashToken(refreshToken);
+        user.refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         user.lastLogin = new Date();
         await user.save();
 
-        res.status(200).json({ accessToken, refreshToken });
+        res.status(200).json({ accessToken, refreshToken, role: user.role });
     } catch (error) {
         console.error("Login Error:", error);
         res.status(500).json({ message: "Server Error" });
     }
 };
 
-// Token Refresh
-const refreshToken = (req, res) => {
-    const { token } = req.body;
-    if (!token) return res.status(401).json({ message: "Token required" });
-    if (!refreshTokens.includes(token)) return res.status(403).json({ message: "Invalid Refresh Token" });
+// Token Refresh (rotates the refresh token)
+const refreshToken = async (req, res) => {
+    // Accept both keys for backward compatibility with older clients.
+    const token = req.body.refreshToken || req.body.token;
+    if (!token) return res.status(401).json({ message: "Refresh token required" });
 
-    jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-        if (err) return res.status(403).json({ message: "Invalid Refresh Token" });
+    try {
+        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
-        const newAccessToken = generateAccessToken({ _id: user.userId, role: user.role });
-        res.status(200).json({ accessToken: newAccessToken });
-    });
+        const user = await User.findById(decoded.userId)
+            .select("+refreshTokenHash +refreshTokenExpiresAt");
+
+        if (!user || !user.refreshTokenHash) {
+            return res.status(403).json({ message: "Invalid Refresh Token" });
+        }
+
+        if (user.refreshTokenExpiresAt && user.refreshTokenExpiresAt < new Date()) {
+            return res.status(403).json({ message: "Refresh Token expired" });
+        }
+
+        if (user.refreshTokenHash !== hashToken(token)) {
+            return res.status(403).json({ message: "Invalid Refresh Token" });
+        }
+
+        // Rotate: issue a fresh pair and store the new refresh hash.
+        const newAccessToken = generateAccessToken(user);
+        const newRefreshToken = generateRefreshToken(user);
+
+        user.refreshTokenHash = hashToken(newRefreshToken);
+        user.refreshTokenExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        await user.save();
+
+        res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
+    } catch (error) {
+        return res.status(403).json({ message: "Invalid Refresh Token" });
+    }
 };
 
 module.exports = { SignupUser, LoginUser, refreshToken };
