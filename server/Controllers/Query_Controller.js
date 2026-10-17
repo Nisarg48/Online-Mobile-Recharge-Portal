@@ -71,7 +71,7 @@ const getQueryById = async (req, res) => {
 // Update query status and admin response (Admin)
 const updateQuery = async (req, res) => {
     try {
-        const { status, admin_response, user_id } = req.body;
+        const { status, admin_response } = req.body;
 
         const query = await Query.findById(req.params.id);
         if (!query) return res.status(404).json({ error: "Query not found" });
@@ -82,8 +82,8 @@ const updateQuery = async (req, res) => {
 
         await query.save();
 
-        // Fetch user email
-        const user = await User.findById(user_id);
+        // Email the query's actual owner (never a client-supplied id)
+        const user = await User.findById(query.user_id);
         if (!user) return res.status(404).json({ error: "User not found" });
 
         // Send email

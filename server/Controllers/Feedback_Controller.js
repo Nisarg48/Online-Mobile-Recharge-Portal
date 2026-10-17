@@ -6,10 +6,9 @@ const createFeedback = async (req, res) => {
         const { message, rating } = req.body;
         const userId = req.user.userId;
 
-        let name = User.findById(userId).select('name');
-
-        if (rating < 1) {
-            return res.status(400).json({ success: false, message: "Rating must be at least 1" });
+        const user = await User.findById(userId).select('name');
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
         }
 
         const newFeedback = new Feedback({
@@ -17,9 +16,8 @@ const createFeedback = async (req, res) => {
             rating,
             user: {
                 _id: userId,
-                name: name
+                name: user.name,
             },
-            createdAt: new Date()
         });
 
         await newFeedback.save();
@@ -30,9 +28,24 @@ const createFeedback = async (req, res) => {
     }
 };
 
+// Public: only top-rated feedback, minimal fields (used on the landing page).
+const getPublicFeedback = async (req, res) => {
+    try {
+        const feedbacks = await Feedback.find({ rating: { $gte: 4 } })
+            .sort({ createdAt: -1 })
+            .limit(20)
+            .select("message rating user.name createdAt");
+        return res.status(200).json({ success: true, data: feedbacks });
+    } catch (err) {
+        console.error("Error fetching public feedback:", err);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// Admin: all feedback
 const getAllFeedback = async (req, res) => {
     try {
-        const feedbacks = await Feedback.find().sort({ timestamp: -1 });
+        const feedbacks = await Feedback.find().sort({ createdAt: -1 });
         return res.status(200).json({ success: true, data: feedbacks });
     } catch (err) {
         console.error(err);
@@ -42,5 +55,6 @@ const getAllFeedback = async (req, res) => {
 
 module.exports = {
     createFeedback,
-    getAllFeedback
+    getPublicFeedback,
+    getAllFeedback,
 };

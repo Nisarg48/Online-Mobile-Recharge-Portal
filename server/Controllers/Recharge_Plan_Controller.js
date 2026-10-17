@@ -34,7 +34,7 @@ const addRecharge_Plan = async (req, res) => {
         }
         else
         {
-            res.status(401).json({ error: "Unauthorized" });
+            res.status(403).json({ error: "Admin access required" });
         }
     } catch (error) {
         console.error("Error in addRecharge_Plan:", error);
@@ -53,7 +53,7 @@ const updateRecharge_Plan = async (req, res) => {
         }
         else
         {
-            res.status(401).json({ error: "Unauthorized" });
+            res.status(403).json({ error: "Admin access required" });
         }
     } catch (error) {
         console.error("Error in updateRecharge_Plan:", error);
@@ -72,7 +72,7 @@ const deleteRecharge_Plan = async (req, res) => {
         }
         else
         {
-            res.status(401).json({ error: "Unauthorized" });
+            res.status(403).json({ error: "Admin access required" });
         }
     } catch (error) {
         console.error("Error in deleteRecharge_Plan:", error);

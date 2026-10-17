@@ -1,14 +1,34 @@
 const Transaction = require("../Models/Transaction");
 const RechargePlan = require("../Models/Recharge_Plan");
 
-// Get Transaction
+const isOwnerOrAdmin = (transaction, user) =>
+    user.role === "admin" || String(transaction.user_id) === String(user.userId);
+
+// Loads a transaction only if the requester owns it (or is an admin).
+const findAccessibleTransaction = async (id, user) => {
+    const transaction = await Transaction.findById(id);
+    if (!transaction) {
+        return { status: 404, message: "Transaction not found" };
+    }
+    if (!isOwnerOrAdmin(transaction, user)) {
+        return { status: 403, message: "You are not allowed to access this transaction" };
+    }
+    return { transaction };
+};
+
+// Get Transaction (own; admins may pass ?userId=)
 const getUserTransaction_List = async (req, res) => {
     try {
-        const userId = req.user.userId;
-        const Transaction_List = await Transaction.find({ user_id: userId }).populate('plan_id');
+        const userId = req.user.role === "admin" && req.query.userId
+            ? req.query.userId
+            : req.user.userId;
+
+        const Transaction_List = await Transaction
+            .find({ user_id: userId })
+            .populate("plan_id");
         res.status(200).json(Transaction_List);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -18,11 +38,11 @@ const getLastTransaction = async (req, res) => {
         const userId = req.user.userId;
         const mobileNumber = req.query.mobileNumber;
 
-        const lastTransaction = await Transaction.findOne({ 
+        const lastTransaction = await Transaction.findOne({
             user_id: userId,
-            mobile_number: mobileNumber, 
+            mobile_number: mobileNumber,
             status: "Success",
-            transactionType: "recharge"
+            transactionType: "recharge",
         }).sort({ createdAt: -1 });
 
         if (!lastTransaction) {
@@ -36,49 +56,54 @@ const getLastTransaction = async (req, res) => {
     }
 };
 
-// Get Transaction by ID
+// Get Transaction by ID (owner or admin only)
 const getTransactionById = async (req, res) => {
     try {
-        const id = req.params.id;
-        const transaction = await Transaction.findById(id);
+        const { transaction, status, message } = await findAccessibleTransaction(req.params.id, req.user);
+        if (!transaction) return res.status(status).json({ message });
         res.status(200).json(transaction);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
-// Add in Transaction
-const addInTransaction_List = async (req, res) => {
-    try {
-        const newTransaction = new Transaction(req.body);
-        await newTransaction.save();
-        res.status(201).json(newTransaction);
-    } catch (error) {
-        res.status(409).json({ message: error.message });
-    }
-}
-
-// Delete from Transaction
+// Delete Transaction (owner or admin only)
 const deleteFromTransaction_List = async (req, res) => {
     try {
-        const id = req.params.id;
-        await Transaction.findByIdAndDelete(id);
+        const { transaction, status, message } = await findAccessibleTransaction(req.params.id, req.user);
+        if (!transaction) return res.status(status).json({ message });
+
+        await transaction.deleteOne();
         res.status(200).json({ message: "Transaction Deleted Successfully" });
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-}
+};
 
-// Update Transaction
+// Update Transaction (admin only; restricted fields)
 const updateTransaction = async (req, res) => {
     try {
-        const id = req.params.id;
-        const updatedTransaction = await Transaction.findByIdAndUpdate(id, req.body, { new: true });
+        const allowedFields = ["status", "payment_method", "transactionType"];
+        const updates = {};
+        allowedFields.forEach((field) => {
+            if (req.body[field] !== undefined) updates[field] = req.body[field];
+        });
+
+        const updatedTransaction = await Transaction.findByIdAndUpdate(
+            req.params.id,
+            updates,
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedTransaction) {
+            return res.status(404).json({ message: "Transaction not found" });
+        }
+
         res.status(200).json(updatedTransaction);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
-}
+};
 
 // Function to get the most popular plans based on past transactions
 const getPopularPlans = async (provider) => {
@@ -86,17 +111,14 @@ const getPopularPlans = async (provider) => {
         const transactions = await Transaction.find({ "plan.platform": provider });
         const planCount = {};
 
-        // Count how many times each plan was purchased
         transactions.forEach(transaction => {
             if (transaction.plan_id) {
                 planCount[transaction.plan_id] = (planCount[transaction.plan_id] || 0) + 1;
             }
         });
 
-        // Sort plans by popularity and get the top 3
         const sortedPlanIds = Object.keys(planCount).sort((a, b) => planCount[b] - planCount[a]).slice(0, 3);
 
-        // Fetch details of the popular plans
         const popularPlans = await RechargePlan.find({ _id: { $in: sortedPlanIds } });
         return popularPlans;
     } catch (error) {
@@ -112,7 +134,6 @@ const getRecommendedPlan = async (userId, provider) => {
         if (lastTransaction) {
             const lastPlan = await RechargePlan.findById(lastTransaction.plan_id);
             if (lastPlan) {
-                // Find similar plans based on the last plan's category and price range
                 const similarPlans = await RechargePlan.find({
                     platform: provider,
                     category: lastPlan.category,
@@ -139,13 +160,9 @@ const getSuggestedPlans = async (req, res) => {
             return res.status(400).json({ error: "Provider is required" });
         }
 
-        // Fetch recommended plans based on user's last transaction
         const recommendedPlans = await getRecommendedPlan(userId, provider);
-
-        // Fetch popular plans based on all users' transactions
         const popularPlans = await getPopularPlans(provider);
 
-        // Prepare the response
         const response = {
             suggestedFromHistory: recommendedPlans,
             popularPlans: popularPlans,
@@ -159,12 +176,11 @@ const getSuggestedPlans = async (req, res) => {
     }
 };
 
-module.exports = { 
-                    getUserTransaction_List,
-                    getLastTransaction,
-                    getTransactionById, 
-                    addInTransaction_List, 
-                    deleteFromTransaction_List, 
-                    updateTransaction,
-                    getSuggestedPlans
-                };
+module.exports = {
+    getUserTransaction_List,
+    getLastTransaction,
+    getTransactionById,
+    deleteFromTransaction_List,
+    updateTransaction,
+    getSuggestedPlans,
+};
