@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node index.js",
     "start-dev": "node --watch index.js",
+    "reset-data": "node scripts/resetData.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
