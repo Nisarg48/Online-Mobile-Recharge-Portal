@@ -31,6 +31,39 @@ The Online Mobile Recharge Portal is a full-stack web application designed to pr
 - `/client`: ReactJS frontend for user interface and interactions
 - `/server`: Node.js and Express.js backend for API endpoints and business logic
 
+## Getting Started (Local Setup)
+
+### Prerequisites
+- Node.js 20+ (Node 24 LTS recommended — Node 18 is End-of-Life)
+- MongoDB (running locally, or a MongoDB Atlas connection string)
+
+### 1. Backend
+```bash
+cd server
+npm install
+cp .env.example .env     # then fill in the values
+npm run start-dev
+```
+The API runs at `http://localhost:5000` by default.
+
+Environment variables (see `server/.env.example`):
+| Variable | Description |
+| --- | --- |
+| `PORT` | Server port (default `5000`) |
+| `CONNECTION_STRING` | MongoDB connection string |
+| `ACCESS_TOKEN_SECRET` | Secret for signing access tokens |
+| `REFRESH_TOKEN_SECRET` | Secret for signing refresh tokens |
+| `EMAIL_USER` / `EMAIL_PASS` | Nodemailer credentials for query reply emails |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` / `TWILIO_PHONE_NUMBER` | Twilio credentials for OTP SMS |
+
+### 2. Frontend
+```bash
+cd client
+npm install
+npm run dev
+```
+The app runs at `http://localhost:5173`.
+
 ## Screenshots
 System Architecture
 ![Picture1](https://github.com/user-attachments/assets/8625a2b2-a54c-4767-a3d2-cdc6305dc149)
