@@ -1,3 +1,7 @@
+const User = require("../Models/User");
+const Transaction = require("../Models/Transaction");
+const Recharge_Plan = require("../Models/Recharge_Plan");
+
 const autoRecharge = async (userId) => {
     try {
         console.log("\n--- Starting auto-recharge for user:", userId, "---");
