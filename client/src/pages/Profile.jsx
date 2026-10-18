@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Wallet, Save, Edit2, ArrowLeft, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../Utils/api";
+import { logout } from "../Utils/auth";
 import { formatDate } from "../Utils/format";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -13,6 +14,7 @@ function Profile() {
     const [showAddFundsModal, setShowAddFundsModal] = useState(false);
     const [amount, setAmount] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(true);
     const [lastTransaction, setLastTransaction] = useState(null);
 
     const [formData, setFormData] = useState({
@@ -25,9 +27,10 @@ function Profile() {
     // Fetch user data and last transaction
     useEffect(() => {
         const fetchData = async () => {
+            let userData;
             try {
                 // Fetch user data
-                const { data: userData } = await API.get("/user/getUser");
+                ({ data: userData } = await API.get("/user/getUser"));
                 setUser(userData);
                 setFormData({
                     name: userData.name,
@@ -35,19 +38,35 @@ function Profile() {
                     mobile_no: userData.mobile_no,
                     autoRechargeEnabled: userData.autoRechargeEnabled,
                 });
+            } catch (error) {
+                console.error("Error fetching profile:", error);
+                // Session is invalid/expired: clear it and send the user to login.
+                if (error.response?.status === 401 || error.response?.status === 403) {
+                    logout();
+                    navigate("/login", { replace: true });
+                    return;
+                }
+                setError("Could not load your profile. Please try again.");
+                return;
+            } finally {
+                setLoading(false);
+            }
 
+            // A 404 here just means the user has no completed recharge yet.
+            try {
                 const { data: transactionData } = await API.get("/transactions/getLastTransaction", {
                     params: { mobileNumber: userData.mobile_no },
                 });
-                console.log("Last transaction data:", transactionData);
                 setLastTransaction(transactionData);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                if (error.response?.status !== 404) {
+                    console.error("Error fetching last transaction:", error);
+                }
             }
         };
 
         fetchData();
-    }, []);
+    }, [navigate]);
 
     // Toggle edit mode
     const toggleEdit = () => {
@@ -180,10 +199,27 @@ function Profile() {
         );
     };
 
-    if (!user) {
+    if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen bg-[#1e1e1e]">
                 <div className="text-[#cfcfcf] text-lg">Loading...</div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="flex flex-col justify-center items-center min-h-screen bg-[#1e1e1e] gap-4">
+                <div className="text-[#cfcfcf] text-lg">{error || "Your session has expired."}</div>
+                <button
+                    onClick={() => {
+                        logout();
+                        navigate("/login");
+                    }}
+                    className="px-6 py-3 bg-[#50c878] text-white rounded-md hover:bg-[#3da861] transition"
+                >
+                    Go to Login
+                </button>
             </div>
         );
     }

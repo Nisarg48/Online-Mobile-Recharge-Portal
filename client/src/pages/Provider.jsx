@@ -53,7 +53,8 @@ function Provider() {
                 );
                 setCategories(uniqueCategories);
 
-                // Fetch suggested plans (based on history and popular plans)
+                // Suggested/popular plans come from an authenticated endpoint, so
+                // only fetch them when signed in. Guests just see the "All" plans.
                 if (accessToken) {
                     const suggestedResponse = await API.get(
                         `/transactions/getSuggestedPlans?provider=${provider}`
@@ -65,13 +66,9 @@ function Provider() {
                         hasTransactionHistory: suggestedResponse.data.hasTransactionHistory || false,
                     });
                 } else {
-                    // For non-logged-in users, fetch only popular plans
-                    const popularPlansResponse = await API.get(
-                        `/transactions/getSuggestedPlans?provider=${provider}`
-                    );
                     setSuggestedPlans({
                         suggestedFromHistory: [],
-                        popularPlans: popularPlansResponse.data.popularPlans || [],
+                        popularPlans: [],
                         hasTransactionHistory: false,
                     });
                 }
