@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const email = Joi.string().email().lowercase().trim().required();
+const email = Joi.string().email({ tlds: { allow: false } }).lowercase().trim().required();
 const mobileNo = Joi.string().pattern(/^[6-9]\d{9}$/).required();
 const password = Joi.string().min(8).max(72).required();
 const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
