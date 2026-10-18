@@ -10,9 +10,12 @@ const generalLimiter = rateLimit({
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 20,
+    max: 50,
     standardHeaders: true,
     legacyHeaders: false,
+    // Don't penalize legitimate traffic: successful logins/refreshes shouldn't
+    // consume quota (only failed attempts should count toward the limit).
+    skipSuccessfulRequests: true,
     message: { message: "Too many attempts, please try again later." },
 });
 
