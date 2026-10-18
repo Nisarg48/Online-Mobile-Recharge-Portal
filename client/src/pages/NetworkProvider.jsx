@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PageLayout from "./PageLayout";
 import API from "../Utils/api";
+import { PROVIDERS } from "../Utils/providers";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -52,19 +53,19 @@ function NetworkProvider() {
         <PageLayout title="Network Provider">
             {/* Network Provider Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-                {["Jio", "Airtel", "Vi"].map((provider) => (
+                {PROVIDERS.map((provider) => (
                     <Link
-                        to={`/NetworkProvider/${provider}`}
-                        key={provider}
+                        to={`/NetworkProvider/${provider.name}`}
+                        key={provider.name}
                         className="bg-[#1e1e1e] rounded-xl shadow-md p-5 hover:shadow-lg hover:scale-105 transition-transform duration-300 border border-blue-400"
                     >
                         <h2 className="text-xl font-semibold text-[#50c878] mb-4 text-center">
-                            {provider}
+                            {provider.name}
                         </h2>
                         <div className="flex justify-center">
                             <img
-                                src={`./Network_Provider/${provider}.png`}
-                                alt={provider}
+                                src={`./Network_Provider/${provider.logo}`}
+                                alt={provider.name}
                                 className="w-full h-auto max-w-[180px] rounded-lg object-contain"
                             />
                         </div>
