@@ -1,15 +1,6 @@
 const Query = require("../Models/Query");
 const User = require("../Models/User");
-const nodemailer = require("nodemailer");
-
-// Nodemailer transporter setup (configure with your email service)
-const transporter = nodemailer.createTransport({
-    service: "gmail", // Use your email service
-    auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS  // Your email password or app-specific password
-    }
-});
+const { sendMail } = require("../Utils/mailer");
 
 // Submit a new query (User)
 const submitQuery = async (req, res) => {
@@ -56,11 +47,16 @@ const getAllQueries = async (req, res) => {
     }
 };
 
-// Get a single query by ID
+// Get a single query by ID (owner or admin only)
 const getQueryById = async (req, res) => {
     try {
         const query = await Query.findById(req.params.id);
         if (!query) return res.status(404).json({ error: "Query not found" });
+
+        const isOwner = String(query.user_id) === String(req.user.userId);
+        if (!isOwner && req.user.role !== "admin") {
+            return res.status(403).json({ error: "You are not allowed to view this query" });
+        }
 
         res.status(200).json(query);
     } catch (error) {
@@ -82,22 +78,20 @@ const updateQuery = async (req, res) => {
 
         await query.save();
 
-        // Email the query's actual owner (never a client-supplied id)
-        const user = await User.findById(query.user_id);
-        if (!user) return res.status(404).json({ error: "User not found" });
+        // Email the query's actual owner (best-effort: the reply is already saved,
+        // so a mail failure must not fail the request).
+        if (admin_response) {
+            const user = await User.findById(query.user_id);
+            if (user) {
+                await sendMail({
+                    to: user.email,
+                    subject: `Response to Your Query: ${query.subject}`,
+                    text: `Dear ${user.name},\n\nYour query: "${query.message}"\n\nAdmin Response: ${admin_response}\n\nThank you for reaching out!\nBest regards,\nSupport Team`,
+                });
+            }
+        }
 
-        // Send email
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: user.email,
-            subject: `Response to Your Query: ${query.subject}`,
-            text: `Dear ${user.name},\n\nYour query: "${query.message}"\n\nAdmin Response: ${admin_response}\n\nThank you for reaching out!\nBest regards,\nSupport Team`
-        };
-
-        await transporter.sendMail(mailOptions);
-        console.log("Email sent to:", user.email);
-
-        res.status(200).json({ success: true, message: "Query updated and email sent successfully", query });
+        res.status(200).json({ success: true, message: "Query updated successfully", query });
 
     } catch (error) {
         console.error("Error in updateQuery:", error);
