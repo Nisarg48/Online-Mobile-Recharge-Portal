@@ -12,11 +12,14 @@ const autoRecharge = async (userId) => {
             return;
         }
 
-        // Fetch the last successful transaction
-        const lastTransaction = await Transaction.findOne({ 
+        // Fetch the last successful *recharge* (wallet top-ups have no plan and
+        // must not be mistaken for the plan being renewed).
+        const lastTransaction = await Transaction.findOne({
             user_id: user._id,
             mobile_number: user.mobile_no,
-            status: "Success" 
+            status: "Success",
+            transactionType: "recharge",
+            plan_id: { $ne: null },
         }).sort({ transaction_date_time: -1 });
 
         console.log("Last Transaction ID:", lastTransaction?._id);
