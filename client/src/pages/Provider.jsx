@@ -230,8 +230,9 @@ function Provider() {
                         )}
 
                         {loading ? (
-                            <div className="flex justify-center items-center py-10">
-                                <div className="spinner-border animate-spin border-t-4 border-[#50c878] rounded-full w-16 h-16"></div>
+                            <div className="flex flex-col justify-center items-center gap-4 py-16">
+                                <div className="h-12 w-12 animate-spin rounded-full border-4 border-[#333333] border-t-[#50c878]"></div>
+                                <p className="text-sm text-gray-400">Loading plans…</p>
                             </div>
                         ) : selectedCategory === "Suggested" ? (
                             <>
@@ -241,7 +242,7 @@ function Provider() {
                                         <h4 className="text-xl font-bold text-white mb-4">
                                             Based on Your History
                                         </h4>
-                                        <div className="grid grid-cols-1 gap-4">
+                                        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                                             {filteredPlans.suggestedFromHistory.map((plan) => (
                                                 <Recharge_Plan_Card
                                                     key={plan._id}
@@ -266,7 +267,7 @@ function Provider() {
                                         <h4 className="text-xl font-bold text-white mb-4">
                                             Most Popular Plans
                                         </h4>
-                                        <div className="grid grid-cols-1 gap-4">
+                                        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                                             {filteredPlans.popularPlans.map((plan) => (
                                                 <Recharge_Plan_Card
                                                     key={plan._id}
@@ -302,7 +303,7 @@ function Provider() {
                                     )}
                             </>
                         ) : filteredPlans.length > 0 ? (
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                                 {filteredPlans.map((plan) => (
                                     <Recharge_Plan_Card
                                         key={plan._id}
@@ -319,9 +320,12 @@ function Provider() {
                                 ))}
                             </div>
                         ) : (
-                            <div className="text-center py-6">
-                                <p className="text-[#ffffff] mb-2">
+                            <div className="flex flex-col items-center gap-2 py-16 text-center">
+                                <p className="text-lg font-medium text-gray-200">
                                     No plans available for this selection.
+                                </p>
+                                <p className="text-sm text-gray-400">
+                                    Try another category or clear the amount filter.
                                 </p>
                             </div>
                         )}

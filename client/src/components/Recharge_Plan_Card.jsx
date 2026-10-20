@@ -1,8 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import { FaDatabase, FaPhoneAlt, FaSms, FaThumbsUp, FaStar, FaFire, FaGem, FaAward, FaHeart } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+    FaDatabase, FaPhoneAlt, FaSms, FaThumbsUp, FaStar, FaFire,
+    FaGem, FaAward, FaHeart, FaEdit, FaTrashAlt, FaChevronDown,
+} from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import API from '../Utils/api';
 import { benefitLabel } from '../Utils/format';
 import Swal from "sweetalert2";
@@ -11,6 +14,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
     const [showMore, setShowMore] = useState(false);
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
+    const isAdmin = accessToken && role === 'admin';
 
     const toggleMore = () => setShowMore(!showMore);
 
@@ -35,7 +39,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
             cancelButtonText: "No, cancel!"
         }).then((result) => {
             if (result.isConfirmed) {
-                API.delete(`/deleteRecharge_Plan/${id}`)
+                API.delete(`/deleteRechargePlan/${id}`)
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
@@ -104,108 +108,128 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
     };
 
     const badge = getSuggestionBadge();
+    const hasBenefits = plan.extraBenefits && plan.extraBenefits.length > 0;
 
     return (
         <motion.div
-            className="bg-[#1e1e1e] shadow-lg rounded-lg p-6 m-2 hover:shadow-xl transition-all duration-300 transform hover:scale-105 z-20 flex flex-col relative border border-gray-700"
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ y: -4 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+            className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#333333] bg-[#1e1e1e] p-5 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl"
         >
-            {/* Suggestion Badge */}
             {badge && (
-                <div className={`absolute -top-2 -right-2 ${badge.color} text-white text-xs font-medium px-3 py-1 rounded-full shadow-md flex items-center`}>
+                <span className={`absolute right-4 top-0 -translate-y-1/2 ${badge.color} flex items-center rounded-full px-3 py-1 text-xs font-medium text-white shadow-md`}>
                     {badge.icon}
                     {badge.text}
-                </div>
+                </span>
             )}
 
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-2xl font-bold text-white">{plan.category}</h2>
-                <div className='flex space-x-5'>
-                    {accessToken && role === 'admin' && (
+            {/* Header: platform + category, admin controls */}
+            <div className="flex items-start justify-between gap-3 pr-16">
+                <div className="min-w-0">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[#50c878]">{plan.platform}</p>
+                    <h3 className="truncate text-lg font-semibold text-white" title={plan.category}>
+                        {plan.category}
+                    </h3>
+                </div>
+                {isAdmin && (
+                    <div className="flex flex-shrink-0 items-center gap-1">
                         <button
-                            className="text-white text-md border-4 rounded-md border-white px-4 py-1 hover:border-blue hover:text-black hover:bg-white hover:font-bold transition-all duration-200"
+                            aria-label="Edit plan"
+                            className="rounded-md p-2 text-gray-300 transition hover:bg-white/10 hover:text-[#50c878]"
                             onClick={() => navigate(`/NetworkProvider/${plan.platform}/edit_plan/${plan._id}`)}
                         >
-                            Edit
+                            <FaEdit />
                         </button>
-                    )}
-
-                    {accessToken && role === 'admin' && (
                         <button
-                            className="text-white text-md border-4 rounded-md border-red-500 px-4 py-1 hover:border-blue hover:text-white hover:bg-red-700 hover:font-bold transition-all duration-200"
+                            aria-label="Delete plan"
+                            className="rounded-md p-2 text-gray-300 transition hover:bg-red-500/20 hover:text-red-400"
                             onClick={() => deleteRechargePlan(plan._id)}
                         >
-                            Delete
+                            <FaTrashAlt />
                         </button>
-                    )}
-
-                    {accessToken && (
-                        <button
-                            className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white font-bold rounded-md px-4 py-2 hover:from-[#6a11cb] hover:to-[#50c878] transition-all duration-200"
-                            onClick={handleBuyClick}
-                        >
-                            Buy
-                        </button>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
 
-            <p className="text-xl text-white mb-2">
-                <span className="font-bold">₹{plan.price}</span> -
-                <span className="italic"> Valid for {plan.validity} days</span>
-            </p>
-
-            <div className="text-white space-y-1">
-                <div className="flex items-center">
-                    <FaDatabase className="mr-2 text-[#50c878]" />
-                    <p>Data: {plan.data.dailyLimit ? `${plan.data.dailyLimit} GB/day` : `${plan.data.totalData || 0} GB`}</p>
-                </div>
-                <div className="flex items-center">
-                    <FaPhoneAlt className="mr-2 text-[#50c878]" />
-                    <p>Calls: <span className="font-medium">{plan.calls}</span></p>
-                </div>
-                <div className="flex items-center">
-                    <FaSms className="mr-2 text-[#50c878]" />
-                    <p>SMS: <span className="font-medium">{plan.sms}</span></p>
-                </div>
+            {/* Price + validity */}
+            <div className="mt-4 flex items-end justify-between">
+                <p className="text-3xl font-bold leading-none text-white">₹{plan.price}</p>
+                <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
+                    {plan.validity} days
+                </span>
             </div>
 
-            {/* Suggestion Reason - Show only for suggested plans */}
+            {/* Key specs */}
+            <ul className="mt-4 space-y-2 text-sm text-gray-200">
+                <li className="flex items-center">
+                    <FaDatabase className="mr-2 flex-shrink-0 text-[#50c878]" />
+                    <span>
+                        {plan.data?.dailyLimit
+                            ? `${plan.data.dailyLimit} GB/day`
+                            : `${plan.data?.totalData || 0} GB total`}
+                    </span>
+                </li>
+                <li className="flex items-center">
+                    <FaPhoneAlt className="mr-2 flex-shrink-0 text-[#50c878]" />
+                    <span>Calls: <span className="font-medium">{plan.calls}</span></span>
+                </li>
+                <li className="flex items-center">
+                    <FaSms className="mr-2 flex-shrink-0 text-[#50c878]" />
+                    <span>SMS: <span className="font-medium">{plan.sms}</span></span>
+                </li>
+            </ul>
+
+            {/* Suggestion reason */}
             {suggestionType && (
-                <div className="mt-3 text-sm">
-                    <p className="text-gray-300 italic">
-                        {suggestionType.includes("Similar")
-                            ? "This plan is similar to what you've used before"
-                            : suggestionType.includes("Recommended")
-                                ? "This plan offers better value than your previous recharges"
-                                : suggestionType.includes("Popular") || suggestionType.includes("Best Seller")
-                                    ? "This plan is popular among our users"
-                                    : "This plan is recommended based on user preferences"}
-                    </p>
-                </div>
+                <p className="mt-3 text-sm italic text-gray-400">
+                    {suggestionType.includes("Similar")
+                        ? "Similar to what you've used before"
+                        : suggestionType.includes("Recommended")
+                            ? "Better value than your previous recharges"
+                            : suggestionType.includes("Popular") || suggestionType.includes("Best Seller")
+                                ? "Popular among our users"
+                                : "Recommended based on user preferences"}
+                </p>
             )}
 
-            {plan.extraBenefits && plan.extraBenefits.length > 0 && (
-                <>
+            {/* Extra benefits */}
+            {hasBenefits && (
+                <div className="mt-3">
                     <button
-                        className="text-[#50c878] mt-4 underline text-md hover:text-[#6a11cb] transition-colors text-left"
+                        className="flex items-center gap-1 text-sm text-[#50c878] hover:text-[#6a11cb]"
                         onClick={toggleMore}
                     >
-                        {showMore ? "See less" : "See more"}
+                        {showMore ? "Hide benefits" : `${plan.extraBenefits.length} extra benefit${plan.extraBenefits.length > 1 ? "s" : ""}`}
+                        <FaChevronDown className={`transition-transform ${showMore ? "rotate-180" : ""}`} size={12} />
                     </button>
-
                     {showMore && (
-                        <div className="mt-4 text-white">
-                            <h4 className="text-md font-medium underline">Extra Benefits:</h4>
-                            <ul className="list-disc ml-5">
-                                {plan.extraBenefits.map((benefit, index) => (
-                                    <li key={index} className="mt-1">{benefitLabel(benefit)}</li>
-                                ))}
-                            </ul>
-                        </div>
+                        <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-300">
+                            {plan.extraBenefits.map((benefit, index) => (
+                                <li key={index}>{benefitLabel(benefit)}</li>
+                            ))}
+                        </ul>
                     )}
-                </>
+                </div>
             )}
+
+            {/* Footer action pinned to the bottom for equal-height cards */}
+            <div className="mt-auto pt-5">
+                {accessToken ? (
+                    <button
+                        className="w-full rounded-lg bg-gradient-to-r from-[#50c878] to-[#6a11cb] py-2.5 font-semibold text-white transition-opacity hover:opacity-90"
+                        onClick={handleBuyClick}
+                    >
+                        Recharge ₹{plan.price}
+                    </button>
+                ) : (
+                    <Link
+                        to="/login"
+                        className="block w-full rounded-lg border border-[#50c878] py-2.5 text-center font-semibold text-[#50c878] transition hover:bg-[#50c878] hover:text-black"
+                    >
+                        Login to recharge
+                    </Link>
+                )}
+            </div>
         </motion.div>
     );
 }
