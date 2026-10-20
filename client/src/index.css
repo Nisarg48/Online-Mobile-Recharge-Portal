@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Base */
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #121212;
+  color: #f5f5f5;
+  overflow-x: hidden;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

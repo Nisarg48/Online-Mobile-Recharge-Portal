@@ -181,7 +181,7 @@ function Navbar() {
                 {/* Mobile Navbar */}
                 <div className="md:hidden flex justify-between items-center py-3">
                     {/* Logo */}
-                    <Link to="/" className="flex items-center">
+                    <Link to="/NetworkProvider" className="flex items-center">
                         <img src="/Logo.png" alt="Logo" className="w-10 h-10 border-2 border-[#50c878] rounded-full" />
                         <span className="ml-2 text-[#50c878] font-bold text-lg">RechargeHub</span>
                     </Link>
