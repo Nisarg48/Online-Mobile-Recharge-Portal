@@ -114,10 +114,10 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
         <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#333333] bg-[#1e1e1e] p-5 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl"
+            className="group relative flex h-full flex-col rounded-2xl border border-[#333333] bg-[#1e1e1e] p-5 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl"
         >
             {badge && (
-                <span className={`absolute right-4 top-0 -translate-y-1/2 ${badge.color} flex items-center rounded-full px-3 py-1 text-xs font-medium text-white shadow-md`}>
+                <span className={`absolute right-4 top-0 z-10 -translate-y-1/2 whitespace-nowrap ${badge.color} flex items-center rounded-full px-3 py-1 text-xs font-medium text-white shadow-md`}>
                     {badge.icon}
                     {badge.text}
                 </span>
