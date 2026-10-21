@@ -82,7 +82,7 @@ function NetworkProvider() {
                     <Slider {...sliderSettings}>
                         {topFeedback.map((feedback, idx) => (
                             <div key={idx} className="px-4">
-                                <div className="flex min-h-[200px] max-h-[260px] flex-col justify-between rounded-lg bg-[#1f2937] p-4 text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 sm:min-h-[220px] sm:p-6">
+                                <div className="flex min-h-[200px] max-h-[260px] flex-col justify-between rounded-lg border border-[#333333] bg-[#1f2937] p-4 text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 sm:min-h-[220px] sm:p-6">
                                     
                                     {/* Rating */}
                                     <div className="flex justify-center mb-2">
