@@ -20,7 +20,7 @@ function MobileNav() {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 z-40 w-full border-t border-[#333333] bg-[#1e1e1e] shadow-[0_-2px_10px_rgba(0,0,0,0.3)] md:hidden">
+        <nav className="fixed bottom-0 left-0 z-40 w-full border-t border-[#333333] bg-[#1e1e1e] pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.3)] md:hidden">
             <div className="flex">
                 {items
                     .filter((item) => item.show)

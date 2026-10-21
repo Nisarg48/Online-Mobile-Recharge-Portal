@@ -8,7 +8,6 @@ import API from "../Utils/api";
 import Swal from "sweetalert2";
 import { toast } from "../Utils/toast";
 import { FaMobileAlt, FaSearchDollar, FaTimes, FaBalanceScale } from "react-icons/fa";
-import { PROVIDERS } from "../Utils/providers";
 
 const QUICK_FILTERS = [
     { id: "all", label: "All" },
@@ -40,9 +39,6 @@ function Provider() {
     const [compareList, setCompareList] = useState([]);
     const [showCompare, setShowCompare] = useState(false);
     const accessToken = localStorage.getItem("accessToken");
-    const providerLogo = PROVIDERS.find(
-        (p) => p.name.toLowerCase() === provider.toLowerCase()
-    )?.logo;
 
     useEffect(() => {
         if (accessToken) {
@@ -165,17 +161,8 @@ function Provider() {
         <PageLayout
             isModalOpen={isModalOpen}
             title={
-                <span className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                    {providerLogo && (
-                        <img
-                            src={`./Network_Provider/${providerLogo}`}
-                            alt={provider}
-                            className="h-12 w-12 rounded-xl border border-[#333333] bg-white p-1.5 object-contain shadow"
-                        />
-                    )}
-                    <span className="inline-block bg-gradient-to-r from-[#50c878] to-[#6a11cb] bg-clip-text pb-1 leading-[1.35] text-transparent">
-                        Recharge for {provider}
-                    </span>
+                <span className="inline-block bg-gradient-to-r from-[#50c878] to-[#6a11cb] bg-clip-text pb-1 leading-[1.35] text-transparent">
+                    Recharge for {provider}
                 </span>
             }
         >
@@ -288,7 +275,7 @@ function Provider() {
                     </div>
 
                     {/* Available Plans */}
-                    <div className="max-h-[70vh] w-full overflow-y-auto rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4 md:w-3/4">
+                    <div className="w-full rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4 md:max-h-[70vh] md:w-3/4 md:overflow-y-auto">
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-3">
                             <h3 className="text-base font-semibold text-white sm:text-lg">
                                 {selectedCategory === "Suggested"
