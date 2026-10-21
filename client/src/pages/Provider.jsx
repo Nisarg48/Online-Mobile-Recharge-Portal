@@ -173,7 +173,7 @@ function Provider() {
                             className="h-12 w-12 rounded-xl border border-[#333333] bg-white p-1.5 object-contain shadow"
                         />
                     )}
-                    <span className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] bg-clip-text text-transparent">
+                    <span className="inline-block bg-gradient-to-r from-[#50c878] to-[#6a11cb] bg-clip-text pb-1 leading-[1.35] text-transparent">
                         Recharge for {provider}
                     </span>
                 </span>
@@ -181,7 +181,7 @@ function Provider() {
         >
             <div className="relative z-10 flex flex-col items-center justify-center space-y-4 rounded-xl bg-[#121212] py-2 px-2 shadow-lg md:px-6">
                 {/* Input Fields */}
-                <div className="m-2 w-full max-w-2xl rounded-xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-md">
+                <div className="m-2 w-full max-w-2xl rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-md sm:p-4">
                     <form className="flex flex-col space-y-3 md:flex-row md:space-y-0 md:space-x-4">
                         {/* Mobile Number Input */}
                         <div className="relative flex w-full items-center md:w-1/2">
@@ -197,7 +197,7 @@ function Provider() {
                                     pattern: /^\d{10}$/,
                                     onChange: (e) => setMobileNumber(e.target.value),
                                 })}
-                                className="w-full rounded-lg border border-[#333333] bg-[#121212] p-3 pl-11 text-lg text-white placeholder:text-gray-500 focus:border-[#50c878] focus:outline-none focus:ring-2 focus:ring-[#50c878]/40"
+                                className="w-full rounded-lg border border-[#333333] bg-[#121212] p-3 pl-11 text-base text-white sm:text-lg placeholder:text-gray-500 focus:border-[#50c878] focus:outline-none focus:ring-2 focus:ring-[#50c878]/40"
                             />
                         </div>
 
@@ -209,7 +209,7 @@ function Provider() {
                                 inputMode="numeric"
                                 placeholder="Search plan by amount"
                                 aria-label="Search plan by amount"
-                                className="w-full rounded-lg border border-[#333333] bg-[#121212] p-3 pl-11 pr-10 text-lg text-white placeholder:text-gray-500 focus:border-[#50c878] focus:outline-none focus:ring-2 focus:ring-[#50c878]/40"
+                                className="w-full rounded-lg border border-[#333333] bg-[#121212] p-3 pl-11 pr-10 text-base text-white sm:text-lg placeholder:text-gray-500 focus:border-[#50c878] focus:outline-none focus:ring-2 focus:ring-[#50c878]/40"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value.replace(/[^0-9]/g, ""))}
                             />
@@ -231,8 +231,8 @@ function Provider() {
                 <div className="w-full flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0 md:space-x-4">
                     <div className="w-full md:sticky md:top-24 md:w-1/4 md:self-start">
                         {/* Category Selection */}
-                        <div className="rounded-xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-lg">
-                            <h3 className="text-lg font-semibold mb-4 text-[#ffffff]">
+                        <div className="rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4">
+                            <h3 className="text-base font-semibold mb-3 text-[#ffffff] sm:text-lg sm:mb-4">
                                 Select Category:
                             </h3>
                             <div className="flex flex-col space-y-2">
@@ -288,9 +288,9 @@ function Provider() {
                     </div>
 
                     {/* Available Plans */}
-                    <div className="max-h-[600px] w-full overflow-y-auto rounded-xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-lg md:w-3/4">
+                    <div className="max-h-[70vh] w-full overflow-y-auto rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4 md:w-3/4">
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-3">
-                            <h3 className="text-lg font-semibold text-white">
+                            <h3 className="text-base font-semibold text-white sm:text-lg">
                                 {selectedCategory === "Suggested"
                                     ? "Recommended Plans For You"
                                     : "Available Plans"}

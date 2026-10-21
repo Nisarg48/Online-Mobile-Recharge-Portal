@@ -52,21 +52,21 @@ function NetworkProvider() {
     return (
         <PageLayout title="Network Provider">
             {/* Network Provider Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+            <div className="grid grid-cols-1 gap-4 p-0 sm:gap-6 sm:p-6 md:grid-cols-2 lg:grid-cols-3">
                 {PROVIDERS.map((provider) => (
                     <Link
                         to={`/NetworkProvider/${provider.name}`}
                         key={provider.name}
-                        className="bg-[#1e1e1e] rounded-xl shadow-md p-5 hover:shadow-lg hover:scale-105 transition-transform duration-300 border border-blue-400"
+                        className="rounded-xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-md transition-transform duration-300 hover:scale-105 hover:shadow-lg sm:p-5"
                     >
-                        <h2 className="text-xl font-semibold text-[#50c878] mb-4 text-center">
+                        <h2 className="mb-4 text-center text-lg font-semibold text-[#50c878] sm:text-xl">
                             {provider.name}
                         </h2>
                         <div className="flex justify-center">
                             <img
                                 src={`./Network_Provider/${provider.logo}`}
                                 alt={provider.name}
-                                className="w-full h-auto max-w-[180px] rounded-lg object-contain"
+                                className="h-auto w-full max-w-[140px] rounded-lg object-contain sm:max-w-[180px]"
                             />
                         </div>
                     </Link>
@@ -74,15 +74,15 @@ function NetworkProvider() {
             </div>
 
             {/* Feedback Carousel */}
-            <div className="py-12 bg-[#111827]">
-                <h3 className="text-center text-3xl font-bold text-[#50c878] mb-8">
+            <div className="rounded-xl bg-[#111827] py-8 sm:py-12">
+                <h3 className="mb-6 text-center text-2xl font-bold text-[#50c878] sm:mb-8 sm:text-3xl">
                     Top Feedback
                 </h3>
                 {topFeedback.length > 0 ? (
                     <Slider {...sliderSettings}>
                         {topFeedback.map((feedback, idx) => (
                             <div key={idx} className="px-4">
-                                <div className="bg-[#1f2937] rounded-lg p-6 shadow-lg text-white min-h-[220px] max-h-[260px] flex flex-col justify-between transition-transform hover:scale-105 duration-300 ease-in-out">
+                                <div className="flex min-h-[200px] max-h-[260px] flex-col justify-between rounded-lg bg-[#1f2937] p-4 text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 sm:min-h-[220px] sm:p-6">
                                     
                                     {/* Rating */}
                                     <div className="flex justify-center mb-2">

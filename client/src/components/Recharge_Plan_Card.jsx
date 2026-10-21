@@ -138,7 +138,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
         <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            className="group relative flex h-full flex-col rounded-2xl border border-[#333333] bg-[#1e1e1e] p-5 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl"
+            className="group relative flex h-full flex-col rounded-2xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl sm:p-5"
         >
             {badge && (
                 <span className={`absolute right-4 top-0 z-10 -translate-y-1/2 whitespace-nowrap ${badge.color} flex items-center rounded-full px-3 py-1 text-xs font-medium text-white shadow-md`}>
@@ -151,7 +151,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
             <div className="flex items-start justify-between gap-3 pr-16">
                 <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-wider text-[#50c878]">{plan.platform}</p>
-                    <h3 className="truncate text-lg font-semibold text-white" title={plan.category}>
+                    <h3 className="truncate text-base font-semibold text-white sm:text-lg" title={plan.category}>
                         {plan.category}
                     </h3>
                 </div>
@@ -178,30 +178,12 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
                             <FaBalanceScale />
                         </button>
                     )}
-                    {isAdmin && (
-                        <>
-                            <button
-                                aria-label="Edit plan"
-                                className="rounded-md p-2 text-gray-300 transition hover:bg-white/10 hover:text-[#50c878]"
-                                onClick={() => navigate(`/NetworkProvider/${plan.platform}/edit_plan/${plan._id}`)}
-                            >
-                                <FaEdit />
-                            </button>
-                            <button
-                                aria-label="Delete plan"
-                                className="rounded-md p-2 text-gray-300 transition hover:bg-red-500/20 hover:text-red-400"
-                                onClick={() => deleteRechargePlan(plan._id)}
-                            >
-                                <FaTrashAlt />
-                            </button>
-                        </>
-                    )}
                 </div>
             </div>
 
             {/* Price + validity */}
             <div className="mt-4 flex items-end justify-between">
-                <p className="text-3xl font-bold leading-none text-white">₹{plan.price}</p>
+                <p className="text-2xl font-bold leading-none text-white sm:text-3xl">₹{plan.price}</p>
                 <div className="text-right">
                     <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
                         {plan.validity} days
@@ -281,6 +263,23 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
                     >
                         Login to recharge
                     </Link>
+                )}
+
+                {isAdmin && (
+                    <div className="mt-3 grid grid-cols-2 gap-2">
+                        <button
+                            onClick={() => navigate(`/NetworkProvider/${plan.platform}/edit_plan/${plan._id}`)}
+                            className="flex items-center justify-center gap-2 rounded-lg border border-[#333333] bg-[#262626] py-2 text-sm font-medium text-[#cfcfcf] transition hover:border-[#50c878] hover:text-[#50c878]"
+                        >
+                            <FaEdit size={14} /> Edit
+                        </button>
+                        <button
+                            onClick={() => deleteRechargePlan(plan._id)}
+                            className="flex items-center justify-center gap-2 rounded-lg border border-[#333333] bg-[#262626] py-2 text-sm font-medium text-[#cfcfcf] transition hover:border-red-400 hover:text-red-400"
+                        >
+                            <FaTrashAlt size={14} /> Delete
+                        </button>
+                    </div>
                 )}
             </div>
         </motion.div>
