@@ -8,6 +8,7 @@ import {
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
 import API from '../Utils/api';
+import ThemeToggle from './ThemeToggle';
 
 function Navbar() {
     const navigate = useNavigate();
@@ -126,7 +127,8 @@ function Navbar() {
                     </div>
 
                     {/* Profile/Login - Right Side */}
-                    <div className="flex-shrink-0 relative" ref={dropdownRef}>
+                    <div className="flex-shrink-0 relative flex items-center gap-2" ref={dropdownRef}>
+                        <ThemeToggle />
                         {accessToken ? (
                             <>
                                 <button 
@@ -186,13 +188,17 @@ function Navbar() {
                         <span className="ml-2 text-[#50c878] font-bold text-lg">RechargeHub</span>
                     </Link>
 
-                    {/* Mobile Menu Button */}
-                    <button 
-                        className="text-white p-2"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    >
-                        {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-                    </button>
+                    {/* Mobile Actions */}
+                    <div className="flex items-center gap-1">
+                        <ThemeToggle />
+                        <button
+                            className="text-white p-2"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            aria-label="Toggle menu"
+                        >
+                            {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+                        </button>
+                    </div>
                 </div>
 
                 {/* Mobile Menu */}

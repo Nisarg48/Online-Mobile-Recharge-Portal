@@ -7,11 +7,44 @@ body,
   min-height: 100%;
 }
 
+:root {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --surface-2: #2a2a2a;
+  --surface-3: #333333;
+  --border: #333333;
+  --border-strong: #444444;
+  --text: #f5f5f5;
+  --text-strong: #ffffff;
+  --text-muted: #cfcfcf;
+  --text-dim: #8a8a8a;
+  --brand: #50c878;
+  --brand-hover: #3da861;
+  --brand-2: #6a11cb;
+}
+
+html[data-theme="light"] {
+  --bg: #f3f5f9;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --surface-3: #e2e6ee;
+  --border: #d8dde6;
+  --border-strong: #c2c9d6;
+  --text: #1f2937;
+  --text-strong: #0f172a;
+  --text-muted: #374151;
+  --text-dim: #6b7280;
+  --brand: #0f9d58;
+  --brand-hover: #0c8248;
+  --brand-2: #6a11cb;
+}
+
 body {
   margin: 0;
-  background-color: #121212;
-  color: #f5f5f5;
+  background-color: var(--bg);
+  color: var(--text);
   overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 html {
@@ -52,6 +85,74 @@ input::-webkit-search-cancel-button {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #6a11cb;
+}
+
+/* ---------------------------------------------------------------------------
+   Light theme
+   The app uses hardcoded hex utility classes (bg-[#1e1e1e], text-[#cfcfcf], …).
+   Rather than rewrite every component, remap those tokens for light mode with
+   attribute selectors on the class list. `class~=` matches the exact utility
+   token (e.g. "bg-[#1e1e1e]") inside the class attribute.
+--------------------------------------------------------------------------- */
+html[data-theme="light"] [class~="bg-[#121212]"] {
+  background-color: var(--bg) !important;
+}
+html[data-theme="light"] [class~="bg-[#1e1e1e]"] {
+  background-color: var(--surface) !important;
+}
+html[data-theme="light"] [class~="bg-[#2a2a2a]"],
+html[data-theme="light"] [class~="bg-[#252525]"],
+html[data-theme="light"] [class~="bg-[#262626]"] {
+  background-color: var(--surface-2) !important;
+}
+html[data-theme="light"] [class~="bg-[#333333]"],
+html[data-theme="light"] [class~="bg-[#333]"] {
+  background-color: var(--surface-3) !important;
+}
+html[data-theme="light"] [class~="bg-[#444444]"] {
+  background-color: var(--border-strong) !important;
+}
+html[data-theme="light"] [class~="bg-black"],
+html[data-theme="light"] [class~="bg-[#000]"] {
+  background-color: var(--surface) !important;
+}
+html[data-theme="light"] [class~="text-white"] {
+  color: var(--text-strong) !important;
+}
+html[data-theme="light"] [class~="hover:bg-[#333333]"]:hover {
+  background-color: var(--surface-3) !important;
+}
+html[data-theme="light"] [class~="hover:bg-[#444444]"]:hover {
+  background-color: var(--border-strong) !important;
+}
+
+html[data-theme="light"] [class~="text-[#ffffff]"] {
+  color: var(--text-strong) !important;
+}
+html[data-theme="light"] [class~="text-[#cfcfcf]"],
+html[data-theme="light"] [class~="text-[#e0e0e0]"] {
+  color: var(--text-muted) !important;
+}
+html[data-theme="light"] [class~="text-[#888888]"],
+html[data-theme="light"] [class~="text-[#aaaaaa]"] {
+  color: var(--text-dim) !important;
+}
+
+html[data-theme="light"] [class~="border-[#333333]"] {
+  border-color: var(--border) !important;
+}
+html[data-theme="light"] [class~="border-[#444444]"] {
+  border-color: var(--border-strong) !important;
+}
+
+html[data-theme="light"] [class~="bg-[#50c878]"] {
+  background-color: var(--brand) !important;
+}
+html[data-theme="light"] [class~="text-[#50c878]"] {
+  color: var(--brand) !important;
+}
+html[data-theme="light"] [class~="border-[#50c878]"] {
+  border-color: var(--brand) !important;
 }
 
 /* :root {
