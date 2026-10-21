@@ -5,6 +5,7 @@ import API from "../Utils/api";
 import { logout } from "../Utils/auth";
 import { formatDate } from "../Utils/format";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "../Utils/toast";
 
 function Profile() {
     const navigate = useNavigate();
@@ -93,13 +94,14 @@ function Profile() {
             setUser(data);
             setIsEditing(false);
             setUpdateSuccess(true);
+            toast.success("Profile updated");
 
             setTimeout(() => {
                 setUpdateSuccess(false);
             }, 3000);
         } catch (error) {
             console.error("Error updating profile:", error.response?.data || error.message);
-            alert("Failed to update profile");
+            toast.error("Failed to update profile");
         }
     };
 
@@ -114,10 +116,10 @@ function Profile() {
             setFormData((prev) => ({ ...prev, autoRechargeEnabled: newAutoRechargeEnabled }));
 
             // Show success message
-            alert(`Auto recharge ${newAutoRechargeEnabled ? "enabled" : "disabled"}`);
+            toast.success(`Auto recharge ${newAutoRechargeEnabled ? "enabled" : "disabled"}`);
         } catch (error) {
             console.error("Error toggling auto recharge:", error.response?.data || error.message);
-            alert("Failed to toggle auto recharge");
+            toast.error("Failed to toggle auto recharge");
         }
     };
 
@@ -201,8 +203,23 @@ function Profile() {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center min-h-screen bg-[#1e1e1e]">
-                <div className="text-[#cfcfcf] text-lg">Loading...</div>
+            <div className="flex min-h-screen items-center justify-center bg-[#1e1e1e] p-6">
+                <div className="w-full max-w-4xl">
+                    <div className="animate-pulse rounded-3xl border border-[#444444] bg-[#2a2a2a] p-8">
+                        <div className="flex items-center gap-6">
+                            <div className="h-28 w-28 rounded-full bg-[#333333]" />
+                            <div className="space-y-3">
+                                <div className="h-8 w-48 rounded bg-[#333333]" />
+                                <div className="h-4 w-32 rounded bg-[#333333]" />
+                            </div>
+                        </div>
+                        <div className="mt-8 space-y-4">
+                            <div className="h-12 w-full rounded-lg bg-[#333333]" />
+                            <div className="h-12 w-full rounded-lg bg-[#333333]" />
+                            <div className="h-12 w-2/3 rounded-lg bg-[#333333]" />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }

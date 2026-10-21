@@ -1,9 +1,13 @@
 /* eslint-disable react/prop-types */
 import PageLayout from "./PageLayout";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FaReceipt } from "react-icons/fa";
 import API from "../Utils/api";
 import { formatDateTime, benefitLabel } from "../Utils/format";
+import { TableSkeleton } from "../components/Skeleton";
+import { toast } from "../Utils/toast";
 
 function Transaction() {
     const [transactionsList, setTransactionsList] = useState([]);
@@ -19,6 +23,7 @@ function Transaction() {
             } catch (error) {
                 setError(error.message);
                 setIsLoading(false);
+                toast.error("Could not load transactions. Please try again.");
             }
         };
 
@@ -32,9 +37,7 @@ function Transaction() {
             </p>
             {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
             {isLoading ? (
-                <div className="flex justify-center items-center py-10">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[#50c878]"></div>
-                </div>
+                <TableSkeleton rows={5} cols={5} />
             ) : transactionsList.length > 0 ? (
                 <motion.div
                     className="overflow-x-auto bg-[#1e1e1e] rounded-lg shadow-lg p-6"
@@ -64,7 +67,19 @@ function Transaction() {
                     </table>
                 </motion.div>
             ) : (
-                <p className="text-[#ffffff] text-center">No transactions found.</p>
+                <div className="flex flex-col items-center gap-3 py-16 text-center">
+                    <FaReceipt className="text-4xl text-gray-600" />
+                    <p className="text-lg font-medium text-gray-200">No transactions yet</p>
+                    <p className="text-sm text-gray-400">
+                        Your recharges and wallet activity will appear here.
+                    </p>
+                    <Link
+                        to="/NetworkProvider"
+                        className="mt-2 rounded-lg bg-[#50c878] px-5 py-2 font-semibold text-black transition hover:bg-[#3da861]"
+                    >
+                        Browse plans
+                    </Link>
+                </div>
             )}
         </PageLayout>
     );
