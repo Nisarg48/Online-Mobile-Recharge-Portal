@@ -6,8 +6,8 @@ const Layout = () => {
     return (
         <>
             <Navbar />
-            {/* Extra bottom padding on mobile so the fixed bottom nav doesn't cover content */}
-            <div className="pb-24 md:pb-0">
+            {/* pt clears the fixed top navbar; pb clears the mobile bottom nav */}
+            <div className="pt-20 pb-24 md:pb-0">
                 <Outlet />
             </div>
             <MobileNav />
