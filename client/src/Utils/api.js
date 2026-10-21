@@ -1,7 +1,14 @@
 import axios from "axios";
 
+// Resolve the API base URL. VITE_API_URL wins when set; otherwise point at the
+// same host the page was served from (so `vite --host` works when opened on a
+// phone via the machine's LAN IP). Falls back to localhost for SSR/tests.
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL ||
+    `http://${window.location.hostname || "localhost"}:4848/Mobile-Recharge-Portal`;
+
 const API = axios.create({
-    baseURL: "http://localhost:4848/Mobile-Recharge-Portal",
+    baseURL: API_BASE_URL,
 });
 
 // Request interceptor to add the access token
@@ -24,7 +31,7 @@ API.interceptors.response.use(
                 try {
                     // Call your refresh token endpoint
                     const { data } = await axios.post(
-                        "http://localhost:4848/Mobile-Recharge-Portal/auth/refresh-token",
+                        `${API_BASE_URL}/auth/refresh-token`,
                         { refreshToken }
                     );
                     // Update tokens in local storage (refresh token is rotated by the server)
