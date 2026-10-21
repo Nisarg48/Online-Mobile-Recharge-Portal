@@ -119,6 +119,34 @@ html[data-theme="light"] [class~="bg-[#000]"] {
 html[data-theme="light"] [class~="text-white"] {
   color: var(--text-strong) !important;
 }
+html[data-theme="light"] [class~="bg-[#111]"],
+html[data-theme="light"] [class~="bg-[#222]"],
+html[data-theme="light"] [class~="bg-[#111827]"],
+html[data-theme="light"] [class~="bg-[#1f2937]"] {
+  background-color: var(--surface) !important;
+}
+html[data-theme="light"] [class~="bg-gray-900"],
+html[data-theme="light"] [class~="bg-gray-800"] {
+  background-color: var(--surface) !important;
+}
+html[data-theme="light"] [class~="bg-gray-700"],
+html[data-theme="light"] [class~="bg-gray-600"],
+html[data-theme="light"] [class~="bg-gray-500"] {
+  background-color: var(--surface-2) !important;
+}
+html[data-theme="light"] [class~="border-gray-800"],
+html[data-theme="light"] [class~="border-gray-700"],
+html[data-theme="light"] [class~="border-gray-600"] {
+  border-color: var(--border-strong) !important;
+}
+html[data-theme="light"] [class~="text-gray-200"],
+html[data-theme="light"] [class~="text-gray-300"] {
+  color: var(--text-muted) !important;
+}
+html[data-theme="light"] [class~="text-gray-400"],
+html[data-theme="light"] [class~="text-gray-500"] {
+  color: var(--text-dim) !important;
+}
 html[data-theme="light"] [class~="hover:bg-[#333333]"]:hover {
   background-color: var(--surface-3) !important;
 }

@@ -128,7 +128,6 @@ function Navbar() {
 
                     {/* Profile/Login - Right Side */}
                     <div className="flex-shrink-0 relative flex items-center gap-2" ref={dropdownRef}>
-                        <ThemeToggle />
                         {accessToken ? (
                             <>
                                 <button 
@@ -173,10 +172,11 @@ function Navbar() {
                                 to='/login' 
                                 className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center text-sm lg:text-base"
                             >
-                                <FaSignInAlt size={20} /> 
+                                <FaSignInAlt size={20} />
                                 <span className="ml-2">Login</span>
                             </Link>
                         )}
+                        <ThemeToggle />
                     </div>
                 </div>
 
