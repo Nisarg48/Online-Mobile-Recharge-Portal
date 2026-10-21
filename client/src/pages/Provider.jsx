@@ -6,7 +6,17 @@ import PageLayout from "./PageLayout";
 import Recharge_Plan_Card from "../components/Recharge_Plan_Card";
 import API from "../Utils/api";
 import Swal from "sweetalert2";
-import { FaMobileAlt, FaSearchDollar, FaTimes } from "react-icons/fa";
+import { toast } from "../Utils/toast";
+import { FaMobileAlt, FaSearchDollar, FaTimes, FaBalanceScale } from "react-icons/fa";
+import { PROVIDERS } from "../Utils/providers";
+
+const QUICK_FILTERS = [
+    { id: "all", label: "All" },
+    { id: "under300", label: "Under ₹300" },
+    { id: "under500", label: "Under ₹500" },
+    { id: "ott", label: "With benefits" },
+    { id: "longterm", label: "84+ days" },
+];
 
 function Provider() {
     const navigate = useNavigate();
@@ -26,7 +36,13 @@ function Provider() {
     });
 
     const [role, setRole] = useState(null);
+    const [quickFilter, setQuickFilter] = useState("all");
+    const [compareList, setCompareList] = useState([]);
+    const [showCompare, setShowCompare] = useState(false);
     const accessToken = localStorage.getItem("accessToken");
+    const providerLogo = PROVIDERS.find(
+        (p) => p.name.toLowerCase() === provider.toLowerCase()
+    )?.logo;
 
     useEffect(() => {
         if (accessToken) {
@@ -94,6 +110,21 @@ function Provider() {
     const matchesAmount = (plan) =>
         !amountQuery || String(plan.price).startsWith(amountQuery);
 
+    const matchesQuickFilter = (plan) => {
+        switch (quickFilter) {
+            case "under300":
+                return plan.price < 300;
+            case "under500":
+                return plan.price < 500;
+            case "ott":
+                return Array.isArray(plan.extraBenefits) && plan.extraBenefits.length > 0;
+            case "longterm":
+                return plan.validity >= 84;
+            default:
+                return true;
+        }
+    };
+
     const getFilteredPlans = () => {
         if (selectedCategory === "Suggested") {
             // For the "Suggested" category, return both types of plans separately
@@ -106,7 +137,7 @@ function Provider() {
             return rechargePlan.filter((plan) => {
                 const isCategoryMatch =
                     selectedCategory === "All" || plan.category === selectedCategory;
-                return isCategoryMatch && matchesAmount(plan);
+                return isCategoryMatch && matchesAmount(plan) && matchesQuickFilter(plan);
             });
         }
     };
@@ -117,8 +148,37 @@ function Provider() {
             ? filteredPlans.suggestedFromHistory.length + filteredPlans.popularPlans.length
             : filteredPlans.length;
 
+    const toggleCompare = (plan) => {
+        setCompareList((prev) => {
+            if (prev.some((p) => p._id === plan._id)) {
+                return prev.filter((p) => p._id !== plan._id);
+            }
+            if (prev.length >= 3) {
+                toast.info("You can compare up to 3 plans");
+                return prev;
+            }
+            return [...prev, plan];
+        });
+    };
+
     return (
-        <PageLayout title={`Recharge for ${provider}`} isModalOpen={isModalOpen}>
+        <PageLayout
+            isModalOpen={isModalOpen}
+            title={
+                <span className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                    {providerLogo && (
+                        <img
+                            src={`./Network_Provider/${providerLogo}`}
+                            alt={provider}
+                            className="h-12 w-12 rounded-xl border border-[#333333] bg-white p-1.5 object-contain shadow"
+                        />
+                    )}
+                    <span className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] bg-clip-text text-transparent">
+                        Recharge for {provider}
+                    </span>
+                </span>
+            }
+        >
             <div className="relative z-10 flex flex-col items-center justify-center space-y-4 rounded-xl bg-[#121212] py-2 px-2 shadow-lg md:px-6">
                 {/* Input Fields */}
                 <div className="m-2 w-full max-w-2xl rounded-xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-md">
@@ -296,6 +356,8 @@ function Provider() {
                                                         mobileNumber.length === 10 ? mobileNumber : ""
                                                     }
                                                     role={role}
+                                                    onCompareToggle={toggleCompare}
+                                                    isComparing={compareList.some((p) => p._id === plan._id)}
                                                     suggestionType="Based on Your History"
                                                 />
                                             ))}
@@ -321,6 +383,8 @@ function Provider() {
                                                         mobileNumber.length === 10 ? mobileNumber : ""
                                                     }
                                                     role={role}
+                                                    onCompareToggle={toggleCompare}
+                                                    isComparing={compareList.some((p) => p._id === plan._id)}
                                                     suggestionType="Most Popular"
                                                 />
                                             ))}
@@ -357,6 +421,8 @@ function Provider() {
                                             mobileNumber.length === 10 ? mobileNumber : ""
                                         }
                                         role={role}
+                                        onCompareToggle={toggleCompare}
+                                        isComparing={compareList.some((p) => p._id === plan._id)}
                                         suggestionType={plan.suggestionType}
                                     />
                                 ))}
@@ -387,6 +453,135 @@ function Provider() {
                     </div>
                 </div>
             </div>
+
+            {/* Compare bar */}
+            {compareList.length > 0 && (
+                <div className="fixed bottom-16 left-1/2 z-40 flex w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 items-center justify-between gap-3 rounded-xl border border-[#333333] bg-[#1e1e1e] px-4 py-3 shadow-2xl md:bottom-4">
+                    <div className="flex items-center gap-2 overflow-x-auto">
+                        <span className="whitespace-nowrap text-sm text-gray-300">
+                            Compare ({compareList.length}/3):
+                        </span>
+                        {compareList.map((p) => (
+                            <span
+                                key={p._id}
+                                className="flex items-center gap-1 whitespace-nowrap rounded-full bg-[#2a2a2a] px-2 py-1 text-xs text-white"
+                            >
+                                {p.platform} ₹{p.price}
+                                <button
+                                    onClick={() => toggleCompare(p)}
+                                    aria-label="Remove from comparison"
+                                    className="text-gray-400 transition hover:text-red-400"
+                                >
+                                    <FaTimes size={10} />
+                                </button>
+                            </span>
+                        ))}
+                    </div>
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                        <button
+                            onClick={() => setCompareList([])}
+                            className="text-xs text-gray-400 transition hover:text-white"
+                        >
+                            Clear
+                        </button>
+                        <button
+                            disabled={compareList.length < 2}
+                            onClick={() => setShowCompare(true)}
+                            className="flex items-center gap-1 rounded-lg bg-[#50c878] px-3 py-1.5 text-sm font-semibold text-black transition hover:bg-[#3da861] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            <FaBalanceScale size={12} /> Compare
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Compare modal */}
+            {showCompare && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+                    onClick={() => setShowCompare(false)}
+                >
+                    <div
+                        className="max-h-[85vh] w-full max-w-3xl overflow-auto rounded-2xl border border-[#333333] bg-[#1e1e1e] p-6"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="mb-4 flex items-center justify-between">
+                            <h3 className="text-xl font-bold text-white">Plan comparison</h3>
+                            <button
+                                onClick={() => setShowCompare(false)}
+                                aria-label="Close"
+                                className="text-gray-400 transition hover:text-white"
+                            >
+                                <FaTimes />
+                            </button>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[480px] text-left text-sm text-gray-200">
+                                <thead>
+                                    <tr className="text-[#50c878]">
+                                        <th className="py-2 pr-4">Feature</th>
+                                        {compareList.map((p) => (
+                                            <th key={p._id} className="py-2 pr-4">
+                                                {p.platform} ₹{p.price}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-[#333333]">
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">Category</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">{p.category}</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">Price</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">₹{p.price}</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">Validity</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">{p.validity} days</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">Data</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">
+                                                {p.data?.dailyLimit
+                                                    ? `${p.data.dailyLimit} GB/day`
+                                                    : `${p.data?.totalData || 0} GB`}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">Calls</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">{p.calls}</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">SMS</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">{p.sms}</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="py-2 pr-4 text-gray-400">≈ per day</td>
+                                        {compareList.map((p) => (
+                                            <td key={p._id} className="py-2 pr-4">
+                                                ₹{(p.price / p.validity).toFixed(1)}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            )}
         </PageLayout>
     );
 }

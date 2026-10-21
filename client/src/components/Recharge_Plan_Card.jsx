@@ -3,20 +3,44 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     FaDatabase, FaPhoneAlt, FaSms, FaThumbsUp, FaStar, FaFire,
-    FaGem, FaAward, FaHeart, FaEdit, FaTrashAlt, FaChevronDown,
+    FaGem, FaAward, FaHeart, FaRegHeart, FaBalanceScale, FaEdit, FaTrashAlt, FaChevronDown,
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import API from '../Utils/api';
 import { benefitLabel } from '../Utils/format';
 import Swal from "sweetalert2";
 
-function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
+function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompareToggle, isComparing }) {
     const [showMore, setShowMore] = useState(false);
+    const [isFavourite, setIsFavourite] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('favouritePlans') || '[]').includes(plan._id);
+        } catch {
+            return false;
+        }
+    });
     const navigate = useNavigate();
     const accessToken = localStorage.getItem('accessToken');
     const isAdmin = accessToken && role === 'admin';
 
     const toggleMore = () => setShowMore(!showMore);
+
+    const toggleFavourite = () => {
+        try {
+            const favs = new Set(JSON.parse(localStorage.getItem('favouritePlans') || '[]'));
+            if (favs.has(plan._id)) {
+                favs.delete(plan._id);
+            } else {
+                favs.add(plan._id);
+            }
+            localStorage.setItem('favouritePlans', JSON.stringify([...favs]));
+            setIsFavourite(favs.has(plan._id));
+        } catch {
+            // Ignore storage failures (private mode etc.)
+        }
+    };
+
+    const perDay = plan.validity ? (plan.price / plan.validity).toFixed(1) : null;
 
     const handleBuyClick = () => {
         navigate(`/NetworkProvider/${plan.platform}/buy`, {
@@ -131,32 +155,61 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType }) {
                         {plan.category}
                     </h3>
                 </div>
-                {isAdmin && (
-                    <div className="flex flex-shrink-0 items-center gap-1">
+                <div className="flex flex-shrink-0 items-center gap-1">
+                    <button
+                        aria-label={isFavourite ? "Remove from favourites" : "Add to favourites"}
+                        title={isFavourite ? "Remove from favourites" : "Add to favourites"}
+                        className={`rounded-md p-2 transition hover:bg-white/10 ${
+                            isFavourite ? "text-red-400" : "text-gray-300 hover:text-red-400"
+                        }`}
+                        onClick={toggleFavourite}
+                    >
+                        {isFavourite ? <FaHeart /> : <FaRegHeart />}
+                    </button>
+                    {onCompareToggle && (
                         <button
-                            aria-label="Edit plan"
-                            className="rounded-md p-2 text-gray-300 transition hover:bg-white/10 hover:text-[#50c878]"
-                            onClick={() => navigate(`/NetworkProvider/${plan.platform}/edit_plan/${plan._id}`)}
+                            aria-label={isComparing ? "Remove from comparison" : "Add to comparison"}
+                            title={isComparing ? "Remove from comparison" : "Add to comparison"}
+                            className={`rounded-md p-2 transition hover:bg-white/10 ${
+                                isComparing ? "text-[#50c878]" : "text-gray-300 hover:text-[#50c878]"
+                            }`}
+                            onClick={() => onCompareToggle(plan)}
                         >
-                            <FaEdit />
+                            <FaBalanceScale />
                         </button>
-                        <button
-                            aria-label="Delete plan"
-                            className="rounded-md p-2 text-gray-300 transition hover:bg-red-500/20 hover:text-red-400"
-                            onClick={() => deleteRechargePlan(plan._id)}
-                        >
-                            <FaTrashAlt />
-                        </button>
-                    </div>
-                )}
+                    )}
+                    {isAdmin && (
+                        <>
+                            <button
+                                aria-label="Edit plan"
+                                className="rounded-md p-2 text-gray-300 transition hover:bg-white/10 hover:text-[#50c878]"
+                                onClick={() => navigate(`/NetworkProvider/${plan.platform}/edit_plan/${plan._id}`)}
+                            >
+                                <FaEdit />
+                            </button>
+                            <button
+                                aria-label="Delete plan"
+                                className="rounded-md p-2 text-gray-300 transition hover:bg-red-500/20 hover:text-red-400"
+                                onClick={() => deleteRechargePlan(plan._id)}
+                            >
+                                <FaTrashAlt />
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
 
             {/* Price + validity */}
             <div className="mt-4 flex items-end justify-between">
                 <p className="text-3xl font-bold leading-none text-white">₹{plan.price}</p>
-                <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
-                    {plan.validity} days
-                </span>
+                <div className="text-right">
+                    <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
+                        {plan.validity} days
+                    </span>
+                    {perDay && (
+                        <p className="mt-1 text-xs text-gray-400">≈ ₹{perDay}/day</p>
+                    )}
+                </div>
             </div>
 
             {/* Key specs */}
