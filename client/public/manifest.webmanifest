@@ -1,0 +1,25 @@
+{
+  "name": "RechargeHub - Online Mobile Recharge",
+  "short_name": "RechargeHub",
+  "description": "Recharge mobile prepaid plans, manage your wallet, and track transactions.",
+  "start_url": "/NetworkProvider",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121212",
+  "theme_color": "#50c878",
+  "icons": [
+    {
+      "src": "/Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Logo.png",
+      "sizes": "441x441",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
