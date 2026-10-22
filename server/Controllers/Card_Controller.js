@@ -114,30 +114,20 @@ const verify_card_details = async (req, res) => {
         }
 
         // Deliver the OTP over the best available channel (SMS -> email -> log).
-        const channel = await sendOtp({
+        await sendOtp({
             mobile_no: mobile_number_to_use,
             email: user.email,
             otp: otpCode,
             message: messageBody,
         });
 
-        const payload = {
+        // The OTP is never returned to the browser. It is delivered out-of-band
+        // (SMS/email) or, when no channel is configured, written to the server log.
+        return res.status(200).json({
             success: true,
-            message:
-                channel === "log"
-                    ? "OTP generated. Check the server console to read it."
-                    : `OTP sent via ${channel}.`,
-            channel,
+            message: "OTP sent successfully!",
             transaction_id: newTransaction._id,
-        };
-
-        // Outside production, echo the OTP so the flow is completable without a
-        // real SMS/email provider. Never exposed in production.
-        if (process.env.NODE_ENV !== "production") {
-            payload.devOtp = String(otpCode);
-        }
-
-        return res.status(200).json(payload);
+        });
     } catch (error) {
         console.error("Payment Error:", error);
         return res.status(500).json({ message: "Server error, please try again." });

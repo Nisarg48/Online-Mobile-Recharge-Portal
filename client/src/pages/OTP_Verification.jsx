@@ -5,8 +5,7 @@ import API from "../Utils/api";
 function OTP_Verification() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { transaction_id, card_details, transactionType, devOtp, channel } =
-        location.state || {};
+    const { transaction_id, card_details, transactionType } = location.state || {};
 
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [timer, setTimer] = useState(300);
@@ -95,22 +94,6 @@ function OTP_Verification() {
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md border border-gray-700 text-center">
                 <h2 className="text-2xl mb-4 text-green-400 font-bold">OTP Verification</h2>
                 <p className="text-gray-300 mb-2">OTP Sent To The Mobile Number Linked With Card Details</p>
-
-                {devOtp && (
-                    <div className="mb-3 rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-300">
-                        <p className="font-semibold">Development mode</p>
-                        <p>
-                            No SMS/email provider is configured, so use this code:{" "}
-                            <span className="font-mono text-lg font-bold tracking-widest text-amber-200">
-                                {devOtp}
-                            </span>
-                        </p>
-                        {channel === "log" && (
-                            <p className="text-xs text-amber-400/80">It is also printed in the server console.</p>
-                        )}
-                    </div>
-                )}
-
                 <p className="text-red-500 text-sm mb-2">⚠ Do not refresh this page!</p>
                 <div className="flex justify-center space-x-2 mt-4">
                     {otp.map((digit, index) => (
