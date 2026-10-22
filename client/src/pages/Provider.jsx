@@ -212,8 +212,8 @@ function Provider() {
                 </div>
 
                 {/* Category Selection & Available Plans */}
-                <div className="w-full flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0 md:space-x-4">
-                    <div className="w-full md:sticky md:top-24 md:w-1/4 md:self-start">
+                <div className="flex w-full min-w-0 flex-col items-start justify-between space-y-4 md:flex-row md:space-y-0 md:space-x-4">
+                    <div className="w-full min-w-0 md:sticky md:top-24 md:w-1/4 md:self-start">
                         {/* Category Selection */}
                         <div className="rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4">
                             <h3 className="text-base font-semibold mb-3 text-[#ffffff] sm:text-lg sm:mb-4">
@@ -272,7 +272,7 @@ function Provider() {
                     </div>
 
                     {/* Available Plans */}
-                    <div className="w-full rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4 md:max-h-[70vh] md:w-3/4 md:overflow-y-auto">
+                    <div className="w-full min-w-0 rounded-xl border border-[#333333] bg-[#1e1e1e] p-3 shadow-lg sm:p-4 md:max-h-[70vh] md:w-3/4 md:overflow-y-auto">
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-[#333333] pb-3">
                             <h3 className="text-base font-semibold text-white sm:text-lg">
                                 {selectedCategory === "Suggested"

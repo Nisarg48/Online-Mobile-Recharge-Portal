@@ -138,17 +138,18 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
         <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            className="group relative flex h-full flex-col rounded-2xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl sm:p-5"
+            className="group relative flex h-full min-w-0 max-w-full flex-col rounded-2xl border border-[#333333] bg-[#1e1e1e] p-4 shadow-lg transition-shadow duration-300 hover:border-[#50c878] hover:shadow-2xl sm:p-5"
         >
+            {/* Badge sits inside the card so it never pokes past the panel border */}
             {badge && (
-                <span className={`absolute right-4 top-0 z-10 -translate-y-1/2 whitespace-nowrap ${badge.color} flex items-center rounded-full px-3 py-1 text-xs font-medium text-white shadow-md`}>
+                <span className={`mb-3 inline-flex w-fit items-center gap-1 rounded-full ${badge.color} px-3 py-1 text-xs font-medium text-white shadow-md`}>
                     {badge.icon}
                     {badge.text}
                 </span>
             )}
 
             {/* Header: platform + category, admin controls */}
-            <div className="flex items-start justify-between gap-3 pr-16">
+            <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                     <p className="text-xs font-semibold uppercase tracking-wider text-[#50c878]">{plan.platform}</p>
                     <h3 className="truncate text-base font-semibold text-white sm:text-lg" title={plan.category}>
@@ -198,7 +199,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
             <ul className="mt-4 space-y-2 text-sm text-gray-200">
                 <li className="flex items-center">
                     <FaDatabase className="mr-2 flex-shrink-0 text-[#50c878]" />
-                    <span>
+                    <span className="min-w-0 break-words">
                         {plan.data?.dailyLimit
                             ? `${plan.data.dailyLimit} GB/day`
                             : `${plan.data?.totalData || 0} GB total`}
@@ -206,17 +207,17 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
                 </li>
                 <li className="flex items-center">
                     <FaPhoneAlt className="mr-2 flex-shrink-0 text-[#50c878]" />
-                    <span>Calls: <span className="font-medium">{plan.calls}</span></span>
+                    <span className="min-w-0 break-words">Calls: <span className="font-medium">{plan.calls}</span></span>
                 </li>
                 <li className="flex items-center">
                     <FaSms className="mr-2 flex-shrink-0 text-[#50c878]" />
-                    <span>SMS: <span className="font-medium">{plan.sms}</span></span>
+                    <span className="min-w-0 break-words">SMS: <span className="font-medium">{plan.sms}</span></span>
                 </li>
             </ul>
 
             {/* Suggestion reason */}
             {suggestionType && (
-                <p className="mt-3 text-sm italic text-gray-400">
+                <p className="mt-3 break-words text-sm italic text-gray-400">
                     {suggestionType.includes("Similar")
                         ? "Similar to what you've used before"
                         : suggestionType.includes("Recommended")
@@ -240,7 +241,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
                     {showMore && (
                         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-300">
                             {plan.extraBenefits.map((benefit, index) => (
-                                <li key={index}>{benefitLabel(benefit)}</li>
+                                <li key={index} className="break-words">{benefitLabel(benefit)}</li>
                             ))}
                         </ul>
                     )}

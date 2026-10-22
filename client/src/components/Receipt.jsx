@@ -274,7 +274,7 @@ function Receipt() {
                 </div>
 
                 {/* Right Side - Feedback Box */}
-                <div className="w-full lg:w-1/3 bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-lg shadow-2xl border border-gray-700">
+                <div className="w-full rounded-lg border border-[#444444] bg-[#2a2a2a] p-6 shadow-2xl lg:w-1/3">
                     <h2 className="text-2xl font-bold mb-6 text-center">
                         🌟 Share Your Feedback
                     </h2>
@@ -294,7 +294,7 @@ function Receipt() {
                     </div>
 
                     <textarea
-                        className="w-full bg-gray-700 p-3 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-green-500 mb-6"
+                        className="w-full resize-none rounded-md border border-[#444444] bg-[#1e1e1e] p-3 focus:outline-none focus:ring-2 focus:ring-green-500 mb-6"
                         placeholder="Tell us about your experience..."
                         value={feedbackMessage}
                         onChange={(e) => setFeedbackMessage(e.target.value)}
