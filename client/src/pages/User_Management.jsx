@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageLayout from "./PageLayout";
 import { FaSearch, FaEye, FaTimes, FaTrash, FaUserEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";
@@ -12,6 +13,8 @@ function User_Management() {
     const [selectedUser, setSelectedUser] = useState(null);
     const [transactions, setTransactions] = useState([]);
     const [loadingTransactions, setLoadingTransactions] = useState(false);
+    const [searchParams] = useSearchParams();
+    const didAutoOpen = useRef(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -25,6 +28,19 @@ function User_Management() {
 
         fetchUsers();
     }, []);
+
+    // Support deep links like /User_Management?userId=... that open a user's details.
+    useEffect(() => {
+        const userId = searchParams.get("userId");
+        if (!userId || didAutoOpen.current || users.length === 0) return;
+
+        const target = users.find((user) => user._id === userId);
+        if (target) {
+            didAutoOpen.current = true;
+            setSelectedUser(target);
+            fetchTransactions(target._id);
+        }
+    }, [searchParams, users]);
 
     const fetchTransactions = async (userId) => {
         setLoadingTransactions(true);

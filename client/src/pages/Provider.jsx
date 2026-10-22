@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
 import PageLayout from "./PageLayout";
 import Recharge_Plan_Card from "../components/Recharge_Plan_Card";
 import API from "../Utils/api";
@@ -22,7 +21,6 @@ function Provider() {
     const { provider } = useParams();
     const [mobileNumber, setMobileNumber] = useState("");
     const [amount, setAmount] = useState("");
-    const { register } = useForm();
     const [rechargePlan, setRechargePlan] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState("Suggested");
     const [categories, setCategories] = useState([]);
@@ -179,11 +177,10 @@ function Provider() {
                                 maxLength={10}
                                 placeholder="Enter mobile number"
                                 aria-label="Mobile Number"
-                                {...register("rechargeNumber", {
-                                    required: false,
-                                    pattern: /^\d{10}$/,
-                                    onChange: (e) => setMobileNumber(e.target.value),
-                                })}
+                                value={mobileNumber}
+                                onChange={(e) =>
+                                    setMobileNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
+                                }
                                 className="w-full rounded-lg border border-[#333333] bg-[#121212] p-3 pl-11 text-base text-white sm:text-lg placeholder:text-gray-500 focus:border-[#50c878] focus:outline-none focus:ring-2 focus:ring-[#50c878]/40"
                             />
                         </div>
