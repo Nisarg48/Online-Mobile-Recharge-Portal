@@ -9,7 +9,7 @@ import autoTable from "jspdf-autotable";
 function Receipt() {
     const location = useLocation();
     const navigate = useNavigate();
-    const transaction_id = location.state.transaction_id;
+    const transaction_id = location.state?.transaction_id;
 
     const [transactionData, setTransactionData] = useState({
         transaction_id: transaction_id,
@@ -39,7 +39,13 @@ function Receipt() {
     const [feedbackMessage, setFeedbackMessage] = useState("");
     const [rating, setRating] = useState(0);
 
+    // Reaching this page without a transaction (refresh/direct URL) must not crash.
     useEffect(() => {
+        if (!transaction_id) navigate("/NetworkProvider", { replace: true });
+    }, [transaction_id, navigate]);
+
+    useEffect(() => {
+        if (!transaction_id) return;
         const fetchTransactionData = async () => {
             try {
                 const response = await API.get(

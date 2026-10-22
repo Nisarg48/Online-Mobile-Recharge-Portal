@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,12 +9,9 @@ function Buy_Plan() {
   const plan = location.state?.plan;
   const mNumber = location.state?.mNumber;
   const [mobileNumber, setMobileNumber] = useState(mNumber || "");
-  const [isModalOpen, setIsModalOpen] = useState(true);
   const [showError, setShowError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
     navigate(-1);
   };
 
@@ -38,6 +34,23 @@ function Buy_Plan() {
       },
     });
   };
+
+  // Reaching this page without a plan (refresh/direct URL) must not crash.
+  if (!plan) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-black text-white">
+        <div className="text-center">
+          <p className="mb-4">No plan selected.</p>
+          <button
+            className="rounded-md bg-gradient-to-r from-[#50c878] to-[#6a11cb] px-6 py-3 text-white transition-all hover:opacity-90"
+            onClick={() => navigate("/NetworkProvider")}
+          >
+            Browse plans
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center">
@@ -89,9 +102,8 @@ function Buy_Plan() {
           <button
             className="bg-gradient-to-r from-[#50c878] to-[#6a11cb] text-white px-6 py-3 rounded-md hover:opacity-90 transition-all"
             onClick={handleProceedToPayment}
-            disabled={isLoading}
           >
-            {isLoading ? "Processing..." : "Pay"}
+            Pay
           </button>
         </div>
       </motion.div>
