@@ -1,19 +1,34 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import API from "../Utils/api";
 
 function OTP_Verification() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { transaction_id, card_details, transactionType } = location.state;
+    const { transaction_id, card_details, transactionType, devOtp, channel } =
+        location.state || {};
 
-    console.log(transaction_id);
-    
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [timer, setTimer] = useState(300);
     const [error, setError] = useState("");
 
+    const handleFailTransaction = useCallback(async () => {
+        if (!transaction_id) return;
+        try {
+            await API.post("/cancel_transaction", { transaction_id });
+        } catch (err) {
+            console.error("Failed to cancel transaction:", err);
+        }
+    }, [transaction_id]);
+
+    // Reaching this page without a payment (refresh/direct URL) must not crash.
     useEffect(() => {
+        if (!transaction_id) navigate("/NetworkProvider", { replace: true });
+    }, [transaction_id, navigate]);
+
+    useEffect(() => {
+        if (!transaction_id) return;
+
         const countdown = setInterval(() => {
             setTimer((prev) => {
                 if (prev <= 1) {
@@ -35,7 +50,7 @@ function OTP_Verification() {
             clearInterval(countdown);
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    });
+    }, [transaction_id, handleFailTransaction]);
 
     const handleChange = (e, index) => {
         const value = e.target.value.replace(/\D/, "");
@@ -55,7 +70,7 @@ function OTP_Verification() {
             setError("⚠ Please enter a complete OTP!");
             return;
         }
-    
+
         try {
             const response = await API.post("/verify_otp", {
                 transaction_id: transaction_id,
@@ -65,9 +80,9 @@ function OTP_Verification() {
             });
 
             if (response.data.success) {
-                navigate("/receipt", {   
+                navigate("/receipt", {
                     state: { transaction_id: transaction_id },
-                    replace: true
+                    replace: true,
                 });
             }
         } catch (error) {
@@ -75,17 +90,27 @@ function OTP_Verification() {
         }
     };
 
-    const handleFailTransaction = async () => {
-        await API.post("/cancel_transaction", {
-            transaction_id: transaction_id,
-        });
-    };
-
     return (
         <div className="w-full h-screen flex flex-col items-center justify-center bg-gray-900 text-white">
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md border border-gray-700 text-center">
                 <h2 className="text-2xl mb-4 text-green-400 font-bold">OTP Verification</h2>
                 <p className="text-gray-300 mb-2">OTP Sent To The Mobile Number Linked With Card Details</p>
+
+                {devOtp && (
+                    <div className="mb-3 rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-300">
+                        <p className="font-semibold">Development mode</p>
+                        <p>
+                            No SMS/email provider is configured, so use this code:{" "}
+                            <span className="font-mono text-lg font-bold tracking-widest text-amber-200">
+                                {devOtp}
+                            </span>
+                        </p>
+                        {channel === "log" && (
+                            <p className="text-xs text-amber-400/80">It is also printed in the server console.</p>
+                        )}
+                    </div>
+                )}
+
                 <p className="text-red-500 text-sm mb-2">⚠ Do not refresh this page!</p>
                 <div className="flex justify-center space-x-2 mt-4">
                     {otp.map((digit, index) => (
@@ -93,6 +118,7 @@ function OTP_Verification() {
                             key={index}
                             id={`otp-${index}`}
                             type="text"
+                            inputMode="numeric"
                             value={digit}
                             onChange={(e) => handleChange(e, index)}
                             maxLength="1"

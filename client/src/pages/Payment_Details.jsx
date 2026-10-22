@@ -59,6 +59,10 @@ function Payment_Details() {
                             cardholderName: cardholderName,
                         },
                         transactionType: transactionType,
+                        // Present only in non-production; lets local testing complete
+                        // the flow when no SMS/email provider is configured.
+                        devOtp: response.data.devOtp,
+                        channel: response.data.channel,
                     },
                     replace: true,
                 });
