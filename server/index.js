@@ -20,10 +20,32 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
     .map((origin) => origin.trim())
     .filter(Boolean);
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// localhost or a private LAN address (used when opening the app on a phone
+// through `vite --host`).
+const isPrivateHost = (hostname) =>
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    /^10\./.test(hostname) ||
+    /^192\.168\./.test(hostname) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname);
+
 app.use(cors({
     origin(origin, callback) {
         // Allow same-origin/tooling requests (no Origin header) and allowlisted origins.
         if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+
+        // Outside production, also trust localhost/LAN origins so the site works
+        // when opened from a phone on the same network without listing every IP.
+        if (!isProduction) {
+            try {
+                if (isPrivateHost(new URL(origin).hostname)) return callback(null, true);
+            } catch {
+                // Malformed Origin header: fall through to rejection.
+            }
+        }
         return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
