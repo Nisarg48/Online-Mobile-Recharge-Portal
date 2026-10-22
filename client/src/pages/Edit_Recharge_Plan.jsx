@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../Utils/api';
 import { FaArrowLeft } from 'react-icons/fa';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from '../Utils/toast';
 
 function Edit_Recharge_Plan() {
     const { provider, planId } = useParams();
@@ -43,7 +42,7 @@ function Edit_Recharge_Plan() {
             }, 2000);
         } catch (error) {
             console.error('Error updating plan:', error);
-            toast.error('Failed to update plan.');
+            toast.error(error.response?.data?.message || 'Failed to update plan.');
         }
     };
 
@@ -83,7 +82,6 @@ function Edit_Recharge_Plan() {
 
     return (
         <div className="min-h-screen bg-black py-12 px-6 sm:px-8 lg:px-16">
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="max-w-4xl mx-auto bg-gray-900 bg-opacity-80 rounded-xl shadow-xl p-8 text-white">
                 <button
                     onClick={handleBack}

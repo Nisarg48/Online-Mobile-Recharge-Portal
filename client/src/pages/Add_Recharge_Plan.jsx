@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import API from '../Utils/api';
 import { FaArrowLeft } from 'react-icons/fa';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from '../Utils/toast';
 
 function Add_Recharge_Plan() {
     const { provider } = useParams();
@@ -44,19 +44,16 @@ function Add_Recharge_Plan() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await API.post('/addRecharge_Plan', plan)
-            .then((res) => {
-                toast.success(res);
-                setTimeout(() => {
-                    navigate(`/NetworkProvider/${provider}`);
-                }, 2000);
-            })
-            .catch((err) => {
-                toast.error(err);
-            });
+            await API.post('/addRecharge_Plan', plan);
+            toast.success('Recharge plan added successfully!');
+            setTimeout(() => {
+                navigate(`/NetworkProvider/${provider}`);
+            }, 2000);
         } catch (error) {
             console.error('Error adding plan:', error);
-            toast.error('Failed to add recharge plan.');
+            toast.error(
+                error.response?.data?.message || 'Failed to add recharge plan.'
+            );
         }
     };
 
@@ -66,7 +63,6 @@ function Add_Recharge_Plan() {
 
     return (
         <div className="min-h-screen bg-black py-12 px-6 sm:px-8 lg:px-16">
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className="max-w-4xl mx-auto bg-gray-900 bg-opacity-80 rounded-xl shadow-xl p-8 text-white">
                 <button
                     onClick={handleBack}

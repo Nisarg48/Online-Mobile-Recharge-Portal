@@ -63,7 +63,7 @@ function Recharge_Plan_Card({ plan, mobileNumber, role, suggestionType, onCompar
             cancelButtonText: "No, cancel!"
         }).then((result) => {
             if (result.isConfirmed) {
-                API.delete(`/deleteRechargePlan/${id}`)
+                API.delete(`/deleteRecharge_Plan/${id}`)
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
