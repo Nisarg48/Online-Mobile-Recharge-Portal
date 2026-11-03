@@ -36,7 +36,10 @@ function Provider() {
     const [quickFilter, setQuickFilter] = useState("all");
     const [compareList, setCompareList] = useState([]);
     const [showCompare, setShowCompare] = useState(false);
+    const [sortBy, setSortBy] = useState("recommended");
+    const [page, setPage] = useState(1);
     const accessToken = localStorage.getItem("accessToken");
+    const PLANS_PER_PAGE = 9;
 
     useEffect(() => {
         if (accessToken) {
@@ -119,6 +122,31 @@ function Provider() {
         }
     };
 
+    // Comparable data allowance in GB, so total-data and daily-data plans can
+    // be sorted together.
+    const planDataGb = (plan) => {
+        const data = plan.data || {};
+        if (data.totalData) return data.totalData;
+        if (data.dailyLimit) return data.dailyLimit * (plan.validity || 1);
+        return 0;
+    };
+
+    const sortPlans = (plans) => {
+        const sorted = [...plans];
+        switch (sortBy) {
+            case "price-asc":
+                return sorted.sort((a, b) => a.price - b.price);
+            case "price-desc":
+                return sorted.sort((a, b) => b.price - a.price);
+            case "validity-desc":
+                return sorted.sort((a, b) => (b.validity || 0) - (a.validity || 0));
+            case "data-desc":
+                return sorted.sort((a, b) => planDataGb(b) - planDataGb(a));
+            default:
+                return sorted;
+        }
+    };
+
     const getFilteredPlans = () => {
         if (selectedCategory === "Suggested") {
             // For the "Suggested" category, return both types of plans separately
@@ -128,11 +156,12 @@ function Provider() {
             };
         } else {
             // For other categories, filter the recharge plans
-            return rechargePlan.filter((plan) => {
+            const filtered = rechargePlan.filter((plan) => {
                 const isCategoryMatch =
                     selectedCategory === "All" || plan.category === selectedCategory;
                 return isCategoryMatch && matchesAmount(plan) && matchesQuickFilter(plan);
             });
+            return sortPlans(filtered);
         }
     };
 
@@ -141,6 +170,24 @@ function Provider() {
         selectedCategory === "Suggested"
             ? filteredPlans.suggestedFromHistory.length + filteredPlans.popularPlans.length
             : filteredPlans.length;
+
+    // Reset to the first page whenever the result set changes.
+    useEffect(() => {
+        setPage(1);
+    }, [provider, selectedCategory, amount, quickFilter, sortBy]);
+
+    const totalPages =
+        selectedCategory === "Suggested"
+            ? 1
+            : Math.max(1, Math.ceil(filteredPlans.length / PLANS_PER_PAGE));
+    const currentPage = Math.min(page, totalPages);
+    const pagedPlans =
+        selectedCategory === "Suggested"
+            ? []
+            : filteredPlans.slice(
+                  (currentPage - 1) * PLANS_PER_PAGE,
+                  currentPage * PLANS_PER_PAGE
+              );
 
     const toggleCompare = (plan) => {
         setCompareList((prev) => {
@@ -279,13 +326,31 @@ function Provider() {
                                     ? "Recommended Plans For You"
                                     : "Available Plans"}
                             </h3>
-                            {!loading && (
-                                <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
-                                    {amountQuery
-                                        ? `${visiblePlanCount} match${visiblePlanCount === 1 ? "" : "es"} for "${amountQuery}"`
-                                        : `${visiblePlanCount} plan${visiblePlanCount === 1 ? "" : "s"}`}
-                                </span>
-                            )}
+                            <div className="flex flex-wrap items-center gap-2">
+                                {!loading && selectedCategory !== "Suggested" && (
+                                    <label className="flex items-center gap-1 text-xs text-gray-400">
+                                        Sort
+                                        <select
+                                            value={sortBy}
+                                            onChange={(e) => setSortBy(e.target.value)}
+                                            className="rounded-lg border border-[#333333] bg-[#121212] px-2 py-1 text-xs text-white focus:border-[#50c878] focus:outline-none"
+                                        >
+                                            <option value="recommended">Recommended</option>
+                                            <option value="price-asc">Price: low to high</option>
+                                            <option value="price-desc">Price: high to low</option>
+                                            <option value="validity-desc">Longest validity</option>
+                                            <option value="data-desc">Most data</option>
+                                        </select>
+                                    </label>
+                                )}
+                                {!loading && (
+                                    <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
+                                        {amountQuery
+                                            ? `${visiblePlanCount} match${visiblePlanCount === 1 ? "" : "es"} for "${amountQuery}"`
+                                            : `${visiblePlanCount} plan${visiblePlanCount === 1 ? "" : "s"}`}
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         {/* Suggestion explanation when showing suggested plans */}
@@ -393,24 +458,51 @@ function Provider() {
                                     )}
                             </>
                         ) : filteredPlans.length > 0 ? (
-                            <div className="grid items-start gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                                {filteredPlans.map((plan) => (
-                                    <Recharge_Plan_Card
-                                        key={plan._id}
-                                        plan={{
-                                            ...plan,
-                                            extraBenefits: plan.extraBenefits || [],
-                                        }}
-                                        mobileNumber={
-                                            mobileNumber.length === 10 ? mobileNumber : ""
-                                        }
-                                        role={role}
-                                        onCompareToggle={toggleCompare}
-                                        isComparing={compareList.some((p) => p._id === plan._id)}
-                                        suggestionType={plan.suggestionType}
-                                    />
-                                ))}
-                            </div>
+                            <>
+                                <div className="grid items-start gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                                    {pagedPlans.map((plan) => (
+                                        <Recharge_Plan_Card
+                                            key={plan._id}
+                                            plan={{
+                                                ...plan,
+                                                extraBenefits: plan.extraBenefits || [],
+                                            }}
+                                            mobileNumber={
+                                                mobileNumber.length === 10 ? mobileNumber : ""
+                                            }
+                                            role={role}
+                                            onCompareToggle={toggleCompare}
+                                            isComparing={compareList.some((p) => p._id === plan._id)}
+                                            suggestionType={plan.suggestionType}
+                                        />
+                                    ))}
+                                </div>
+                                {totalPages > 1 && (
+                                    <div className="mt-6 flex items-center justify-center gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                            disabled={currentPage === 1}
+                                            className="rounded-lg border border-[#333333] px-3 py-1.5 text-sm text-gray-200 transition hover:border-[#50c878] hover:text-[#50c878] disabled:cursor-not-allowed disabled:opacity-40"
+                                        >
+                                            Previous
+                                        </button>
+                                        <span className="text-sm text-gray-400">
+                                            Page {currentPage} of {totalPages}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                setPage((p) => Math.min(totalPages, p + 1))
+                                            }
+                                            disabled={currentPage === totalPages}
+                                            className="rounded-lg border border-[#333333] px-3 py-1.5 text-sm text-gray-200 transition hover:border-[#50c878] hover:text-[#50c878] disabled:cursor-not-allowed disabled:opacity-40"
+                                        >
+                                            Next
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className="flex flex-col items-center gap-3 py-16 text-center">
                                 <FaSearchDollar className="text-3xl text-gray-600" />
