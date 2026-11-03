@@ -81,9 +81,9 @@ const refreshToken = async (req, res) => {
         const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
         const user = await User.findById(decoded.userId)
-            .select("+refreshTokenHash +refreshTokenExpiresAt");
+            .select("+refreshTokenHash +refreshTokenExpiresAt isActive");
 
-        if (!user || !user.refreshTokenHash) {
+        if (!user || !user.isActive || !user.refreshTokenHash) {
             return res.status(403).json({ message: "Invalid Refresh Token" });
         }
 
