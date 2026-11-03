@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { FaReply, FaCheckCircle, FaClock } from 'react-icons/fa';
 import API from '../Utils/api';
+import { toast } from '../Utils/toast';
 import PageLayout from './PageLayout';
 
 function Query_Page() {
     const [queries, setQueries] = useState([]);
     const [replies, setReplies] = useState({});
     const [loading, setLoading] = useState(true);
-    const [successMessage, setSuccessMessage] = useState('');
 
     const fetchQueries = async () => {
         setLoading(true);
@@ -34,28 +34,28 @@ function Query_Page() {
     const sendReply = async (id) => {
         const replyMessage = replies[id]?.trim();
         if (!replyMessage) {
-            alert('Please enter a reply message.');
+            toast.warning('Please enter a reply message.');
             return;
         }
 
         try {
-            const queryRes = await API.get(`/query/getQueryById/${id}`);
-            const query = queryRes.data;
-
             const response = await API.put(`/query/updateQuery/${id}`, {
                 admin_response: replyMessage,
                 status: "Resolved",
-                user_id: query.user_id
             });
 
-            if (response.data) {
-                setSuccessMessage('Reply sent successfully!');
-                setReplies(prev => ({ ...prev, [id]: '' }));
-                fetchQueries();
-            }
+            toast.success(
+                response.data?.emailed
+                    ? 'Reply saved and emailed to the user.'
+                    : 'Reply saved (email logged to the server in dev).'
+            );
+            setReplies(prev => ({ ...prev, [id]: '' }));
+            fetchQueries();
         } catch (error) {
             console.error('Error sending reply:', error);
-            alert('Error sending reply. Please try again.');
+            toast.error(
+                error.response?.data?.message || 'Error sending reply. Please try again.'
+            );
         }
     };
 
@@ -63,24 +63,9 @@ function Query_Page() {
         fetchQueries();
     }, []);
 
-    useEffect(() => {
-        if (successMessage) {
-            const timer = setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [successMessage]);
-
     return (
         <PageLayout title="Query Management">
             <div className="w-full px-4 py-2">
-                {successMessage && (
-                    <div className="mb-4 p-3 bg-green-500/20 text-green-500 rounded-lg text-center">
-                        {successMessage}
-                    </div>
-                )}
-                
                 <div className="mb-4">
                     <h1 className="text-xl font-bold text-white">Customer Support Queries</h1>
                     <p className="text-sm text-gray-400">

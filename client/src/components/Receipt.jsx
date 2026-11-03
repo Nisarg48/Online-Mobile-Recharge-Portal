@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import API from "../Utils/api";
 import { formatDateTime } from "../Utils/format";
+import { toast } from "../Utils/toast";
 import { motion } from "framer-motion";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -38,6 +39,7 @@ function Receipt() {
 
     const [feedbackMessage, setFeedbackMessage] = useState("");
     const [rating, setRating] = useState(0);
+    const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
     // Reaching this page without a transaction (refresh/direct URL) must not crash.
     useEffect(() => {
@@ -140,25 +142,41 @@ function Receipt() {
     };
 
     const handleFeedbackSubmit = async () => {
+        if (feedbackMessage.trim().length < 10) {
+            toast.error("Please write at least 10 characters.");
+            return;
+        }
+
+        setSubmittingFeedback(true);
         try {
-            const response = await API.post("/feedback/createFeedback", {
-                message: feedbackMessage,
-                rating: rating > 0 ? rating : 1
-            });
+            const payload = {
+                message: feedbackMessage.trim(),
+                rating: rating > 0 ? rating : 1,
+            };
+            // Only recharge receipts carry a transaction that can back a rating.
+            if (transaction_id && transactionData.transactionType === "recharge") {
+                payload.transaction_id = transaction_id;
+            }
+
+            const response = await API.post("/feedback/createFeedback", payload);
 
             if (response.data.success) {
-                alert("Thanks for your feedback!");
+                toast.success(
+                    response.data.updated
+                        ? "Thanks — your feedback was updated!"
+                        : "Thanks for your feedback!"
+                );
                 setFeedbackMessage("");
                 setRating(0);
             }
-
-            // redirect to home page
-            navigate("/NetworkProvider", { replace: true });
         } catch (error) {
             console.error("Error submitting feedback", error);
-            alert(
-                "There was an error submitting your feedback. Please try again later."
+            toast.error(
+                error.response?.data?.message ||
+                    "There was an error submitting your feedback. Please try again later."
             );
+        } finally {
+            setSubmittingFeedback(false);
         }
     };
 
@@ -294,21 +312,29 @@ function Receipt() {
                     </div>
 
                     <textarea
-                        className="w-full resize-none rounded-md border border-[#444444] bg-[#1e1e1e] p-3 focus:outline-none focus:ring-2 focus:ring-green-500 mb-6"
+                        className="w-full resize-none rounded-md border border-[#444444] bg-[#1e1e1e] p-3 focus:outline-none focus:ring-2 focus:ring-green-500 mb-2"
                         placeholder="Tell us about your experience..."
                         value={feedbackMessage}
                         onChange={(e) => setFeedbackMessage(e.target.value)}
                         rows="4"
+                        maxLength={200}
                     />
+                    <p className="mb-4 text-right text-xs text-[#888888]">
+                        {feedbackMessage.trim().length}/200 (min 10)
+                    </p>
 
                     <div className="flex justify-end space-x-4">
                         <button
-                            className="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-md text-white transition-all font-semibold w-full"
+                            className="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-md text-white transition-all font-semibold w-full disabled:opacity-60"
                             onClick={handleFeedbackSubmit}
+                            disabled={submittingFeedback}
                         >
-                            Submit Feedback
+                            {submittingFeedback ? "Submitting..." : "Submit Feedback"}
                         </button>
                     </div>
+                    <p className="mt-3 text-center text-xs text-[#888888]">
+                        One feedback per account — submitting again updates it.
+                    </p>
                 </div>
             </div>
         </motion.div>

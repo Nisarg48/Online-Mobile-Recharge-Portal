@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import API from "../Utils/api";
+import { isAuthenticated } from "../Utils/auth";
+import { toast } from "../Utils/toast";
 import PageLayout from "./PageLayout";
 
 const faqCategories = [
@@ -49,7 +52,7 @@ function CategoryCard({ category }) {
     );
 }
 
-function ContactForm() {
+function ContactForm({ onSubmitted, authed }) {
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,24 +61,46 @@ function ContactForm() {
         e.preventDefault();
 
         if (subject.trim().length < 5 || message.trim().length < 10) {
-            alert("Subject must be at least 5 characters and message at least 10 characters.");
+            toast.error("Subject must be at least 5 characters and message at least 10 characters.");
             return;
         }
 
         setIsSubmitting(true);
         try {
-            console.log(subject, message);
-            await API.post("/query/submitQuery", { subject, message });
-            alert("Query submitted successfully!");
+            await API.post("/query/submitQuery", {
+                subject: subject.trim(),
+                message: message.trim(),
+            });
+            toast.success("Query submitted successfully!");
             setSubject("");
             setMessage("");
+            if (onSubmitted) onSubmitted();
         } catch (error) {
-            alert("Failed to submit query. Try again later.");
+            toast.error(
+                error.response?.data?.message || "Failed to submit query. Try again later."
+            );
             console.error("Error submitting query:", error);
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    if (!authed) {
+        return (
+            <div className="bg-[#1e1e1e] p-8 rounded-lg border border-[#444444] text-center">
+                <h2 className="text-[#50c878] text-lg font-semibold mb-2">Send Us Your Query</h2>
+                <p className="text-sm text-[#aaaaaa] mb-4">
+                    Sign in to submit a support query and track its status.
+                </p>
+                <Link
+                    to="/login"
+                    className="inline-block rounded-lg bg-[#50c878] px-6 py-2 font-semibold text-white transition hover:bg-[#40a868]"
+                >
+                    Sign in
+                </Link>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-[#1e1e1e] p-6 rounded-lg border border-[#444444]">
@@ -172,24 +197,92 @@ function UserQueryItem({ query }) {
     );
 }
 
+function StarRow({ rating }) {
+    return (
+        <div className="flex items-center" aria-label={`${rating} out of 5 stars`}>
+            {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} className={i < rating ? "text-[#ffd700]" : "text-[#555555]"}>
+                    ★
+                </span>
+            ))}
+        </div>
+    );
+}
+
+function MyFeedback({ feedback, loading }) {
+    return (
+        <div className="mb-12">
+            <h2 className="text-2xl font-bold text-[#ffffff] mb-6 pb-2 border-b border-[#444444]">
+                Your Feedback
+            </h2>
+            {loading ? (
+                <div className="text-center py-8 text-[#888888]">Loading your feedback...</div>
+            ) : feedback ? (
+                <div className="bg-[#1e1e1e] rounded-xl border border-[#444444] p-6">
+                    <div className="flex items-center justify-between mb-3">
+                        <StarRow rating={feedback.rating} />
+                        <span className="text-xs text-[#888888]">
+                            {new Date(feedback.createdAt).toLocaleDateString()}
+                        </span>
+                    </div>
+                    <p className="text-[#e0e0e0] text-sm leading-relaxed">{feedback.message}</p>
+                    <p className="mt-3 text-xs italic text-[#888888]">
+                        One feedback per account — submitting again from a receipt updates this entry.
+                    </p>
+                </div>
+            ) : (
+                <div className="text-center py-10 text-[#888888] bg-[#1e1e1e] rounded-xl border border-[#444444]">
+                    <div className="text-4xl mb-3">🌟</div>
+                    <p className="text-lg">You haven&apos;t shared feedback yet.</p>
+                    <p className="text-sm mt-2">You can share feedback after completing a recharge.</p>
+                </div>
+            )}
+        </div>
+    );
+}
+
 function Help() {
     const [userQueries, setUserQueries] = useState([]);
     const [loadingQueries, setLoadingQueries] = useState(true);
+    const [myFeedback, setMyFeedback] = useState(null);
+    const [loadingFeedback, setLoadingFeedback] = useState(false);
+    const authed = isAuthenticated();
+
+    const loadQueries = useCallback(async () => {
+        if (!authed) {
+            setLoadingQueries(false);
+            return;
+        }
+        try {
+            const response = await API.get("/query/fetchUserQueries");
+            setUserQueries(response.data);
+        } catch (error) {
+            console.error("Error fetching user queries:", error);
+        } finally {
+            setLoadingQueries(false);
+        }
+    }, [authed]);
 
     useEffect(() => {
-        const fetchUserQueries = async () => {
-            try {
-                const response = await API.get("/query/fetchUserQueries");
-                setUserQueries(response.data);
-            } catch (error) {
-                console.error("Error fetching user queries:", error);
-            } finally {
-                setLoadingQueries(false);
-            }
-        };
+        loadQueries();
+    }, [loadQueries]);
 
-        fetchUserQueries();
-    }, []);
+    useEffect(() => {
+        if (!authed) return;
+        let active = true;
+        setLoadingFeedback(true);
+        API.get("/feedback/myFeedback")
+            .then((res) => {
+                if (active) setMyFeedback(res.data.data);
+            })
+            .catch((error) => console.error("Error fetching user feedback:", error))
+            .finally(() => {
+                if (active) setLoadingFeedback(false);
+            });
+        return () => {
+            active = false;
+        };
+    }, [authed]);
 
     return (
         <PageLayout title="Help Center">
@@ -217,7 +310,15 @@ function Help() {
                     <h2 className="text-2xl font-bold text-[#ffffff] mb-6 pb-2 border-b border-[#444444]">
                         Your Support Queries
                     </h2>
-                    {loadingQueries ? (
+                    {!authed ? (
+                        <div className="text-center py-12 text-[#888888] bg-[#1e1e1e] rounded-xl border border-[#444444]">
+                            <div className="text-4xl mb-3">🔒</div>
+                            <p className="text-lg">Sign in to view your support queries.</p>
+                            <Link to="/login" className="mt-3 inline-block text-[#50c878] hover:underline">
+                                Go to login
+                            </Link>
+                        </div>
+                    ) : loadingQueries ? (
                         <div className="text-center py-10 text-[#888888]">
                             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#50c878] mb-3"></div>
                             <p>Loading your queries...</p>
@@ -236,8 +337,10 @@ function Help() {
                         </div>
                     )}
                 </div>
-                
-                <ContactForm />
+
+                {authed && <MyFeedback feedback={myFeedback} loading={loadingFeedback} />}
+
+                <ContactForm authed={authed} onSubmitted={loadQueries} />
             </div>
         </PageLayout>
     );
