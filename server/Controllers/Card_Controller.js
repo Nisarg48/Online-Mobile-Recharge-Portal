@@ -165,6 +165,15 @@ const verify_otp = async (req, res) => {
             return res.status(400).json({ message: "Transaction not found!" });
         }
 
+        // A completed/cancelled transaction must never be processed again —
+        // otherwise a replayed OTP could double-charge the card or double-credit
+        // the wallet.
+        if (transaction.status !== "Pending") {
+            return res
+                .status(400)
+                .json({ message: `Transaction already ${transaction.status.toLowerCase()}.` });
+        }
+
         // Validate amount_to_pay
         if (!transaction.amount_to_pay || isNaN(transaction.amount_to_pay)) {
             return res.status(400).json({ message: "Invalid transaction amount!" });
@@ -202,9 +211,15 @@ const verify_otp = async (req, res) => {
         if (transactionType === "wallet") {
             // Add amount to user's wallet
             const user = await User.findById(transaction.user_id);
+            if (!user) {
+                return res.status(400).json({ message: "User not found!" });
+            }
             user.wallet += transaction.amount_to_pay;
             await user.save();
         }
+
+        // Burn the OTP so the same code cannot be replayed.
+        await OTP.deleteOne({ _id: otpRecord._id });
 
         return res
             .status(200)
