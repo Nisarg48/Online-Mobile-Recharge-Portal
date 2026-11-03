@@ -10,6 +10,7 @@ const {
     changeUserRoleSchema,
     rechargePlanSchema,
     verifyCardDetailsSchema,
+    validateCouponSchema,
     verifyOtpSchema,
     cancelTransactionSchema,
     submitQuerySchema,
@@ -69,6 +70,8 @@ const {
     getAllFeedback,
 } = require("../Controllers/Feedback_Controller");
 
+const { validateCoupon } = require("../Controllers/Coupon_Controller");
+
 // Auth Routes
 const authRoutes = require("./authRoute");
 router.use('/auth', authRoutes);
@@ -100,6 +103,9 @@ router.put('/user/toggleAutoRecharge', verifyToken, validate(toggleAutoRechargeS
 router.delete('/user/deleteUser/:id', verifyToken, isAdmin, deleteUser);
 router.put('/user/changeUserRole/:id', verifyToken, isAdmin, validate(changeUserRoleSchema), changeUserRole);
 router.put('/user/toggleUserStatus/:id', verifyToken, isAdmin, toggleUserStatus);
+
+// Coupons (preview only; checkout re-validates server-side)
+router.post('/coupon/validate', verifyToken, validate(validateCouponSchema), validateCoupon);
 
 // Card Payment
 router.post('/verify_card_details', verifyToken, validate(verifyCardDetailsSchema), verify_card_details);

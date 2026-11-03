@@ -31,6 +31,11 @@ const Transaction_Schema = new mongoose.Schema({
     payment_method: { type: String, default: 'Card' },
     transactionType: { type: String, enum: ['recharge', 'wallet'], default: 'recharge' },
     amount_to_pay: { type: Number, required: true },
+    // Coupon bookkeeping: original amount before discount, what was saved, and
+    // the code that was applied (all null/0 when no coupon was used).
+    original_amount: { type: Number, default: null },
+    discount_amount: { type: Number, default: 0 },
+    coupon_code: { type: String, default: null },
     planExpiryDate: { type: Date, default: null },
 }, { timestamps: true });
 

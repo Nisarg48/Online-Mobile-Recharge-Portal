@@ -4,6 +4,13 @@ const Transaction = require("../Models/Transaction.js");
 const Plan = require("../Models/Recharge_Plan.js");
 require("dotenv").config();
 const { sendOtp } = require("../Utils/notifier.js");
+const {
+    PLATFORM_CHARGE,
+    findUsableCoupon,
+    computeDiscount,
+    consumeCoupon,
+} = require("../Utils/coupons.js");
+const { notifyRechargeSuccess } = require("../Utils/notifications.js");
 const User = require("../Models/User.js");
 
 // Verify Card Details
@@ -12,17 +19,16 @@ const verify_card_details = async (req, res) => {
         const {
             mobile_number,
             plan_id,
-            platformCharge,
             amount_to_pay,
             cardNumber,
             expiryDate,
             cvv,
             cardholderName,
             transactionType,
+            coupon_code,
         } = req.body;
 
         if (
-            !amount_to_pay ||
             !cardNumber ||
             !expiryDate ||
             !cvv ||
@@ -42,10 +48,6 @@ const verify_card_details = async (req, res) => {
             return res.status(400).json({ message: "Invalid card details!" });
         }
 
-        if (card.balance < amount_to_pay) {
-            return res.status(400).json({ message: "Insufficient balance!" });
-        }
-
         const user_id = req.user.userId;
         const user = await User.findById(user_id);
 
@@ -56,6 +58,9 @@ const verify_card_details = async (req, res) => {
         const mobile_number_to_use = transactionType === "recharge" ? mobile_number : user.mobile_no;
 
         let plan = null;
+        let platformCharge = 0;
+        let baseAmount;
+
         if (transactionType === "recharge") {
             if (!plan_id) {
                 return res.status(400).json({ message: "Plan ID is required for recharge transactions!" });
@@ -64,6 +69,34 @@ const verify_card_details = async (req, res) => {
             if (!plan) {
                 return res.status(400).json({ message: "Plan not found!" });
             }
+            // Derive the amount server-side; never trust the client's total.
+            platformCharge = PLATFORM_CHARGE;
+            baseAmount = plan.price + platformCharge;
+        } else {
+            baseAmount = Number(amount_to_pay);
+            if (!Number.isFinite(baseAmount) || baseAmount <= 0) {
+                return res.status(400).json({ message: "Invalid amount!" });
+            }
+            if (coupon_code) {
+                return res.status(400).json({ message: "Coupons are only valid on recharges." });
+            }
+        }
+
+        let coupon = null;
+        let discount = 0;
+        if (coupon_code) {
+            const usable = await findUsableCoupon(coupon_code, user_id, baseAmount);
+            if (usable.error) {
+                return res.status(400).json({ message: usable.error });
+            }
+            coupon = usable.coupon;
+            discount = computeDiscount(coupon, baseAmount);
+        }
+
+        const amountToPay = Math.max(0, baseAmount - discount);
+
+        if (card.balance < amountToPay) {
+            return res.status(400).json({ message: "Insufficient balance!" });
         }
 
         const currentDate = new Date();
@@ -80,8 +113,11 @@ const verify_card_details = async (req, res) => {
             mobile_number: mobile_number_to_use,
             plan_id: transactionType === "recharge" ? plan_id : null,
             plan: transactionType === "recharge" ? plan : null, // Include plan for recharge
-            platformCharge: transactionType === "recharge" ? platformCharge : 0,
-            amount_to_pay,
+            platformCharge,
+            amount_to_pay: amountToPay,
+            original_amount: baseAmount,
+            discount_amount: discount,
+            coupon_code: coupon ? coupon.code : null,
             status: "Pending",
             transactionType,
             planExpiryDate,
@@ -108,9 +144,10 @@ const verify_card_details = async (req, res) => {
         // Prepare OTP message based on transaction type
         let messageBody;
         if (transactionType === "recharge") {
-            messageBody = `Your OTP for the recharge of ₹${amount_to_pay} (Plan: ${plan.platform} - ${plan.category}) is ${otpCode}. Please do not share this OTP with anyone. It is valid for 5 minutes. - Mobile Recharge Portal`;
+            const couponNote = discount > 0 ? ` (coupon ${coupon.code} saved ₹${discount})` : "";
+            messageBody = `Your OTP for the recharge of ₹${amountToPay}${couponNote} (Plan: ${plan.platform} - ${plan.category}) is ${otpCode}. Please do not share this OTP with anyone. It is valid for 5 minutes. - Mobile Recharge Portal`;
         } else if (transactionType === "wallet") {
-            messageBody = `Your OTP for adding ₹${amount_to_pay} to your wallet is ${otpCode}. Please do not share this OTP with anyone. It is valid for 5 minutes. - Mobile Recharge Portal`;
+            messageBody = `Your OTP for adding ₹${amountToPay} to your wallet is ${otpCode}. Please do not share this OTP with anyone. It is valid for 5 minutes. - Mobile Recharge Portal`;
         }
 
         // Deliver the OTP over the best available channel (SMS -> email -> log).
@@ -127,6 +164,9 @@ const verify_card_details = async (req, res) => {
             success: true,
             message: "OTP sent successfully!",
             transaction_id: newTransaction._id,
+            amount_to_pay: amountToPay,
+            original_amount: baseAmount,
+            discount_amount: discount,
         });
     } catch (error) {
         console.error("Payment Error:", error);
@@ -174,9 +214,15 @@ const verify_otp = async (req, res) => {
                 .json({ message: `Transaction already ${transaction.status.toLowerCase()}.` });
         }
 
-        // Validate amount_to_pay
-        if (!transaction.amount_to_pay || isNaN(transaction.amount_to_pay)) {
+        // Validate amount_to_pay (0 is valid when a coupon makes it free).
+        if (!Number.isFinite(transaction.amount_to_pay) || transaction.amount_to_pay < 0) {
             return res.status(400).json({ message: "Invalid transaction amount!" });
+        }
+
+        const owner = await User.findById(transaction.user_id);
+        if (!owner) {
+            await Transaction.findByIdAndUpdate(transaction_id, { status: "Failed" });
+            return res.status(400).json({ message: "User not found!" });
         }
 
         const card = await Card.findOne({
@@ -200,6 +246,16 @@ const verify_otp = async (req, res) => {
             return res.status(400).json({ message: "Insufficient balance!" });
         }
 
+        // Reserve the coupon only when the payment is about to complete, so an
+        // abandoned OTP does not burn a use. If it just ran out, fail cleanly.
+        if (transaction.coupon_code) {
+            const consumed = await consumeCoupon(transaction.coupon_code, transaction.user_id);
+            if (!consumed) {
+                await Transaction.findByIdAndUpdate(transaction_id, { status: "Failed" });
+                return res.status(400).json({ message: "This coupon is no longer available." });
+            }
+        }
+
         // Deduct amount from card
         card.balance -= transaction.amount_to_pay;
         await card.save();
@@ -207,15 +263,12 @@ const verify_otp = async (req, res) => {
         // Update transaction status
         await Transaction.findByIdAndUpdate(transaction_id, { status: "Success" });
 
-        // Handle transaction based on type
-        if (transactionType === "wallet") {
-            // Add amount to user's wallet
-            const user = await User.findById(transaction.user_id);
-            if (!user) {
-                return res.status(400).json({ message: "User not found!" });
-            }
-            user.wallet += transaction.amount_to_pay;
-            await user.save();
+        // Handle transaction based on the stored type (not client input).
+        if (transaction.transactionType === "wallet") {
+            owner.wallet += transaction.amount_to_pay;
+            await owner.save();
+        } else if (transaction.transactionType === "recharge") {
+            await notifyRechargeSuccess(owner, transaction);
         }
 
         // Burn the OTP so the same code cannot be replayed.

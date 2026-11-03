@@ -5,7 +5,7 @@
  *   - the 60 recharge plans (Vi / Jio / Airtel) from ./plans.json
  *   - demo accounts (1 admin + 2 users)
  *   - a few mock cards so the (simulated) payment form works
- *   - sample recharge/wallet transactions, feedback, and queries
+ *   - sample recharge/wallet transactions, feedback, queries, and coupons
  *
  * Safe to run repeatedly: plans upsert by planId, users by email, cards by
  * cardNumber, and sample activity is only created when it's missing.
@@ -22,6 +22,7 @@ const Card = require("../Models/Card");
 const User = require("../Models/User");
 const Feedback = require("../Models/Feedback");
 const Query = require("../Models/Query");
+const Coupon = require("../Models/Coupon");
 
 const plans = require("./plans.json");
 
@@ -253,6 +254,56 @@ const seedQueries = async () => {
     console.log("Queries: seeded 2 sample entries");
 };
 
+const seedCoupons = async () => {
+    const coupons = [
+        {
+            code: "WELCOME10",
+            description: "10% off your recharge (max ₹50)",
+            type: "percent",
+            value: 10,
+            maxDiscount: 50,
+            minAmount: 100,
+            active: true,
+            usageLimit: 0,
+            perUserLimit: 1,
+        },
+        {
+            code: "FLAT25",
+            description: "₹25 off recharges of ₹199 or more",
+            type: "flat",
+            value: 25,
+            minAmount: 199,
+            active: true,
+            usageLimit: 500,
+            perUserLimit: 1,
+        },
+        {
+            code: "SAVE15",
+            description: "15% off (max ₹75) on recharges of ₹250+",
+            type: "percent",
+            value: 15,
+            maxDiscount: 75,
+            minAmount: 250,
+            active: true,
+            usageLimit: 200,
+            perUserLimit: 1,
+        },
+    ];
+
+    let created = 0;
+    let updated = 0;
+    for (const coupon of coupons) {
+        const result = await Coupon.updateOne(
+            { code: coupon.code },
+            { $set: coupon },
+            { upsert: true }
+        );
+        if (result.upsertedCount) created += 1;
+        else updated += 1;
+    }
+    console.log(`Coupons: ${created} created, ${updated} updated`);
+};
+
 const run = async () => {
     await mongoose.connect(process.env.CONNECTION_STRING);
     console.log("Connected to", mongoose.connection.name);
@@ -263,6 +314,7 @@ const run = async () => {
     await seedTransactions(rahul);
     await seedFeedback();
     await seedQueries();
+    await seedCoupons();
 
     await mongoose.disconnect();
     console.log("\nSeed complete.");

@@ -120,6 +120,13 @@ function Receipt() {
             ]);
         }
 
+        if (transactionData.discount_amount > 0) {
+            transactionDetails.push([
+                "Coupon Discount",
+                `${transactionData.coupon_code || "Applied"} (-Rs. ${transactionData.discount_amount})`,
+            ]);
+        }
+
         autoTable(doc, {
             startY: currentY,
             head: [["Field", "Details"]],
@@ -250,6 +257,23 @@ function Receipt() {
                                             <b>Mobile Number:</b>
                                         </p>
                                         <p>{transactionData.mobile_number}</p>
+                                    </div>
+                                    {transactionData.discount_amount > 0 && (
+                                        <div className="flex justify-between border-b border-gray-700 pb-2">
+                                            <p>
+                                                <b>Coupon:</b>
+                                            </p>
+                                            <p className="text-green-400">
+                                                {transactionData.coupon_code} (−₹
+                                                {transactionData.discount_amount})
+                                            </p>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between border-b border-gray-700 pb-2">
+                                        <p>
+                                            <b>Amount Paid:</b>
+                                        </p>
+                                        <p>₹{transactionData.amount_to_pay}</p>
                                     </div>
                                 </>
                             )}

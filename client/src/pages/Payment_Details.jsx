@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import API from "../Utils/api";
+import { toast } from "../Utils/toast";
 
 function Payment_Details() {
     const location = useLocation();
@@ -13,9 +14,39 @@ function Payment_Details() {
     const [cardholderName, setCardholderName] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [couponCode, setCouponCode] = useState("");
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [couponError, setCouponError] = useState("");
+    const [applyingCoupon, setApplyingCoupon] = useState(false);
 
     const platformCharge = transactionType === "recharge" ? 10 : 0;
     const totalAmount = transactionType === "recharge" ? plan.price + platformCharge : plan;
+    const payableAmount = appliedCoupon ? appliedCoupon.finalAmount : totalAmount;
+
+    const applyCoupon = async () => {
+        if (!couponCode.trim()) return;
+        setApplyingCoupon(true);
+        setCouponError("");
+        try {
+            const { data } = await API.post("/coupon/validate", {
+                code: couponCode.trim(),
+                plan_id: plan._id,
+            });
+            setAppliedCoupon(data);
+            toast.success(`Coupon applied — you saved ₹${data.discount}`);
+        } catch (err) {
+            setAppliedCoupon(null);
+            setCouponError(err.response?.data?.message || "Could not apply this coupon.");
+        } finally {
+            setApplyingCoupon(false);
+        }
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponCode("");
+        setCouponError("");
+    };
 
     const handlePayment = async () => {
         setError("");
@@ -38,12 +69,13 @@ function Payment_Details() {
                 mobile_number: transactionType === "recharge" ? mobileNumber : null,
                 plan_id: transactionType === "recharge" ? plan._id : null,
                 platformCharge: transactionType === "recharge" ? platformCharge : 0,
-                amount_to_pay: totalAmount,
+                amount_to_pay: payableAmount,
                 cardNumber: cardNumber,
                 expiryDate: expiryDate,
                 cvv: cvv,
                 cardholderName: cardholderName,
                 transactionType: transactionType,
+                coupon_code: appliedCoupon?.code || null,
             };
     
             const response = await API.post("/verify_card_details", transaction_details);
@@ -67,7 +99,9 @@ function Payment_Details() {
             }
         } catch (error) {
             console.error("Payment error:", error.response?.data || error.message);
-            setError("⚠ Payment failed. Please check your details.");
+            setError(
+                `⚠ ${error.response?.data?.message || "Payment failed. Please check your details."}`
+            );
         } finally {
             setLoading(false);
         }
@@ -123,12 +157,66 @@ function Payment_Details() {
                         />
                     </div>
                 </div>
+                {transactionType === "recharge" && (
+                    <div className="mb-4 rounded-lg border border-gray-600 bg-gray-800 p-3">
+                        <label className="mb-2 block text-sm text-gray-400">
+                            Have a coupon?
+                        </label>
+                        {appliedCoupon ? (
+                            <div className="flex items-center justify-between gap-2">
+                                <div>
+                                    <p className="font-semibold text-green-400">
+                                        {appliedCoupon.code}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                        {appliedCoupon.description || "Coupon applied"} — you saved ₹
+                                        {appliedCoupon.discount}
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={removeCoupon}
+                                    className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-500/10"
+                                >
+                                    Remove
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={couponCode}
+                                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                    placeholder="e.g. WELCOME10"
+                                    className="w-full rounded-lg border border-gray-600 bg-gray-700 p-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={applyCoupon}
+                                    disabled={applyingCoupon || !couponCode.trim()}
+                                    className="rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition hover:bg-green-500 disabled:opacity-50"
+                                >
+                                    {applyingCoupon ? "..." : "Apply"}
+                                </button>
+                            </div>
+                        )}
+                        {couponError && (
+                            <p className="mt-2 text-xs text-red-400">{couponError}</p>
+                        )}
+                    </div>
+                )}
                 <div className="mb-4">
                     <p className="text-gray-300">Amount: <span className="text-green-400">₹{transactionType === "recharge" ? plan.price : plan}</span></p>
                     {transactionType === "recharge" && (
                         <>
                             <p className="text-gray-300">Platform Charge: <span className="text-green-400">₹{platformCharge}</span></p>
-                            <p className="text-gray-300 font-bold">Total: <span className="text-green-400">₹{totalAmount}</span></p>
+                            {appliedCoupon && (
+                                <p className="text-gray-300">
+                                    Discount ({appliedCoupon.code}):{" "}
+                                    <span className="text-green-400">−₹{appliedCoupon.discount}</span>
+                                </p>
+                            )}
+                            <p className="text-gray-300 font-bold">Total: <span className="text-green-400">₹{payableAmount}</span></p>
                         </>
                     )}
                 </div>

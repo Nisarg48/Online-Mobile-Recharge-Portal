@@ -88,12 +88,18 @@ const verifyCardDetailsSchema = Joi.object({
     mobile_number: Joi.string().pattern(/^[6-9]\d{9}$/).allow(null, ""),
     plan_id: objectId.allow(null, ""),
     platformCharge: Joi.number().min(0).default(0),
-    amount_to_pay: Joi.number().positive().required(),
+    amount_to_pay: Joi.number().min(0).required(),
     cardNumber: Joi.string().trim().required(),
     expiryDate: Joi.string().trim().required(),
     cvv: Joi.string().trim().required(),
     cardholderName: Joi.string().trim().required(),
     transactionType: Joi.string().valid("recharge", "wallet").required(),
+    coupon_code: Joi.string().trim().uppercase().max(24).allow(null, ""),
+});
+
+const validateCouponSchema = Joi.object({
+    code: Joi.string().trim().uppercase().max(24).required(),
+    plan_id: objectId.required(),
 });
 
 const verifyOtpSchema = Joi.object({
@@ -135,6 +141,7 @@ module.exports = {
     changeUserRoleSchema,
     rechargePlanSchema,
     verifyCardDetailsSchema,
+    validateCouponSchema,
     verifyOtpSchema,
     cancelTransactionSchema,
     submitQuerySchema,
