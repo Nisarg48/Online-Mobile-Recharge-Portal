@@ -1,48 +1,76 @@
-import { useState, useEffect } from "react";
-import { Wallet, Save, Edit2, ArrowLeft, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+    Wallet,
+    Save,
+    Edit2,
+    ArrowLeft,
+    Lock,
+    LogOut,
+    MapPin,
+    Phone,
+    Mail,
+    User as UserIcon,
+    CalendarDays,
+    CreditCard,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../Utils/api";
 import { logout } from "../Utils/auth";
-import { formatDate } from "../Utils/format";
+import { formatDate, formatDateTime } from "../Utils/format";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "../Utils/toast";
 
+const emptyForm = {
+    name: "",
+    email: "",
+    mobile_no: "",
+    alternate_mobile: "",
+    address: "",
+    avatar: "",
+    autoRechargeEnabled: false,
+};
+
+// Initials shown when the user has no avatar URL.
+const getInitials = (name = "") =>
+    name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((part) => part[0]?.toUpperCase() || "")
+        .join("") || "U";
+
 function Profile() {
     const navigate = useNavigate();
-    const [isEditing, setIsEditing] = useState(false);
-    const [updateSuccess, setUpdateSuccess] = useState(false);
     const [user, setUser] = useState(null);
+    const [formData, setFormData] = useState(emptyForm);
+    const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState("");
+    const [lastTransaction, setLastTransaction] = useState(null);
+    const [walletActivity, setWalletActivity] = useState([]);
     const [showAddFundsModal, setShowAddFundsModal] = useState(false);
     const [amount, setAmount] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [lastTransaction, setLastTransaction] = useState(null);
+    const [fundsError, setFundsError] = useState("");
 
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        mobile_no: "",
-        autoRechargeEnabled: false,
-    });
-
-    // Fetch user data and last transaction
     useEffect(() => {
         const fetchData = async () => {
             let userData;
             try {
-                // Fetch user data
                 ({ data: userData } = await API.get("/user/getUser"));
                 setUser(userData);
                 setFormData({
-                    name: userData.name,
-                    email: userData.email,
-                    mobile_no: userData.mobile_no,
-                    autoRechargeEnabled: userData.autoRechargeEnabled,
+                    name: userData.name || "",
+                    email: userData.email || "",
+                    mobile_no: userData.mobile_no || "",
+                    alternate_mobile: userData.alternate_mobile || "",
+                    address: userData.address || "",
+                    avatar: userData.avatar || "",
+                    autoRechargeEnabled: Boolean(userData.autoRechargeEnabled),
                 });
-            } catch (error) {
-                console.error("Error fetching profile:", error);
-                // Session is invalid/expired: clear it and send the user to login.
-                if (error.response?.status === 401 || error.response?.status === 403) {
+            } catch (err) {
+                console.error("Error fetching profile:", err);
+                if (err.response?.status === 401 || err.response?.status === 403) {
                     logout();
                     navigate("/login", { replace: true });
                     return;
@@ -53,151 +81,163 @@ function Profile() {
                 setLoading(false);
             }
 
-            // A 404 here just means the user has no completed recharge yet.
+            // Current plan (404 simply means no completed recharge yet).
             try {
-                const { data: transactionData } = await API.get("/transactions/getLastTransaction", {
+                const { data } = await API.get("/transactions/getLastTransaction", {
                     params: { mobileNumber: userData.mobile_no },
                 });
-                setLastTransaction(transactionData);
-            } catch (error) {
-                if (error.response?.status !== 404) {
-                    console.error("Error fetching last transaction:", error);
+                setLastTransaction(data);
+            } catch (err) {
+                if (err.response?.status !== 404) {
+                    console.error("Error fetching last transaction:", err);
                 }
+            }
+
+            // Recent wallet activity.
+            try {
+                const { data } = await API.get("/transactions/getUserTransaction_List");
+                const walletOnly = (Array.isArray(data) ? data : [])
+                    .filter((txn) => txn.transactionType === "wallet")
+                    .sort(
+                        (a, b) =>
+                            new Date(b.transaction_date_time) - new Date(a.transaction_date_time)
+                    )
+                    .slice(0, 5);
+                setWalletActivity(walletOnly);
+            } catch (err) {
+                console.error("Error fetching wallet activity:", err);
             }
         };
 
         fetchData();
     }, [navigate]);
 
-    // Toggle edit mode
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
     const toggleEdit = () => {
-        setIsEditing(!isEditing);
+        setIsEditing((prev) => !prev);
         if (user) {
             setFormData({
-                name: user.name,
-                email: user.email,
-                mobile_no: user.mobile_no,
-                autoRechargeEnabled: user.autoRechargeEnabled,
+                name: user.name || "",
+                email: user.email || "",
+                mobile_no: user.mobile_no || "",
+                alternate_mobile: user.alternate_mobile || "",
+                address: user.address || "",
+                avatar: user.avatar || "",
+                autoRechargeEnabled: Boolean(user.autoRechargeEnabled),
             });
         }
     };
 
-    // Update user data
-    const updateUser = async () => {
+    const updateUser = async (e) => {
+        e?.preventDefault();
+        setSaving(true);
         try {
             const payload = {
-                name: formData.name,
-                email: formData.email,
-                mobile_no: formData.mobile_no,
+                name: formData.name.trim(),
+                email: formData.email.trim(),
+                mobile_no: formData.mobile_no.trim(),
+                alternate_mobile: formData.alternate_mobile.trim(),
+                address: formData.address.trim(),
+                avatar: formData.avatar.trim(),
             };
             const { data } = await API.put("/user/updateUser", payload);
             setUser(data);
             setIsEditing(false);
-            setUpdateSuccess(true);
             toast.success("Profile updated");
-
-            setTimeout(() => {
-                setUpdateSuccess(false);
-            }, 3000);
-        } catch (error) {
-            console.error("Error updating profile:", error.response?.data || error.message);
-            toast.error("Failed to update profile");
+        } catch (err) {
+            console.error("Error updating profile:", err.response?.data || err.message);
+            toast.error(err.response?.data?.message || "Failed to update profile");
+        } finally {
+            setSaving(false);
         }
     };
 
-    // Toggle auto recharge
     const toggleAutoRecharge = async () => {
         try {
-            const newAutoRechargeEnabled = !formData.autoRechargeEnabled;
+            const next = !formData.autoRechargeEnabled;
             const { data } = await API.put("/user/toggleAutoRecharge", {
-                autoRechargeEnabled: newAutoRechargeEnabled,
+                autoRechargeEnabled: next,
             });
             setUser(data);
-            setFormData((prev) => ({ ...prev, autoRechargeEnabled: newAutoRechargeEnabled }));
-
-            // Show success message
-            toast.success(`Auto recharge ${newAutoRechargeEnabled ? "enabled" : "disabled"}`);
-        } catch (error) {
-            console.error("Error toggling auto recharge:", error.response?.data || error.message);
+            setFormData((prev) => ({ ...prev, autoRechargeEnabled: next }));
+            toast.success(`Auto recharge ${next ? "enabled" : "disabled"}`);
+        } catch (err) {
+            console.error("Error toggling auto recharge:", err.response?.data || err.message);
             toast.error("Failed to toggle auto recharge");
         }
     };
 
-    // Handle Add Funds
     const handleAddFunds = () => {
-        if (!amount || isNaN(amount) || amount <= 0) {
-            setError("⚠ Please enter a valid amount!");
+        const value = Number(amount);
+        if (!amount || Number.isNaN(value) || value <= 0) {
+            setFundsError("⚠ Please enter a valid amount!");
             return;
         }
-        setError("");
+        setFundsError("");
+        setShowAddFundsModal(false);
         navigate("/payment-details", {
-            state: { plan: parseFloat(amount), transactionType: "wallet", mobileNumber: user.mobile_no },
+            state: { plan: value, transactionType: "wallet", mobileNumber: user.mobile_no },
         });
     };
 
-    // Display current running plan
+    const handleLogout = () => {
+        logout();
+        navigate("/login", { replace: true });
+    };
+
+    const isPlanActive =
+        lastTransaction?.plan &&
+        lastTransaction.planExpiryDate &&
+        new Date(lastTransaction.planExpiryDate) >= new Date();
+
     const renderCurrentPlan = () => {
-        if (!lastTransaction || !lastTransaction.plan || new Date(lastTransaction.planExpiryDate) < new Date()) {
+        if (!isPlanActive) {
             return (
-                <div className="text-center text-gray-400 my-4">
-                    No active plan found. Please recharge to continue.
+                <div className="rounded-xl border border-dashed border-[#444444] bg-[#1e1e1e] p-5 text-center text-sm text-[#cfcfcf]">
+                    No active plan found. Recharge to start using services.
                 </div>
             );
         }
 
         return (
-            <div className="bg-[#333333] p-6 rounded-lg border border-[#444444] mb-6">
-                <h3 className="text-xl font-semibold text-[#50c878] mb-4">Current Running Plan</h3>
-                <div className="space-y-4 text-[#cfcfcf]">
-                    <div className="flex justify-between">
-                        <p><b>Plan:</b></p>
-                        <p>{lastTransaction.plan.platform} - {lastTransaction.plan.category}</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p><b>Price:</b></p>
-                        <p>₹{lastTransaction.plan.price}</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p><b>Validity:</b></p>
-                        <p>{lastTransaction.plan.validity} days</p>
-                    </div>
-                    <div className="flex justify-between">
-                        <p><b>Expiry Date:</b></p>
-                        <p>{formatDate(lastTransaction.planExpiryDate)}</p>
-                    </div>
+            <div className="rounded-xl border border-[#444444] bg-[#1e1e1e] p-5">
+                <div className="mb-3 flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-[#50c878]">Current Running Plan</h3>
+                    <span className="rounded-full bg-[#50c878]/10 px-3 py-1 text-xs font-medium text-[#50c878]">
+                        Active until {formatDate(lastTransaction.planExpiryDate)}
+                    </span>
+                </div>
+                <div className="grid grid-cols-2 gap-3 text-sm text-[#cfcfcf]">
+                    <p><span className="text-gray-400">Plan:</span> {lastTransaction.plan.platform} - {lastTransaction.plan.category}</p>
+                    <p><span className="text-gray-400">Price:</span> ₹{lastTransaction.plan.price}</p>
+                    <p><span className="text-gray-400">Validity:</span> {lastTransaction.plan.validity} days</p>
+                    <p><span className="text-gray-400">Mobile:</span> {lastTransaction.mobile_number}</p>
                 </div>
             </div>
         );
     };
 
-    // Check if auto-recharge is possible
-    const isAutoRechargePossible = () => {
-        if (!lastTransaction || !lastTransaction.plan || !user) return false;
-
-        const isPlanExpired = new Date(lastTransaction.planExpiryDate) < new Date();
-        const hasSufficientBalance = user.wallet >= lastTransaction.plan.price;
-
-        return isPlanExpired && hasSufficientBalance && formData.autoRechargeEnabled;
-    };
-
-    // Render auto-recharge status
     const renderAutoRechargeStatus = () => {
         if (!formData.autoRechargeEnabled) {
-            return <div className="text-center text-gray-400 my-4">Auto recharge is disabled.</div>;
+            return <p className="text-sm text-gray-400">Auto recharge is disabled.</p>;
         }
 
-        if (isAutoRechargePossible()) {
-            return (
-                <div className="text-center text-green-400 my-4">
-                    Auto recharge will be triggered soon for your expired plan.
-                </div>
-            );
-        }
+        const canRecharge =
+            lastTransaction?.plan &&
+            !isPlanActive &&
+            user &&
+            user.wallet >= lastTransaction.plan.price;
 
         return (
-            <div className="text-center text-gray-400 my-4">
-                Auto recharge is enabled. No action required at the moment.
-            </div>
+            <p className={`text-sm ${canRecharge ? "text-green-400" : "text-gray-400"}`}>
+                {canRecharge
+                    ? "Auto recharge will trigger soon for your expired plan."
+                    : `Auto recharge is enabled. It will renew when your plan expires and your wallet covers ₹${lastTransaction?.plan?.price ?? "-"}.`}
+            </p>
         );
     };
 
@@ -207,7 +247,7 @@ function Profile() {
                 <div className="w-full max-w-4xl">
                     <div className="animate-pulse rounded-3xl border border-[#444444] bg-[#2a2a2a] p-8">
                         <div className="flex items-center gap-6">
-                            <div className="h-28 w-28 rounded-full bg-[#333333]" />
+                            <div className="h-24 w-24 rounded-full bg-[#333333]" />
                             <div className="space-y-3">
                                 <div className="h-8 w-48 rounded bg-[#333333]" />
                                 <div className="h-4 w-32 rounded bg-[#333333]" />
@@ -226,14 +266,11 @@ function Profile() {
 
     if (!user) {
         return (
-            <div className="flex flex-col justify-center items-center min-h-screen bg-[#1e1e1e] gap-4">
-                <div className="text-[#cfcfcf] text-lg">{error || "Your session has expired."}</div>
+            <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#1e1e1e]">
+                <div className="text-lg text-[#cfcfcf]">{error || "Your session has expired."}</div>
                 <button
-                    onClick={() => {
-                        logout();
-                        navigate("/login");
-                    }}
-                    className="px-6 py-3 bg-[#50c878] text-white rounded-md hover:bg-[#3da861] transition"
+                    onClick={handleLogout}
+                    className="rounded-md bg-[#50c878] px-6 py-3 text-white transition hover:bg-[#3da861]"
                 >
                     Go to Login
                 </button>
@@ -241,207 +278,257 @@ function Profile() {
         );
     }
 
+    const inputClass =
+        "w-full rounded-lg border border-[#444444] bg-[#333333] px-4 py-3 text-[#cfcfcf] transition focus:border-[#50c878] focus:ring-2 focus:ring-[#50c878] disabled:opacity-80";
+
     return (
-        <div className="min-h-screen flex justify-center items-center bg-[#1e1e1e] p-6">
+        <div className="flex min-h-screen justify-center bg-[#1e1e1e] p-4 sm:p-6">
             <div className="w-full max-w-4xl">
                 <motion.div
-                    className="bg-[#2a2a2a] shadow-2xl rounded-3xl overflow-hidden border border-[#444444]"
+                    className="overflow-hidden rounded-3xl border border-[#444444] bg-[#2a2a2a] shadow-2xl"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    transition={{ duration: 0.4 }}
                 >
-                    {/* Header Section */}
-                    <div className="bg-gradient-to-r from-[#50c878] to-[#3da861] p-8 text-[#cfcfcf] relative">
+                    {/* Header */}
+                    <div className="relative bg-gradient-to-r from-[#50c878] to-[#3da861] p-6 sm:p-8">
                         <button
                             onClick={() => navigate(-1)}
-                            className="absolute left-4 top-4 bg-[#444444]/20 rounded-lg p-1.5 hover:bg-[#444444]/30 transition"
+                            aria-label="Go back"
+                            className="absolute left-4 top-4 rounded-lg bg-black/10 p-2 transition hover:bg-black/20"
                         >
-                            <ArrowLeft className="w-5 h-5 text-[#cfcfcf]" />
+                            <ArrowLeft className="h-5 w-5 text-[#1e1e1e]" />
                         </button>
-                        <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-6">
-                                <div className="w-28 h-28 bg-[#1e1e1e] rounded-full flex items-center justify-center shadow-lg border-4 border-[#50c878]">
-                                    <Wallet className="w-16 h-16 text-[#50c878]" />
+                        <button
+                            onClick={handleLogout}
+                            aria-label="Logout"
+                            className="absolute right-4 top-4 flex items-center gap-2 rounded-lg bg-black/10 px-3 py-2 text-sm font-medium text-[#1e1e1e] transition hover:bg-black/20"
+                        >
+                            <LogOut className="h-4 w-4" /> Logout
+                        </button>
+
+                        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+                            {formData.avatar ? (
+                                <img
+                                    src={formData.avatar}
+                                    alt={user.name}
+                                    className="h-24 w-24 rounded-full border-4 border-[#1e1e1e] object-cover shadow-lg"
+                                />
+                            ) : (
+                                <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-[#1e1e1e] bg-[#1e1e1e] text-3xl font-bold text-[#50c878] shadow-lg">
+                                    {getInitials(formData.name)}
                                 </div>
-                                <div>
-                                    <h1 className="text-4xl font-semibold text-[#1e1e1e]">{formData.name}</h1>
-                                    <p className="text-lg text-[#1e1e1e]">Recharge Portal Profile</p>
-                                </div>
+                            )}
+                            <div className="text-center sm:text-left">
+                                <h1 className="text-2xl font-semibold text-[#1e1e1e] sm:text-3xl">
+                                    {user.name}
+                                </h1>
+                                <p className="text-sm text-[#1e1e1e]/80">{user.email}</p>
+                                <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-black/10 px-3 py-1 text-xs font-medium capitalize text-[#1e1e1e]">
+                                    {user.role}
+                                </span>
                             </div>
-                            <button
-                                onClick={toggleEdit}
-                                className="bg-[#1e1e1e]/20 rounded-lg p-2 hover:bg-[#1e1e1e]/30 transition"
-                            >
-                                <Edit2 className="w-6 h-6 text-[#1e1e1e]" />
-                            </button>
                         </div>
                     </div>
 
-                    {/* Success Message */}
-                    <AnimatePresence>
-                        {updateSuccess && (
-                            <motion.div
-                                className="text-center text-green-500 font-medium my-2"
-                                initial={{ opacity: 0, y: -10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
+                    <div className="space-y-6 p-6 sm:p-8">
+                        {/* Wallet card */}
+                        <div className="flex flex-col gap-4 rounded-2xl border border-[#444444] bg-[#1e1e1e] p-5 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#50c878]/15">
+                                    <Wallet className="h-6 w-6 text-[#50c878]" />
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400">Wallet balance</p>
+                                    <p className="text-2xl font-bold text-[#ffffff]">₹{user.wallet ?? 0}</p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowAddFundsModal(true)}
+                                className="rounded-lg bg-[#50c878] px-5 py-2.5 font-medium text-[#1e1e1e] transition hover:bg-[#3da861]"
                             >
-                                Profile updated successfully
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                                Add Money
+                            </button>
+                        </div>
 
-                    {/* Form Section */}
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            updateUser();
-                        }}
-                        className="p-8 space-y-8 bg-[#2a2a2a]"
-                    >
-                        <div className="space-y-6">
-                            {/* Name and Email Fields (Horizontal Layout) */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Full Name</label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg text-[#cfcfcf] focus:border-[#50c878] focus:ring-2 focus:ring-[#50c878] transition"
-                                        disabled={!isEditing}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Email Address</label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg text-[#cfcfcf] focus:border-[#50c878] focus:ring-2 focus:ring-[#50c878] transition"
-                                        disabled={!isEditing}
-                                    />
-                                </div>
-                            </div>
+                        {/* Current plan */}
+                        {renderCurrentPlan()}
 
-                            {/* Phone Number Field */}
-                            <div>
-                                <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Phone Number</label>
-                                <input
-                                    type="text"
-                                    name="mobile_no"
-                                    value={formData.mobile_no}
-                                    onChange={(e) => setFormData({ ...formData, mobile_no: e.target.value })}
-                                    className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg text-[#cfcfcf] focus:border-[#50c878] focus:ring-2 focus:ring-[#50c878] transition"
-                                    disabled={!isEditing}
-                                />
-                            </div>
-
-                            {/* Wallet Balance Field */}
-                            <div>
-                                <label className="block text-sm font-medium text-[#cfcfcf] mb-2">Wallet Balance</label>
-                                <div className="flex items-center gap-4">
-                                    <input
-                                        type="number"
-                                        name="wallet"
-                                        value={user.wallet}
-                                        className="w-full px-4 py-3 bg-[#333333] border border-[#444444] rounded-lg text-[#cfcfcf] focus:border-[#50c878] focus:ring-2 focus:ring-[#50c878] transition"
-                                        disabled
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowAddFundsModal(true)}
-                                        className="px-4 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
-                                    >
-                                        Add Money to Wallet
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Current Running Plan */}
-                            {renderCurrentPlan()}
-
-                            {/* Auto Recharge Toggle */}
+                        {/* Personal details */}
+                        <form onSubmit={updateUser} className="space-y-5">
                             <div className="flex items-center justify-between">
-                                <label className="block text-sm font-medium text-[#cfcfcf]">Auto Recharge</label>
+                                <h2 className="text-lg font-semibold text-[#ffffff]">Personal details</h2>
                                 <button
                                     type="button"
-                                    onClick={toggleAutoRecharge}
-                                    className={`relative w-14 h-7 rounded-full p-1 transition-colors ${formData.autoRechargeEnabled ? "bg-[#50c878]" : "bg-[#444444]"
-                                        }`}
+                                    onClick={toggleEdit}
+                                    className="flex items-center gap-2 rounded-lg border border-[#50c878] px-3 py-1.5 text-sm text-[#50c878] transition hover:bg-[#50c878] hover:text-[#1e1e1e]"
                                 >
-                                    <div
-                                        className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${formData.autoRechargeEnabled ? "translate-x-6" : "translate-x-0"
-                                            }`}
-                                    />
+                                    <Edit2 className="h-4 w-4" /> {isEditing ? "Cancel" : "Edit"}
                                 </button>
                             </div>
 
-                            {/* Auto Recharge Status */}
-                            {renderAutoRechargeStatus()}
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div>
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <UserIcon className="h-4 w-4 text-[#50c878]" /> Full Name
+                                    </label>
+                                    <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClass} disabled={!isEditing} />
+                                </div>
+                                <div>
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <Mail className="h-4 w-4 text-[#50c878]" /> Email
+                                    </label>
+                                    <input type="email" name="email" value={formData.email} onChange={handleChange} className={inputClass} disabled={!isEditing} />
+                                </div>
+                                <div>
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <Phone className="h-4 w-4 text-[#50c878]" /> Mobile Number
+                                    </label>
+                                    <input type="tel" name="mobile_no" inputMode="numeric" maxLength={10} value={formData.mobile_no} onChange={(e) => setFormData((p) => ({ ...p, mobile_no: e.target.value.replace(/\D/g, "").slice(0, 10) }))} className={inputClass} disabled={!isEditing} />
+                                </div>
+                                <div>
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <Phone className="h-4 w-4 text-[#50c878]" /> Alternate Mobile
+                                    </label>
+                                    <input type="tel" name="alternate_mobile" inputMode="numeric" maxLength={10} value={formData.alternate_mobile} onChange={(e) => setFormData((p) => ({ ...p, alternate_mobile: e.target.value.replace(/\D/g, "").slice(0, 10) }))} className={inputClass} placeholder="Optional" disabled={!isEditing} />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <MapPin className="h-4 w-4 text-[#50c878]" /> Address
+                                    </label>
+                                    <input type="text" name="address" value={formData.address} onChange={handleChange} className={inputClass} placeholder="Optional — street, city, state" disabled={!isEditing} />
+                                </div>
+                                <div className="md:col-span-2">
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <CreditCard className="h-4 w-4 text-[#50c878]" /> Avatar image URL
+                                    </label>
+                                    <input type="url" name="avatar" value={formData.avatar} onChange={handleChange} className={inputClass} placeholder="Optional — https://…" disabled={!isEditing} />
+                                </div>
+                            </div>
 
-                            {/* Save Button */}
                             {isEditing && (
                                 <button
                                     type="submit"
-                                    className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#50c878] text-[#1e1e1e] font-medium rounded-lg hover:bg-[#3da861] transition"
+                                    disabled={saving}
+                                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#50c878] px-6 py-3 font-medium text-[#1e1e1e] transition hover:bg-[#3da861] disabled:opacity-60"
                                 >
-                                    <Save className="w-5 h-5" /> Save Changes
+                                    <Save className="h-5 w-5" /> {saving ? "Saving…" : "Save Changes"}
                                 </button>
                             )}
+                        </form>
 
-                            {/* Change Password Button */}
-                            <div className="flex justify-center items-center mb-2">
+                        {/* Auto recharge */}
+                        <div className="rounded-2xl border border-[#444444] bg-[#1e1e1e] p-5">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h2 className="font-semibold text-[#ffffff]">Auto Recharge</h2>
+                                    <p className="text-xs text-gray-400">Renew automatically from your wallet balance.</p>
+                                </div>
                                 <button
-                                    className="text-[#50c878] hover:text-[#3da861] text-lg flex items-center gap-2 transition"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        navigate("/change-password");
-                                    }}
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={formData.autoRechargeEnabled}
+                                    onClick={toggleAutoRecharge}
+                                    className={`relative h-7 w-14 rounded-full p-1 transition-colors ${formData.autoRechargeEnabled ? "bg-[#50c878]" : "bg-[#444444]"}`}
                                 >
-                                    <Lock className="w-5 h-5" /> Change Password
+                                    <span
+                                        className={`block h-5 w-5 rounded-full bg-white shadow-md transition-transform ${formData.autoRechargeEnabled ? "translate-x-7" : "translate-x-0"}`}
+                                    />
                                 </button>
                             </div>
+                            <div className="mt-3">{renderAutoRechargeStatus()}</div>
                         </div>
-                    </form>
+
+                        {/* Wallet activity */}
+                        <div className="rounded-2xl border border-[#444444] bg-[#1e1e1e] p-5">
+                            <h2 className="mb-3 font-semibold text-[#ffffff]">Recent wallet activity</h2>
+                            {walletActivity.length > 0 ? (
+                                <ul className="divide-y divide-[#444444]">
+                                    {walletActivity.map((txn) => (
+                                        <li key={txn._id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                                            <div className="min-w-0">
+                                                <p className="truncate text-[#cfcfcf]">Wallet top-up</p>
+                                                <p className="text-xs text-gray-400">{formatDateTime(txn.transaction_date_time)}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="font-semibold text-[#50c878]">+₹{txn.amount_to_pay}</p>
+                                                <p className={`text-xs ${txn.status === "Success" ? "text-green-400" : txn.status === "Failed" ? "text-red-400" : "text-yellow-400"}`}>{txn.status}</p>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm text-gray-400">No wallet top-ups yet.</p>
+                            )}
+                        </div>
+
+                        {/* Meta + actions */}
+                        <div className="flex flex-col gap-3 border-t border-[#444444] pt-5 sm:flex-row sm:items-center sm:justify-between">
+                            <p className="flex items-center gap-2 text-xs text-gray-400">
+                                <CalendarDays className="h-4 w-4" />
+                                Member since {formatDate(user.createdAt)}
+                                {user.lastLogin ? ` · Last login ${formatDateTime(user.lastLogin)}` : ""}
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => navigate("/change-password")}
+                                className="flex items-center justify-center gap-2 rounded-lg border border-[#50c878] px-4 py-2 text-sm font-medium text-[#50c878] transition hover:bg-[#50c878] hover:text-[#1e1e1e]"
+                            >
+                                <Lock className="h-4 w-4" /> Change Password
+                            </button>
+                        </div>
+                    </div>
                 </motion.div>
             </div>
 
             {/* Add Funds Modal */}
-            {showAddFundsModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-                    <div className="bg-black p-8 rounded-lg shadow-lg text-white w-full max-w-lg border border-gray-700">
-                        <h2 className="text-2xl mb-6 text-green-400 font-bold text-center">Add Money to Wallet</h2>
-                        <div className="mb-4">
-                            <label className="block text-gray-400 text-sm mb-2">Amount</label>
+            <AnimatePresence>
+                {showAddFundsModal && (
+                    <motion.div
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                    >
+                        <motion.div
+                            className="w-full max-w-md rounded-2xl border border-[#444444] bg-[#1e1e1e] p-6 text-[#ffffff] shadow-xl"
+                            initial={{ scale: 0.95, y: 10 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.95, y: 10 }}
+                        >
+                            <h2 className="mb-4 text-xl font-bold text-[#50c878]">Add Money to Wallet</h2>
+                            <label className="mb-2 block text-sm text-[#cfcfcf]">Amount (₹)</label>
                             <input
                                 type="number"
+                                min="1"
                                 placeholder="Enter amount"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
-                                className="w-full p-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                                className="w-full rounded-lg border border-[#444444] bg-[#333333] p-3 text-[#cfcfcf] focus:outline-none focus:ring-2 focus:ring-green-500"
                             />
-                        </div>
-                        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
-                        <div className="flex gap-4">
-                            <button
-                                onClick={handleAddFunds}
-                                className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition duration-200"
-                            >
-                                Add Money
-                            </button>
-                            <button
-                                onClick={() => setShowAddFundsModal(false)}
-                                className="w-full bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700 transition duration-200"
-                            >
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                            {fundsError && <p className="mt-2 text-sm text-red-500">{fundsError}</p>}
+                            <div className="mt-5 flex gap-3">
+                                <button
+                                    onClick={handleAddFunds}
+                                    className="w-full rounded-lg bg-[#50c878] py-3 font-medium text-[#1e1e1e] transition hover:bg-[#3da861]"
+                                >
+                                    Continue to Payment
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setShowAddFundsModal(false);
+                                        setFundsError("");
+                                    }}
+                                    className="w-full rounded-lg bg-[#444444] py-3 text-[#ffffff] transition hover:bg-[#555555]"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

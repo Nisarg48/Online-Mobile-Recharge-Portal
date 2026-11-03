@@ -8,6 +8,7 @@ import {
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
 import API from '../Utils/api';
+import { logout } from '../Utils/auth';
 import ThemeToggle from './ThemeToggle';
 
 function Navbar() {
@@ -69,11 +70,9 @@ function Navbar() {
         };
     }, []);
 
-    // Logout function
+    // Logout function (also invalidates the server-side refresh token)
     const Logout = () => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userRole');
+        logout();
         navigate('/NetworkProvider', { replace: true });
     };
 
