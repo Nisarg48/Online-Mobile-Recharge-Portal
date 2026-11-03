@@ -15,6 +15,12 @@ const User_Schema = new mongoose.Schema({
         unique: true,
         match: /^[6-9]\d{9}$/
     },
+    alternate_mobile: {
+        type: String,
+        match: /^[6-9]\d{9}$/
+    },
+    address: { type: String, trim: true, maxlength: 250 },
+    avatar: { type: String, trim: true, maxlength: 500 },
     password: { type: String, required: true, minLength: 8, select: false },
 
     role: { type: String, enum: ["user", "admin"], default: "user" },

@@ -38,6 +38,9 @@ const updateUserSchema = Joi.object({
     name: Joi.string().trim().min(2).max(60),
     email: Joi.string().email().lowercase().trim(),
     mobile_no: Joi.string().pattern(/^[6-9]\d{9}$/),
+    alternate_mobile: Joi.string().pattern(/^[6-9]\d{9}$/).allow(null, ""),
+    address: Joi.string().trim().max(250).allow(null, ""),
+    avatar: Joi.string().trim().max(500).allow(null, ""),
 }).min(1);
 
 const toggleAutoRechargeSchema = Joi.object({

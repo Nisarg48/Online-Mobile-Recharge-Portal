@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { SignupUser, LoginUser, refreshToken } = require("../Controllers/Authentication_Controller");
-const { requestPasswordReset, resetPassword } = require("../Controllers/User_Controller");
+const { requestPasswordReset, resetPassword, logout } = require("../Controllers/User_Controller");
+const verifyToken = require("../Middleware/authMiddleware");
 const validate = require("../Middleware/validate");
 const { authLimiter } = require("../Middleware/rateLimit");
 const {
@@ -21,6 +22,9 @@ router.post("/login", validate(loginSchema), LoginUser);
 
 // Refresh Token
 router.post("/refresh-token", refreshToken);
+
+// Logout (invalidate the stored refresh token)
+router.post("/logout", verifyToken, logout);
 
 // Password reset (public, code-based)
 router.post("/forgot-password", validate(forgotPasswordSchema), requestPasswordReset);

@@ -31,17 +31,31 @@ const updateUser = async (req, res) => {
     try {
         const userId = req.user.userId;
 
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            {
-                $set: {
-                    name: req.body.name,
-                    email: req.body.email,
-                    mobile_no: req.body.mobile_no,
-                },
-            },
-            { new: true, runValidators: true }
-        );
+        // Only update the fields the client actually sent, so partial edits
+        // (e.g. filling in an address) don't wipe other profile data.
+        const allowed = ["name", "email", "mobile_no", "alternate_mobile", "address", "avatar"];
+        const clearable = ["alternate_mobile", "address", "avatar"];
+        const $set = {};
+        const $unset = {};
+
+        for (const field of allowed) {
+            if (!Object.prototype.hasOwnProperty.call(req.body, field)) continue;
+            const value = req.body[field];
+            if (value === "" || value === null) {
+                if (clearable.includes(field)) $unset[field] = 1;
+            } else {
+                $set[field] = value;
+            }
+        }
+
+        const update = {};
+        if (Object.keys($set).length) update.$set = $set;
+        if (Object.keys($unset).length) update.$unset = $unset;
+
+        const updatedUser = await User.findByIdAndUpdate(userId, update, {
+            new: true,
+            runValidators: true,
+        });
 
         if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });
@@ -173,6 +187,19 @@ const changePassword = async (req, res) => {
     }
 };
 
+// Logout: invalidate the stored refresh token so it can never be reused
+const logout = async (req, res) => {
+    try {
+        await User.findByIdAndUpdate(req.user.userId, {
+            $unset: { refreshTokenHash: 1, refreshTokenExpiresAt: 1 },
+        });
+        return res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Logout Error:", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+};
+
 // Delete User (Admin)
 const deleteUser = async (req, res) => {
     try {
@@ -248,6 +275,7 @@ module.exports = {
     requestPasswordReset,
     resetPassword,
     changePassword,
+    logout,
     deleteUser,
     changeUserRole,
     toggleUserStatus,
