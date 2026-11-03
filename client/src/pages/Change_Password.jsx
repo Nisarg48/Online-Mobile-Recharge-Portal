@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import API from "../Utils/api";
+import { logout } from "../Utils/auth";
+import { toast } from "../Utils/toast";
 
 function Change_Password() {
     const { register, handleSubmit, formState: { errors }, getValues, reset } = useForm();
@@ -12,15 +14,18 @@ function Change_Password() {
     const onSubmit = async (data) => {
         setLoading(true);
         try {
-            const response = await API.put("/user/changePassword", {
+            await API.put("/user/changePassword", {
                 currentPassword: data.currentPassword,
                 newPassword: data.newPassword,
             });
-            alert(response.data.message);
             reset();
-            navigate("/Profile", { replace: true });
+            // The server invalidates the session on password change, so ask the
+            // user to sign in again instead of leaving a half-valid session.
+            toast.success("Password changed. Please sign in again.");
+            logout();
+            setTimeout(() => navigate("/login", { replace: true }), 1200);
         } catch (error) {
-            alert(error.response?.data?.message || "Could not change password.");
+            toast.error(error.response?.data?.message || "Could not change password.");
         } finally {
             setLoading(false);
         }
