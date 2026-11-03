@@ -1,6 +1,7 @@
 const User = require("../Models/User");
 const Transaction = require("../Models/Transaction");
 const Recharge_Plan = require("../Models/Recharge_Plan");
+const { notifyRechargeSuccess } = require("../Utils/notifications");
 
 const autoRecharge = async (userId) => {
     try {
@@ -114,6 +115,8 @@ const autoRecharge = async (userId) => {
             });
 
             await newTransaction.save();
+
+            await notifyRechargeSuccess(user, newTransaction);
 
             console.log(`Auto recharge successful for ${user.mobile_no}`);
             console.log("New Transaction ID:", newTransaction._id);
