@@ -108,7 +108,12 @@ const updateTransaction = async (req, res) => {
 // Function to get the most popular plans based on past transactions
 const getPopularPlans = async (provider) => {
     try {
-        const transactions = await Transaction.find({ "plan.platform": provider });
+        // Only completed recharges count toward popularity.
+        const transactions = await Transaction.find({
+            "plan.platform": provider,
+            status: "Success",
+            transactionType: "recharge",
+        });
         const planCount = {};
 
         transactions.forEach(transaction => {
@@ -127,23 +132,49 @@ const getPopularPlans = async (provider) => {
     }
 };
 
-// Function to get the recommended plan based on the user's last transaction
+// Recommends plans from the user's usage pattern: their most recent recharge
+// for this provider, the category they pick most, and the average price they
+// pay (so recommendations track real behaviour rather than a single purchase).
 const getRecommendedPlan = async (userId, provider) => {
     try {
-        const lastTransaction = await Transaction.findOne({ user_id: userId, "plan.platform": provider }).sort({ transaction_date_time: -1 });
-        if (lastTransaction) {
-            const lastPlan = await RechargePlan.findById(lastTransaction.plan_id);
-            if (lastPlan) {
-                const similarPlans = await RechargePlan.find({
-                    platform: provider,
-                    category: lastPlan.category,
-                    price: { $gte: lastPlan.price - 50, $lte: lastPlan.price + 50 },
-                    _id: { $ne: lastPlan._id }
-                }).limit(3);
-                return similarPlans;
-            }
-        }
-        return [];
+        const history = await Transaction.find({
+            user_id: userId,
+            "plan.platform": provider,
+            status: "Success",
+            transactionType: "recharge",
+            plan_id: { $ne: null },
+        })
+            .sort({ transaction_date_time: -1 })
+            .limit(10)
+            .lean();
+
+        if (!history.length) return [];
+
+        const lastPlan = await RechargePlan.findById(history[0].plan_id).lean();
+        if (!lastPlan) return [];
+
+        const categoryCounts = {};
+        history.forEach((txn) => {
+            const category = txn.plan?.category;
+            if (category) categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+        });
+        const preferredCategory =
+            Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] ||
+            lastPlan.category;
+
+        const prices = history.map((txn) => txn.plan?.price).filter((p) => Number.isFinite(p));
+        const averagePrice = prices.length
+            ? prices.reduce((sum, price) => sum + price, 0) / prices.length
+            : lastPlan.price;
+
+        return await RechargePlan.find({
+            platform: provider,
+            category: preferredCategory,
+            price: { $gte: Math.max(0, averagePrice - 50), $lte: averagePrice + 50 },
+            _id: { $ne: lastPlan._id },
+        })
+            .sort({ price: 1 })
+            .limit(3);
     } catch (error) {
         console.error("Error fetching recommended plans:", error);
         return [];
