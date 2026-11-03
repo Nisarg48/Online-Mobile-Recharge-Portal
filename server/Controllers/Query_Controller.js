@@ -72,18 +72,23 @@ const updateQuery = async (req, res) => {
         const query = await Query.findById(req.params.id);
         if (!query) return res.status(404).json({ error: "Query not found" });
 
-        // Update query
+        // Update query. Replying without an explicit status resolves the query,
+        // so the lifecycle can't get stuck at "Pending" after a reply.
         if (status) query.status = status;
-        if (admin_response) query.admin_response = admin_response;
+        if (admin_response) {
+            query.admin_response = admin_response;
+            if (!status) query.status = "Resolved";
+        }
 
         await query.save();
 
         // Email the query's actual owner (best-effort: the reply is already saved,
         // so a mail failure must not fail the request).
+        let emailed = false;
         if (admin_response) {
             const user = await User.findById(query.user_id);
             if (user) {
-                await sendMail({
+                emailed = await sendMail({
                     to: user.email,
                     subject: `Response to Your Query: ${query.subject}`,
                     text: `Dear ${user.name},\n\nYour query: "${query.message}"\n\nAdmin Response: ${admin_response}\n\nThank you for reaching out!\nBest regards,\nSupport Team`,
@@ -91,7 +96,12 @@ const updateQuery = async (req, res) => {
             }
         }
 
-        res.status(200).json({ success: true, message: "Query updated successfully", query });
+        res.status(200).json({
+            success: true,
+            message: "Query updated successfully",
+            emailed,
+            query,
+        });
 
     } catch (error) {
         console.error("Error in updateQuery:", error);

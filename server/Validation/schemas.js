@@ -121,6 +121,7 @@ const updateQuerySchema = Joi.object({
 const createFeedbackSchema = Joi.object({
     message: Joi.string().trim().min(10).max(200).required(),
     rating: Joi.number().integer().min(1).max(5).required(),
+    transaction_id: Joi.string().hex().length(24).allow(null, ""),
 });
 
 module.exports = {

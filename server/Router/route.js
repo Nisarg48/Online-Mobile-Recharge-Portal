@@ -3,6 +3,7 @@ const router = express.Router();
 const verifyToken = require("../Middleware/authMiddleware");
 const { isAdmin } = require("../Middleware/authMiddleware");
 const validate = require("../Middleware/validate");
+const { contentLimiter } = require("../Middleware/rateLimit");
 const {
     updateUserSchema,
     toggleAutoRechargeSchema,
@@ -63,6 +64,7 @@ const {
 
 const {
     createFeedback,
+    getMyFeedback,
     getPublicFeedback,
     getAllFeedback,
 } = require("../Controllers/Feedback_Controller");
@@ -105,7 +107,7 @@ router.post('/verify_otp', verifyToken, validate(verifyOtpSchema), verify_otp);
 router.post('/cancel_transaction', verifyToken, validate(cancelTransactionSchema), cancel_transaction);
 
 // Query
-router.post('/query/submitQuery', verifyToken, validate(submitQuerySchema), submitQuery);
+router.post('/query/submitQuery', verifyToken, contentLimiter, validate(submitQuerySchema), submitQuery);
 router.get('/query/getAllQueries', verifyToken, isAdmin, getAllQueries);
 router.get('/query/getQueryById/:id', verifyToken, getQueryById);
 router.put('/query/updateQuery/:id', verifyToken, isAdmin, validate(updateQuerySchema), updateQuery);
@@ -114,7 +116,8 @@ router.get('/query/fetchUserQueries', verifyToken, fetchUserQueries);
 
 // Feedback
 router.get('/feedback/public', getPublicFeedback);
-router.post('/feedback/createFeedback', verifyToken, validate(createFeedbackSchema), createFeedback);
+router.get('/feedback/myFeedback', verifyToken, getMyFeedback);
+router.post('/feedback/createFeedback', verifyToken, contentLimiter, validate(createFeedbackSchema), createFeedback);
 router.get('/feedback/getAllFeedback', verifyToken, isAdmin, getAllFeedback);
 
 module.exports = router;

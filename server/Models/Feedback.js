@@ -29,6 +29,12 @@ const feedbackSchema = new mongoose.Schema({
             required: true
         },
     },
+    // The completed recharge this feedback is tied to (optional for older rows).
+    transaction: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Transaction',
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -40,5 +46,7 @@ const feedbackSchema = new mongoose.Schema({
 // Index for faster sorting
 feedbackSchema.index({ createdAt: -1 });
 feedbackSchema.index({ rating: 1 });
+// One feedback per user (anti-spam); edits replace the existing entry.
+feedbackSchema.index({ 'user._id': 1 }, { unique: true });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);

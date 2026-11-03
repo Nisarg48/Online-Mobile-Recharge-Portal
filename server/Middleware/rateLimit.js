@@ -19,4 +19,14 @@ const authLimiter = rateLimit({
     message: { message: "Too many attempts, please try again later." },
 });
 
-module.exports = { generalLimiter, authLimiter };
+// Throttles user-generated content (queries/feedback) to blunt spam even when
+// a single account is used.
+const contentLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Too many submissions, please try again later." },
+});
+
+module.exports = { generalLimiter, authLimiter, contentLimiter };
