@@ -43,6 +43,25 @@ const validateCoupon = async (req, res) => {
     }
 };
 
+// Available coupons for users (public view — no internal redemption fields).
+const listAvailableCoupons = async (_req, res) => {
+    try {
+        const now = new Date();
+        const coupons = await Coupon.find({
+            active: true,
+            $or: [{ expiresAt: null }, { expiresAt: { $gt: now } }],
+        })
+            .select("code description type value minAmount maxDiscount expiresAt")
+            .sort({ createdAt: -1 })
+            .lean();
+
+        return res.status(200).json({ success: true, data: coupons });
+    } catch (error) {
+        console.error("List available coupons error:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
 // List all coupons (admin).
 const listCoupons = async (_req, res) => {
     try {
@@ -116,6 +135,7 @@ const deleteCoupon = async (req, res) => {
 
 module.exports = {
     validateCoupon,
+    listAvailableCoupons,
     listCoupons,
     addCoupon,
     updateCoupon,

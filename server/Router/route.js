@@ -79,6 +79,7 @@ const {
 
 const {
     validateCoupon,
+    listAvailableCoupons,
     listCoupons,
     addCoupon,
     updateCoupon,
@@ -126,6 +127,9 @@ router.put('/user/toggleUserStatus/:id', verifyToken, isAdmin, toggleUserStatus)
 
 // Coupons (preview only; checkout re-validates server-side)
 router.post('/coupon/validate', verifyToken, validate(validateCouponSchema), validateCoupon);
+
+// Coupons available to users (browse + copy code at checkout)
+router.get('/coupon/available', verifyToken, listAvailableCoupons);
 
 // Coupon management (admin)
 router.get('/coupon/list', verifyToken, isAdmin, listCoupons);

@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     FaNetworkWired, FaExchangeAlt, FaQuestionCircle, FaSignOutAlt,
-    FaSignInAlt, FaUserCircle, FaChevronDown, FaEnvelope, FaUsers,
-    FaBars, FaTimes, FaChartPie, FaTag, FaComment
+    FaSignInAlt, FaUserCircle, FaChevronDown,     FaUsers,
+    FaBars, FaTimes, FaChartPie, FaTag, FaComment,     FaCog
 } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,11 +14,13 @@ import ThemeToggle from './ThemeToggle';
 function Navbar() {
     const navigate = useNavigate();
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [showAdminDropdown, setShowAdminDropdown] = useState(false);
     const [unrepliedCount, setUnrepliedCount] = useState(0);
     const [role, setRole] = useState(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const dropdownRef = useRef(null);
     const profileButtonRef = useRef(null);
+    const adminButtonRef = useRef(null);
 
     const accessToken = localStorage.getItem('accessToken');
 
@@ -37,7 +39,7 @@ function Navbar() {
         decodeToken();
     }, [accessToken]);
 
-    // Fetch unreplied queries count
+    // Fetch unreplied queries count (admin only)
     const fetchUnrepliedQueries = async () => {
         try {
             const response = await API.get('/query/getAllQueries');
@@ -56,12 +58,15 @@ function Navbar() {
         return () => clearInterval(interval);
     }, [role]);
 
-    // Close dropdown when clicking outside
+    // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target) && 
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
                 profileButtonRef.current && !profileButtonRef.current.contains(event.target)) {
                 setShowProfileDropdown(false);
+            }
+            if (adminButtonRef.current && !adminButtonRef.current.contains(event.target)) {
+                setShowAdminDropdown(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -76,23 +81,7 @@ function Navbar() {
         navigate('/NetworkProvider', { replace: true });
     };
 
-    // Navigation links data
-    const navLinks = [
-        { to: "/NetworkProvider", icon: <FaNetworkWired size={20} />, text: "Network Provider", show: true },
-        { to: "/Transaction", icon: <FaExchangeAlt size={20} />, text: "Transactions", show: accessToken },
-        { to: "/User_Management", icon: <FaUsers size={20} />, text: "User Management", show: accessToken && role === 'admin' },
-        { to: "/admin/dashboard", icon: <FaChartPie size={20} />, text: "Dashboard", show: accessToken && role === 'admin' },
-        { to: "/admin/coupons", icon: <FaTag size={20} />, text: "Coupons", show: accessToken && role === 'admin' },
-        { to: "/admin/feedback", icon: <FaComment size={20} />, text: "Feedback", show: accessToken && role === 'admin' },
-        { to: "/help", icon: <FaQuestionCircle size={20} />, text: "Help", show: true },
-        { 
-            to: "/query", 
-            icon: <FaEnvelope size={20} />, 
-            text: "Query", 
-            show: accessToken && role === 'admin',
-            badge: unrepliedCount > 0 ? unrepliedCount : null
-        }
-    ];
+    const isAdmin = accessToken && role === 'admin';
 
     return (
         <div className="bg-[#1e1e1e] fixed top-0 left-0 w-full shadow-lg z-50">
@@ -107,80 +96,145 @@ function Navbar() {
                         </Link>
                     </div>
 
-                    {/* Navigation Links - Center */}
-                    <div className="flex flex-wrap space-x-2 lg:space-x-4 mx-4 flex-1 justify-center gap-y-2">
-                        {navLinks.map((link, index) => {
-                            // Keep secondary admin links off small screens to avoid overflow.
-                            const hideOnSmall = ["Coupons", "Feedback"].includes(link.text);
-                            if (!link.show) return null;
-                            return (
-                                <Link 
-                                    key={index}
-                                    to={link.to} 
-                                    className={`text-white hover:text-[#50c878] transition py-2 px-1 flex items-center text-xs sm:text-sm lg:text-base ${
-                                        hideOnSmall ? "hidden lg:flex" : ""
-                                    }`}
-                                >
-                                    {link.icon}
-                                    <span className={`ml-2 ${hideOnSmall ? "hidden lg:inline" : ""}`}>{link.text}</span>
-                                    {link.badge && (
-                                        <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                                            {link.badge}
-                                        </span>
-                                    )}
-                                </Link>
-                            );
-                        })}
+                    {/* Core Navigation Links - Center */}
+                    <div className="flex items-center space-x-6 mx-4 flex-1 justify-center">
+                        <Link
+                            to="/NetworkProvider"
+                            className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center gap-1.5 text-sm font-medium"
+                        >
+                            <FaNetworkWired size={16} /> Network Provider
+                        </Link>
+                        <Link
+                            to="/Transaction"
+                            className={`text-white hover:text-[#50c878] transition py-2 px-1 flex items-center gap-1.5 text-sm font-medium ${accessToken ? "" : "hidden"}`}
+                        >
+                            <FaExchangeAlt size={16} /> Transactions
+                        </Link>
+                        {accessToken && (
+                            <Link
+                                to="/coupons"
+                                className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center gap-1.5 text-sm font-medium"
+                            >
+                                <FaTag size={16} /> Coupons
+                            </Link>
+                        )}
+                        <Link
+                            to="/help"
+                            className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center gap-1.5 text-sm font-medium"
+                        >
+                            <FaQuestionCircle size={16} /> Help
+                        </Link>
                     </div>
 
-                    {/* Profile/Login - Right Side */}
-                    <div className="flex-shrink-0 relative flex items-center gap-2" ref={dropdownRef}>
+                    {/* Right Side: Admin dropdown, Profile, Theme */}
+                    <div className="flex items-center gap-3" ref={dropdownRef}>
+                        {/* Admin dropdown */}
+                        {isAdmin && (
+                            <div className="relative" ref={adminButtonRef}>
+                                <button
+                                    onClick={() => setShowAdminDropdown(!showAdminDropdown)}
+                                    className="flex items-center gap-2 px-3 py-2 rounded bg-[#333333] hover:bg-[#50c878]/20 border border-[#50c878]/30 text-[#cfcfcf] hover:text-white transition"
+                                >
+                                    <FaCog size={16} />
+                                    <span className="hidden sm:inline">Admin</span>
+                                    <FaChevronDown size={14} />
+                                </button>
+                                <AnimatePresence>
+                                    {showAdminDropdown && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            className="absolute right-0 mt-2 w-48 bg-[#1e1e1e] rounded-lg shadow-xl border border-[#333333] z-50"
+                                        >
+                                            <div className="py-1">
+                                                <Link
+                                                    to="/admin/dashboard"
+                                                    onClick={() => setShowAdminDropdown(false)}
+                                                    className={`block px-4 py-2 text-sm ${unrepliedCount > 0 ? "text-[#50c878]" : "text-gray-300"} hover:bg-[#2a2a2a] hover:text-white transition`}
+                                                >
+                                                    <FaChartPie size={14} className="mr-2" /> Dashboard
+                                                    {unrepliedCount > 0 && (
+                                                        <span className="ml-auto bg-[#50c878] text-[#1e1e1e] text-[10px] rounded-full px-2 py-0.5">{unrepliedCount}</span>
+                                                    )}
+                                                </Link>
+                                                <Link
+                                                    to="/admin/coupons"
+                                                    onClick={() => setShowAdminDropdown(false)}
+                                                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
+                                                >
+                                                    <FaTag size={14} className="mr-2" /> Coupons
+                                                </Link>
+                                                <Link
+                                                    to="/admin/feedback"
+                                                    onClick={() => setShowAdminDropdown(false)}
+                                                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
+                                                >
+                                                    <FaComment size={14} className="mr-2" /> Feedback
+                                                </Link>
+                                                <div className="border-t border-[#333333] my-1"></div>
+                                                <Link
+                                                    to="/User_Management"
+                                                    onClick={() => setShowAdminDropdown(false)}
+                                                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
+                                                >
+                                                    <FaUsers size={14} className="mr-2" /> User Management
+                                                </Link>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        )}
+
+                        {/* Profile/Login */}
                         {accessToken ? (
                             <>
-                                <button 
+                                <button
                                     ref={profileButtonRef}
-                                    className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center text-sm lg:text-base"
+                                    className="flex items-center gap-2 px-3 py-2 rounded bg-[#333333] hover:bg-[#50c878]/20 border border-[#50c878]/30 text-[#cfcfcf] hover:text-white transition"
                                     onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                                 >
-                                    <FaUserCircle size={20} />
-                                    <span className="ml-2">Profile</span>
-                                    <FaChevronDown size={15} className="ml-2" />
+                                    <FaUserCircle size={16} />
+                                    <span className="hidden sm:inline">Profile</span>
+                                    <FaChevronDown size={14} />
                                 </button>
 
                                 <AnimatePresence>
                                     {showProfileDropdown && (
-                                        <motion.div 
-                                            className="absolute top-12 right-0 bg-[#1e1e1e] rounded-lg shadow-lg w-48 border border-[#333333] z-50"
+                                        <motion.div
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
+                                            className="absolute right-0 mt-2 w-48 bg-[#1e1e1e] rounded-lg shadow-xl border border-[#333333] z-50"
                                         >
-                                            <button 
-                                                className="w-full px-4 py-2 text-white hover:bg-[#333333] transition text-left flex items-center"
-                                                onClick={() => {
-                                                    navigate('/Profile');
-                                                    setShowProfileDropdown(false);
-                                                }}
-                                            >
-                                                <CgProfile className="mr-2" /> View Profile
-                                            </button>
-                                            <button 
-                                                className="w-full px-4 py-2 text-white hover:bg-[#333333] transition text-left flex items-center"
-                                                onClick={Logout}
-                                            >
-                                                <FaSignOutAlt className="mr-2" /> Logout
-                                            </button>
+                                            <div className="py-1">
+                                                <button
+                                                    onClick={() => {
+                                                        navigate('/Profile');
+                                                        setShowProfileDropdown(false);
+                                                    }}
+                                                    className="block w-full px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition text-left"
+                                                >
+                                                    <CgProfile className="mr-2" /> View Profile
+                                                </button>
+                                                <button
+                                                    onClick={Logout}
+                                                    className="block w-full px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition text-left"
+                                                >
+                                                    <FaSignOutAlt className="mr-2" /> Logout
+                                                </button>
+                                            </div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
                             </>
                         ) : (
-                            <Link 
-                                to='/login' 
-                                className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center text-sm lg:text-base"
+                            <Link
+                                to='/login'
+                                className="px-4 py-2 rounded bg-[#333333] hover:bg-[#50c878]/20 border border-[#50c878]/30 text-[#cfcfcf] hover:text-white transition text-sm font-medium"
                             >
-                                <FaSignInAlt size={20} />
-                                <span className="ml-2">Login</span>
+                                <FaSignInAlt size={16} className="mr-2" /> Login
                             </Link>
                         )}
                         <ThemeToggle />
@@ -189,17 +243,15 @@ function Navbar() {
 
                 {/* Mobile Navbar */}
                 <div className="md:hidden flex justify-between items-center py-3">
-                    {/* Logo */}
                     <Link to="/NetworkProvider" className="flex items-center">
                         <img src="/Logo.png" alt="Logo" className="w-10 h-10 border-2 border-[#50c878] rounded-full" />
                         <span className="ml-2 text-[#50c878] font-bold text-lg">RechargeHub</span>
                     </Link>
 
-                    {/* Mobile Actions */}
                     <div className="flex items-center gap-1">
                         <ThemeToggle />
                         <button
-                            className="text-white p-2"
+                            className="text-white p-2 rounded hover:bg-[#333333]"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                             aria-label="Toggle menu"
                         >
@@ -211,66 +263,129 @@ function Navbar() {
                 {/* Mobile Menu */}
                 <AnimatePresence>
                     {mobileMenuOpen && (
-                        <motion.div 
+                        <motion.div
                             className="md:hidden bg-[#1e1e1e] border-t border-[#333333]"
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
                             transition={{ duration: 0.3 }}
                         >
-                            <div className="px-4 py-2 space-y-2">
-                                {navLinks.map((link, index) => (
-                                    link.show && (
-                                        <Link 
-                                            key={index}
-                                            to={link.to} 
-                                            className="block text-white hover:text-[#50c878] transition py-3 px-2 flex items-center"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                        >
-                                            {link.icon}
-                                            <span className="ml-3">{link.text}</span>
-                                            {link.badge && (
-                                                <span className="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1">
-                                                    {link.badge}
-                                                </span>
-                                            )}
-                                        </Link>
-                                    )
-                                ))}
-
+                            <div className="px-4 py-4 space-y-3">
+                                <Link
+                                    to="/NetworkProvider"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="block px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
+                                >
+                                    <FaNetworkWired size={18} /> Network Provider
+                                </Link>
                                 {accessToken ? (
                                     <>
-                                        <button 
-                                            className="w-full text-white hover:text-[#50c878] transition py-3 px-2 flex items-center"
+                                        <Link
+                                            to="/Transaction"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="block px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
+                                        >
+                                            <FaExchangeAlt size={18} /> Transactions
+                                        </Link>
+                                        <Link
+                                            to="/coupons"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="block px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
+                                        >
+                                            <FaTag size={18} /> Coupons
+                                        </Link>
+                                        <Link
+                                            to="/help"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="block px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
+                                        >
+                                            <FaQuestionCircle size={18} /> Help
+                                        </Link>
+                                        {isAdmin && (
+                                            <div className="px-2">
+                                                <button
+                                                    onClick={() => setShowAdminDropdown(!showAdminDropdown)}
+                                                    className="w-full flex items-center justify-between px-3 py-2 text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
+                                                >
+                                                    <span className="flex items-center gap-3">
+                                                        <FaCog size={16} /> Admin
+                                                    </span>
+                                                    <FaChevronDown size={14} />
+                                                </button>
+                                                {showAdminDropdown && (
+                                                    <div className="ml-4 space-y-1">
+                                                        <Link
+                                                            to="/admin/dashboard"
+                                                            onClick={() => {
+                                                                setMobileMenuOpen(false);
+                                                                setShowAdminDropdown(false);
+                                                            }}
+                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                        >
+                                                            <FaChartPie size={14} className="mr-2" /> Dashboard
+                                                        </Link>
+                                                        <Link
+                                                            to="/admin/coupons"
+                                                            onClick={() => {
+                                                                setMobileMenuOpen(false);
+                                                                setShowAdminDropdown(false);
+                                                            }}
+                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                        >
+                                                            <FaTag size={14} className="mr-2" /> Coupons
+                                                        </Link>
+                                                        <Link
+                                                            to="/admin/feedback"
+                                                            onClick={() => {
+                                                                setMobileMenuOpen(false);
+                                                                setShowAdminDropdown(false);
+                                                            }}
+                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                        >
+                                                            <FaComment size={14} className="mr-2" /> Feedback
+                                                        </Link>
+                                                        <Link
+                                                            to="/User_Management"
+                                                            onClick={() => {
+                                                                setMobileMenuOpen(false);
+                                                                setShowAdminDropdown(false);
+                                                            }}
+                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                        >
+                                                            <FaUsers size={14} className="mr-2" /> User Management
+                                                        </Link>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                        <button
                                             onClick={() => {
                                                 navigate('/Profile');
                                                 setMobileMenuOpen(false);
                                             }}
+                                            className="block w-full px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
                                         >
-                                            <FaUserCircle className="mr-3" /> View Profile
+                                            <FaUserCircle size={18} /> Profile
                                         </button>
-                                        <button 
-                                            className="w-full text-white hover:text-[#50c878] transition py-3 px-2 flex items-center"
-                                            onClick={() => {
-                                                Logout();
-                                                setMobileMenuOpen(false);
-                                            }}
+                                        <button
+                                            onClick={Logout}
+                                            className="block w-full px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
                                         >
-                                            <FaSignOutAlt className="mr-3" /> Logout
+                                            <FaSignOutAlt size={18} /> Logout
                                         </button>
                                     </>
                                 ) : (
-                                    <Link 
-                                        to='/login' 
-                                        className="text-white hover:text-[#50c878] transition py-3 px-2 flex items-center"
+                                    <Link
+                                        to="/login"
                                         onClick={() => setMobileMenuOpen(false)}
+                                        className="block px-3 py-2 rounded bg-[#50c878] text-[#1e1e1e] text-center font-medium hover:bg-[#3da861] transition"
                                     >
-                                        <FaSignInAlt className="mr-3" /> Login
+                                        Login
                                     </Link>
                                 )}
                             </div>
-                        </motion.div>
-                    )}
+                </motion.div>
+            )}
                 </AnimatePresence>
             </div>
         </div>
