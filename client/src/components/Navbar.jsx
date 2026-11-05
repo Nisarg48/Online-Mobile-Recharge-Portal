@@ -21,6 +21,7 @@ function Navbar() {
     const dropdownRef = useRef(null);
     const profileButtonRef = useRef(null);
     const adminButtonRef = useRef(null);
+    const mobileNavRef = useRef(null);
 
     const accessToken = localStorage.getItem('accessToken');
 
@@ -61,12 +62,16 @@ function Navbar() {
     // Close dropdowns when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
+            const insideMobileNav = mobileNavRef.current && mobileNavRef.current.contains(event.target);
             if (dropdownRef.current && !dropdownRef.current.contains(event.target) &&
                 profileButtonRef.current && !profileButtonRef.current.contains(event.target)) {
                 setShowProfileDropdown(false);
             }
-            if (adminButtonRef.current && !adminButtonRef.current.contains(event.target)) {
+            if (adminButtonRef.current && !adminButtonRef.current.contains(event.target) && !insideMobileNav) {
                 setShowAdminDropdown(false);
+            }
+            if (mobileNavRef.current && !insideMobileNav) {
+                setMobileMenuOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -234,7 +239,8 @@ function Navbar() {
                 </div>
 
                 {/* Mobile Navbar */}
-                <div className="md:hidden flex justify-between items-center py-3">
+                <div className="md:hidden" ref={mobileNavRef}>
+                    <div className="flex justify-between items-center py-3">
                     <Link to="/NetworkProvider" className="flex items-center">
                         <img src="/Logo.png" alt="Logo" className="w-10 h-10 border-2 border-[#50c878] rounded-full" />
                         <span className="ml-2 text-[#50c878] font-bold text-lg">RechargeHub</span>
@@ -250,7 +256,7 @@ function Navbar() {
                             {mobileMenuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
                         </button>
                     </div>
-                </div>
+                    </div>
 
                 {/* Mobile Menu */}
                 <AnimatePresence>
@@ -302,6 +308,8 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/admin/dashboard');
+                                                                setShowAdminDropdown(false);
+                                                                setMobileMenuOpen(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
@@ -310,6 +318,8 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/admin/coupons');
+                                                                setShowAdminDropdown(false);
+                                                                setMobileMenuOpen(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
@@ -318,6 +328,8 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/admin/feedback');
+                                                                setShowAdminDropdown(false);
+                                                                setMobileMenuOpen(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
@@ -326,6 +338,8 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/User_Management');
+                                                                setShowAdminDropdown(false);
+                                                                setMobileMenuOpen(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
@@ -364,6 +378,7 @@ function Navbar() {
                 </motion.div>
             )}
                 </AnimatePresence>
+                </div>
             </div>
         </div>
     );
