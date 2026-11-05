@@ -229,7 +229,7 @@ function Navbar() {
                         ) : (
                             <Link
                                 to='/login'
-                                className="px-4 py-2 rounded bg-[#333333] hover:bg-[#50c878]/20 border border-[#50c878]/30 text-[#cfcfcf] hover:text-white transition text-sm font-medium"
+                                className="inline-flex items-center whitespace-nowrap px-4 py-2 rounded bg-[#333333] hover:bg-[#50c878]/20 border border-[#50c878]/30 text-[#cfcfcf] hover:text-white transition text-sm font-medium"
                             >
                                 <FaSignInAlt size={16} className="mr-2" /> Login
                             </Link>
