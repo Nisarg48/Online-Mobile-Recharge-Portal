@@ -62,7 +62,7 @@ const Dashboard = () => {
                 ["Failed", stats.transactions.failed],
                 ["Pending", stats.transactions.pending],
                 ["Success Rate (%)", stats.transactions.successRate],
-                ["Total Revenue (\u20B9)", stats.revenue.total],
+                ["Total Revenue (₹)", stats.revenue.total],
                 ["Wallet Top-ups", stats.revenue.walletTopups],
             ],
             theme: "grid",
@@ -119,7 +119,7 @@ const Dashboard = () => {
                         <FaUsers className="text-[#50c878] text-xl" />
                     </div>
                     <p className="mt-2 text-xs text-gray-500">
-                        {stats.users.active} active \u00b7 {stats.users.admins} admins
+                        {stats.users.active} active · {stats.users.admins} admins
                     </p>
                 </div>
                 <div className="p-4 rounded-xl border border-[#444444] bg-[#1e1e1e]">
@@ -141,7 +141,7 @@ const Dashboard = () => {
                         <div>
                             <p className="text-xs text-gray-400 uppercase">Total Revenue</p>
                             <p className="text-2xl font-bold text-white">
-                                \u20B9{stats.revenue.total}
+                                ₹{stats.revenue.total}
                             </p>
                         </div>
                         <FaMoneyBillWave className="text-[#50c878] text-xl" />
@@ -161,7 +161,7 @@ const Dashboard = () => {
                         <FaExchangeAlt className="text-[#50c878] text-xl" />
                     </div>
                     <p className="mt-2 text-xs text-gray-500">
-                        {stats.transactions.failed} failed \u00b7 {stats.transactions.pending} pending
+                        {stats.transactions.failed} failed · {stats.transactions.pending} pending
                     </p>
                 </div>
             </div>
@@ -185,13 +185,13 @@ const Dashboard = () => {
                             <tr className="text-left border-b border-[#444444]">
                                 <th className="pb-2">Plan</th>
                                 <th className="pb-2 text-right">Recharges</th>
-                                <th className="pb-2 text-right">Revenue (\u20B9)</th>
+                                <th className="pb-2 text-right">Revenue (₹)</th>
                             </tr>
                         </thead>
                         <tbody>
                             {popularPlans.map((p) => (
                                 <tr key={p.plan_id} className="border-b border-[#444444]">
-                                    <td className="py-2 text-white">{p.platform} \u00b7 {p.category}</td>
+                                    <td className="py-2 text-white">{p.platform} · {p.category}</td>
                                     <td className="py-2 text-right text-[#50c878]">{p.count}</td>
                                     <td className="py-2 text-right">{p.revenue}</td>
                                 </tr>
@@ -203,25 +203,31 @@ const Dashboard = () => {
                 {/* Plan distribution pie */}
                 <div className="p-4 rounded-xl border border-[#444444] bg-[#1e1e1e] flex flex-col">
                     <h3 className="mb-4 text-base font-semibold text-white">Plan Distribution</h3>
-                    <div className="flex-1 min-h-[300px] flex items-center justify-center">
-                        <PieChart>
-                            <Pie
-                                data={popularPlans}
-                                dataKey="count"
-                                nameKey="category"
-                                cx="50%"
-                                cy="50%"
-                                outerRadius={90}
-                                fill="#8884d8"
-                                label
-                            >
-                                {popularPlans.map((_entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                        </PieChart>
-                    </div>
+                    {popularPlans.length > 0 ? (
+                        <div className="flex-1 min-h-[300px] flex items-center justify-center">
+                            <PieChart>
+                                <Pie
+                                    data={popularPlans}
+                                    dataKey="count"
+                                    nameKey="category"
+                                    cx="50%"
+                                    cy="50%"
+                                    outerRadius={90}
+                                    fill="#8884d8"
+                                    label
+                                >
+                                    {popularPlans.map((_entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </div>
+                    ) : (
+                        <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
+                            No plan distribution data yet.
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -267,7 +273,7 @@ const Dashboard = () => {
                                                 {plan.platform || "Wallet Top-up"}
                                             </td>
                                             <td className="py-2 text-right">
-                                                \u20B9{txn.amount_to_pay}
+                                                ₹{txn.amount_to_pay}
                                             </td>
                                             <td className="py-2 text-center">{statusBadge(txn.status)}</td>
                                         </tr>

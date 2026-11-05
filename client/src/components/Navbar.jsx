@@ -108,24 +108,29 @@ function Navbar() {
                     </div>
 
                     {/* Navigation Links - Center */}
-                    <div className="flex space-x-4 lg:space-x-6 mx-4 flex-1 justify-center">
-                        {navLinks.map((link, index) => (
-                            link.show && (
+                    <div className="flex flex-wrap space-x-2 lg:space-x-4 mx-4 flex-1 justify-center gap-y-2">
+                        {navLinks.map((link, index) => {
+                            // Keep secondary admin links off small screens to avoid overflow.
+                            const hideOnSmall = ["Coupons", "Feedback"].includes(link.text);
+                            if (!link.show) return null;
+                            return (
                                 <Link 
                                     key={index}
                                     to={link.to} 
-                                    className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center text-sm lg:text-base"
+                                    className={`text-white hover:text-[#50c878] transition py-2 px-1 flex items-center text-xs sm:text-sm lg:text-base ${
+                                        hideOnSmall ? "hidden lg:flex" : ""
+                                    }`}
                                 >
                                     {link.icon}
-                                    <span className="ml-2">{link.text}</span>
+                                    <span className={`ml-2 ${hideOnSmall ? "hidden lg:inline" : ""}`}>{link.text}</span>
                                     {link.badge && (
                                         <span className="ml-2 bg-red-500 text-white text-xs rounded-full px-2 py-1">
                                             {link.badge}
                                         </span>
                                     )}
                                 </Link>
-                            )
-                        ))}
+                            );
+                        })}
                     </div>
 
                     {/* Profile/Login - Right Side */}

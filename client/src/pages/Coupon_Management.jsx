@@ -140,7 +140,7 @@ const Coupon_Management = () => {
         </span>
     );
 
-    const typeLabel = (type) => (type === "percent" ? "Percentage" : "Flat (\u20B9)");
+    const typeLabel = (type) => (type === "percent" ? "Percentage" : "Flat (₹)");
 
     if (loading) {
         return (
@@ -190,10 +190,10 @@ const Coupon_Management = () => {
                                     <td className="p-3 text-gray-400">{c.description || "-"}</td>
                                     <td className="p-3 text-gray-300">{typeLabel(c.type)}</td>
                                     <td className="p-3 text-right text-white">
-                                        {c.type === "percent" ? `${c.value}%` : `\u20B9{c.value}`}
+                                        {c.type === "percent" ? `${c.value}%` : `₹{c.value}`}
                                     </td>
                                     <td className="p-3 text-right text-gray-400">
-                                        {c.minAmount > 0 ? `\u20B9{c.minAmount}` : "-"}
+                                        {c.minAmount > 0 ? `₹{c.minAmount}` : "-"}
                                     </td>
                                     <td className="p-3 text-center">{statusBadge(c.active)}</td>
                                     <td className="p-3 text-center text-gray-400 text-xs">
@@ -306,7 +306,7 @@ const Coupon_Management = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs text-gray-400 mb-1">
-                                            Max Discount (\u20B9)
+                                            Max Discount (₹)
                                         </label>
                                         <input
                                             type="number"
@@ -320,7 +320,7 @@ const Coupon_Management = () => {
                                     </div>
                                     <div>
                                         <label className="block text-xs text-gray-400 mb-1">
-                                            Min Amount (\u20B9)
+                                            Min Amount (₹)
                                         </label>
                                         <input
                                             type="number"
