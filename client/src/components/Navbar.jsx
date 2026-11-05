@@ -186,7 +186,7 @@ function Navbar() {
 
                         {/* Profile/Login */}
                         {accessToken ? (
-                            <>
+                            <div className="relative">
                                 <button
                                     ref={profileButtonRef}
                                     className="flex items-center gap-2 px-3 py-2 rounded bg-[#333333] hover:bg-[#50c878]/20 border border-[#50c878]/30 text-[#cfcfcf] hover:text-white transition"
@@ -225,7 +225,7 @@ function Navbar() {
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
-                            </>
+                            </div>
                         ) : (
                             <Link
                                 to='/login'
