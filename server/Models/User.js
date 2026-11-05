@@ -30,6 +30,11 @@ const User_Schema = new mongoose.Schema({
 
     wallet: { type: Number, default: 0 },
     autoRechargeEnabled: { type: Boolean, default: false },
+    // Consecutive failed auto-recharge attempts (reset on success). Three in a
+    // row disables auto-recharge so we stop retrying a wallet that never tops up.
+    autoRechargeFailures: { type: Number, default: 0, min: 0 },
+    autoRechargeLastAttempt: { type: Date, default: null },
+    autoRechargeLastStatus: { type: String, default: null },
     selectedPlan: { type: mongoose.Schema.Types.ObjectId, ref: "Recharge_Plan" },
     planExpiryDate: { type: Date },
 

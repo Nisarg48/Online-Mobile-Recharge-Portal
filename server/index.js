@@ -5,8 +5,7 @@ const cors = require("cors");
 const connectDB = require("./DBConnection/connect");
 const userRoutes = require("./Router/route");
 const cron = require("node-cron");
-const autoRecharge = require("./Controllers/AutoRecharge_Controller");
-const User = require("./Models/User");
+const { processDueAutoRecharges } = require("./Controllers/AutoRecharge_Controller");
 const { generalLimiter } = require("./Middleware/rateLimit");
 
 const app = express();
@@ -85,14 +84,11 @@ const start = async () => {
         cron.schedule('0 */2 * * *', async () => {
             console.log("\n--- Running auto-recharge job ---");
             try {
-                const users = await User.find({ autoRechargeEnabled: true });
-
-                console.log(`Found ${users.length} users with auto-recharge enabled`);
-
-                for (const user of users) {
-                    console.log("\nProcessing user:", user._id);
-                    await autoRecharge(user._id);
-                }
+                const summary = await processDueAutoRecharges();
+                console.log(
+                    `Auto-recharge: ${summary.success} success, ${summary.failed} failed, ` +
+                        `${summary.skipped} skipped (${summary.total} enabled)`
+                );
             } catch (error) {
                 console.error("Error in auto-recharge job:", error);
             }

@@ -38,4 +38,35 @@ const notifyRechargeSuccess = async (user, transaction) => {
     }
 };
 
-module.exports = { notifyRechargeSuccess };
+// Tells the user why auto-recharge could not run, and whether it was disabled
+// after repeated failures.
+const notifyAutoRechargeFailure = async (user, plan, reason, disabled) => {
+    if (!user?.email) return false;
+
+    try {
+        const lines = [
+            `Hi ${user.name || "there"},`,
+            "",
+            "We could not auto-recharge your plan.",
+            `Plan: ${plan?.platform || "-"} ${plan?.category ? `- ${plan.category}` : ""}`.trim(),
+            `Reason: ${reason}`,
+            "",
+            disabled
+                ? "Auto-recharge has been turned off. Top up your wallet and enable it again from your profile."
+                : "We will try again on the next scheduled check.",
+            "",
+            "Thank you for using our service!",
+        ];
+
+        return await sendMail({
+            to: user.email,
+            subject: "Auto-recharge failed",
+            text: lines.join("\n"),
+        });
+    } catch (error) {
+        console.error("[notifications] auto-recharge failure email failed:", error.message);
+        return false;
+    }
+};
+
+module.exports = { notifyRechargeSuccess, notifyAutoRechargeFailure };

@@ -49,6 +49,7 @@ function Profile() {
     const [error, setError] = useState("");
     const [lastTransaction, setLastTransaction] = useState(null);
     const [walletActivity, setWalletActivity] = useState([]);
+    const [autoRechargeLogs, setAutoRechargeLogs] = useState([]);
     const [showAddFundsModal, setShowAddFundsModal] = useState(false);
     const [amount, setAmount] = useState("");
     const [fundsError, setFundsError] = useState("");
@@ -106,6 +107,14 @@ function Profile() {
                 setWalletActivity(walletOnly);
             } catch (err) {
                 console.error("Error fetching wallet activity:", err);
+            }
+
+            // Auto-recharge history (skips/failures/successes).
+            try {
+                const { data } = await API.get("/autoRecharge/logs");
+                setAutoRechargeLogs(Array.isArray(data?.data) ? data.data : []);
+            } catch (err) {
+                console.error("Error fetching auto-recharge logs:", err);
             }
         };
 
@@ -165,6 +174,10 @@ function Profile() {
             setUser(data);
             setFormData((prev) => ({ ...prev, autoRechargeEnabled: next }));
             toast.success(`Auto recharge ${next ? "enabled" : "disabled"}`);
+
+            if (next && lastTransaction?.plan && Number(user?.wallet) < Number(lastTransaction.plan.price)) {
+                toast.info("Your wallet is below the plan price. Top up so the renewal can run.");
+            }
         } catch (err) {
             console.error("Error toggling auto recharge:", err.response?.data || err.message);
             toast.error("Failed to toggle auto recharge");
@@ -222,22 +235,81 @@ function Profile() {
     };
 
     const renderAutoRechargeStatus = () => {
+        const expiry = user?.planExpiryDate || lastTransaction?.planExpiryDate;
+        const planPrice = lastTransaction?.plan?.price;
+        const planActive = expiry && new Date(expiry) >= new Date();
+        const failures = Number(user?.autoRechargeFailures || 0);
+        const wallet = Number(user?.wallet || 0);
+        const canRecharge = planPrice != null && wallet >= Number(planPrice);
+
+        const lastAttempt = user?.autoRechargeLastAttempt ? (
+            <p className="text-xs text-gray-400">
+                Last attempt {formatDateTime(user.autoRechargeLastAttempt)}
+                {user.autoRechargeLastStatus ? ` · ${user.autoRechargeLastStatus}` : ""}
+            </p>
+        ) : null;
+
+        const recentLogs =
+            autoRechargeLogs.length > 0 ? (
+                <ul className="mt-1 space-y-1 border-t border-[#444444] pt-2">
+                    {autoRechargeLogs.slice(0, 3).map((log) => (
+                        <li key={log._id} className="text-xs text-gray-400">
+                            <span
+                                className={`font-medium ${
+                                    log.status === "Success"
+                                        ? "text-green-400"
+                                        : log.status === "Failed"
+                                          ? "text-red-400"
+                                          : "text-yellow-400"
+                                }`}
+                            >
+                                {log.status}
+                            </span>{" "}
+                            · {formatDateTime(log.createdAt)} · {log.reason}
+                        </li>
+                    ))}
+                </ul>
+            ) : null;
+
         if (!formData.autoRechargeEnabled) {
-            return <p className="text-sm text-gray-400">Auto recharge is disabled.</p>;
+            return (
+                <div className="space-y-1">
+                    <p className="text-sm text-gray-400">Auto recharge is disabled.</p>
+                    {lastAttempt}
+                </div>
+            );
         }
 
-        const canRecharge =
-            lastTransaction?.plan &&
-            !isPlanActive &&
-            user &&
-            user.wallet >= lastTransaction.plan.price;
+        let message;
+        let tone = "text-gray-400";
+
+        if (planPrice == null) {
+            message = "No plan found yet. Complete a recharge to enable automatic renewals.";
+            tone = "text-yellow-400";
+        } else if (planActive) {
+            message = `Renewal is scheduled for ${formatDate(expiry)}, right after your current plan ends.`;
+            tone = "text-green-400";
+        } else if (canRecharge) {
+            message =
+                "Your plan has expired and your wallet covers the renewal. It will run on the next scheduled check (within 2 hours).";
+            tone = "text-green-400";
+        } else {
+            message = `Your plan has expired, but your wallet (₹${wallet}) is below the plan price (₹${planPrice}). Top up to avoid failed renewals.`;
+            tone = "text-yellow-400";
+        }
 
         return (
-            <p className={`text-sm ${canRecharge ? "text-green-400" : "text-gray-400"}`}>
-                {canRecharge
-                    ? "Auto recharge will trigger soon for your expired plan."
-                    : `Auto recharge is enabled. It will renew when your plan expires and your wallet covers ₹${lastTransaction?.plan?.price ?? "-"}.`}
-            </p>
+            <div className="space-y-2">
+                <p className={`text-sm ${tone}`}>{message}</p>
+                {failures > 0 && (
+                    <p className="text-xs text-red-400">
+                        {failures} consecutive failed attempt{failures === 1 ? "" : "s"}. Auto recharge
+                        turns off after 3.
+                    </p>
+                )}
+                {lastAttempt}
+                {recentLogs}
+            </div>
         );
     };
 

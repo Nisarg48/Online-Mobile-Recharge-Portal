@@ -266,8 +266,17 @@ const verify_otp = async (req, res) => {
         // Handle transaction based on the stored type (not client input).
         if (transaction.transactionType === "wallet") {
             owner.wallet += transaction.amount_to_pay;
+            owner.autoRechargeFailures = 0;
             await owner.save();
         } else if (transaction.transactionType === "recharge") {
+            // Keep the user's "current plan" fields in step with the Date model
+            // the auto-recharge scheduler and profile rely on.
+            if (transaction.plan_id) {
+                owner.selectedPlan = transaction.plan_id;
+                owner.planExpiryDate = transaction.planExpiryDate || null;
+            }
+            owner.autoRechargeFailures = 0;
+            await owner.save();
             await notifyRechargeSuccess(owner, transaction);
         }
 

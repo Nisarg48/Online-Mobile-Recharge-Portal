@@ -77,11 +77,17 @@ const toggleAutoRecharge = async (req, res) => {
         const userId = req.user.userId;
         const { autoRechargeEnabled } = req.body;
 
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { autoRechargeEnabled },
-            { new: true }
-        );
+        const update = { autoRechargeEnabled };
+        if (autoRechargeEnabled) {
+            // Re-enabling is a fresh start: clear the retry counter that may
+            // have disabled the feature previously.
+            update.autoRechargeFailures = 0;
+            update.autoRechargeLastStatus = null;
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(userId, update, {
+            new: true,
+        });
 
         if (!updatedUser) {
             return res.status(404).json({ message: "User not found" });

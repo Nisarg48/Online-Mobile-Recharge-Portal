@@ -55,6 +55,11 @@ const {
 } = require("../Controllers/Card_Controller");
 
 const {
+    listAutoRechargeLogs,
+    runAutoRecharge,
+} = require("../Controllers/AutoRecharge_Controller");
+
+const {
     submitQuery,
     getAllQueries,
     getQueryById,
@@ -98,6 +103,8 @@ router.put('/user/updateUser', verifyToken, validate(updateUserSchema), updateUs
 router.put('/user/changePassword', verifyToken, validate(changePasswordSchema), changePassword);
 router.put('/user/updateLastLogin', verifyToken, updateLastLogin);
 router.put('/user/toggleAutoRecharge', verifyToken, validate(toggleAutoRechargeSchema), toggleAutoRecharge);
+router.get('/autoRecharge/logs', verifyToken, listAutoRechargeLogs);
+router.post('/autoRecharge/run', verifyToken, isAdmin, runAutoRecharge);
 
 // Admin Routes
 router.delete('/user/deleteUser/:id', verifyToken, isAdmin, deleteUser);
