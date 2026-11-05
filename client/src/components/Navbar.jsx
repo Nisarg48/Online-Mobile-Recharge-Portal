@@ -302,7 +302,6 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/admin/dashboard');
-                                                                setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
@@ -312,7 +311,6 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/admin/coupons');
-                                                                setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
@@ -322,7 +320,6 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/admin/feedback');
-                                                                setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
@@ -332,7 +329,6 @@ function Navbar() {
                                                         <button
                                                             onClick={() => {
                                                                 navigate('/User_Management');
-                                                                setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
