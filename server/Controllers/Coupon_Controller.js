@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+const Coupon = require("../Models/Coupon");
 const RechargePlan = require("../Models/Recharge_Plan");
 const {
     PLATFORM_CHARGE,
@@ -41,4 +43,81 @@ const validateCoupon = async (req, res) => {
     }
 };
 
-module.exports = { validateCoupon };
+// List all coupons (admin).
+const listCoupons = async (_req, res) => {
+    try {
+        const coupons = await Coupon.find().sort({ createdAt: -1 }).lean();
+        return res.status(200).json({ success: true, data: coupons });
+    } catch (error) {
+        console.error("List coupons error:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// Add a new coupon (admin).
+const addCoupon = async (req, res) => {
+    try {
+        const exists = await Coupon.findOne({ code: req.body.code });
+        if (exists) {
+            return res.status(400).json({ success: false, message: "Coupon code already exists." });
+        }
+        const coupon = await Coupon.create(req.body);
+        return res.status(201).json({ success: true, data: coupon });
+    } catch (error) {
+        console.error("Add coupon error:", error);
+        if (error.code === 11000) {
+            return res.status(400).json({ success: false, message: "Coupon code already exists." });
+        }
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// Update a coupon (admin).
+const updateCoupon = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({ success: false, message: "Invalid coupon id." });
+        }
+        const coupon = await Coupon.findByIdAndUpdate(id, req.body, {
+            new: true,
+            runValidators: true,
+        });
+        if (!coupon) {
+            return res.status(404).json({ success: false, message: "Coupon not found." });
+        }
+        return res.status(200).json({ success: true, data: coupon });
+    } catch (error) {
+        console.error("Update coupon error:", error);
+        if (error.code === 11000) {
+            return res.status(400).json({ success: false, message: "Coupon code already exists." });
+        }
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+// Delete a coupon (admin).
+const deleteCoupon = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({ success: false, message: "Invalid coupon id." });
+        }
+        const coupon = await Coupon.findByIdAndDelete(id);
+        if (!coupon) {
+            return res.status(404).json({ success: false, message: "Coupon not found." });
+        }
+        return res.status(200).json({ success: true, message: "Coupon deleted." });
+    } catch (error) {
+        console.error("Delete coupon error:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+module.exports = {
+    validateCoupon,
+    listCoupons,
+    addCoupon,
+    updateCoupon,
+    deleteCoupon,
+};

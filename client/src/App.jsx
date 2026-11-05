@@ -5,6 +5,9 @@ import Signup from "./pages/SignUp";
 import ForgotPassword from "./pages/Forgot_Password";
 import ChangePassword from "./pages/Change_Password";
 import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
+import Coupon_Management from "./pages/Coupon_Management";
+import Feedback_Management from "./pages/Feedback_Management";
 import NetworkProvider from "./pages/NetworkProvider";
 import Transaction from "./pages/Transaction";
 import Buy_Plan from "./components/Buy_Plan";
@@ -29,6 +32,9 @@ function App() {
           <Route path="/NetworkProvider/:provider" element={<Provider />} />
           <Route path="/Transaction" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
           <Route path="/User_Management" element={<AdminRoute><User_Management /></AdminRoute>} />
+          <Route path="/admin/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
+          <Route path="/admin/coupons" element={<AdminRoute><Coupon_Management /></AdminRoute>} />
+          <Route path="/admin/feedback" element={<AdminRoute><Feedback_Management /></AdminRoute>} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/Help" element={<Help />} />
           <Route path="/query" element={<AdminRoute><QueryPage /></AdminRoute>} />

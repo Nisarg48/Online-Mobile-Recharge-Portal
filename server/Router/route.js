@@ -17,6 +17,8 @@ const {
     updateQuerySchema,
     createFeedbackSchema,
     changePasswordSchema,
+    couponSchema,
+    updateCouponSchema,
 } = require("../Validation/schemas");
 
 const {
@@ -75,7 +77,15 @@ const {
     getAllFeedback,
 } = require("../Controllers/Feedback_Controller");
 
-const { validateCoupon } = require("../Controllers/Coupon_Controller");
+const {
+    validateCoupon,
+    listCoupons,
+    addCoupon,
+    updateCoupon,
+    deleteCoupon,
+} = require("../Controllers/Coupon_Controller");
+
+const { getDashboard } = require("../Controllers/Admin_Controller");
 
 // Auth Routes
 const authRoutes = require("./authRoute");
@@ -106,6 +116,9 @@ router.put('/user/toggleAutoRecharge', verifyToken, validate(toggleAutoRechargeS
 router.get('/autoRecharge/logs', verifyToken, listAutoRechargeLogs);
 router.post('/autoRecharge/run', verifyToken, isAdmin, runAutoRecharge);
 
+// Admin Dashboard
+router.get('/admin/dashboard', verifyToken, isAdmin, getDashboard);
+
 // Admin Routes
 router.delete('/user/deleteUser/:id', verifyToken, isAdmin, deleteUser);
 router.put('/user/changeUserRole/:id', verifyToken, isAdmin, validate(changeUserRoleSchema), changeUserRole);
@@ -113,6 +126,12 @@ router.put('/user/toggleUserStatus/:id', verifyToken, isAdmin, toggleUserStatus)
 
 // Coupons (preview only; checkout re-validates server-side)
 router.post('/coupon/validate', verifyToken, validate(validateCouponSchema), validateCoupon);
+
+// Coupon management (admin)
+router.get('/coupon/list', verifyToken, isAdmin, listCoupons);
+router.post('/coupon/add', verifyToken, isAdmin, validate(couponSchema), addCoupon);
+router.put('/coupon/update/:id', verifyToken, isAdmin, validate(updateCouponSchema), updateCoupon);
+router.delete('/coupon/delete/:id', verifyToken, isAdmin, deleteCoupon);
 
 // Card Payment
 router.post('/verify_card_details', verifyToken, validate(verifyCardDetailsSchema), verify_card_details);

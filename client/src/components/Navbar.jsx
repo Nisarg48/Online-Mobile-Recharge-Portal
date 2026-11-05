@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
     FaNetworkWired, FaExchangeAlt, FaQuestionCircle, FaSignOutAlt,
     FaSignInAlt, FaUserCircle, FaChevronDown, FaEnvelope, FaUsers,
-    FaBars, FaTimes
+    FaBars, FaTimes, FaChartPie, FaTag, FaComment
 } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -81,6 +81,9 @@ function Navbar() {
         { to: "/NetworkProvider", icon: <FaNetworkWired size={20} />, text: "Network Provider", show: true },
         { to: "/Transaction", icon: <FaExchangeAlt size={20} />, text: "Transactions", show: accessToken },
         { to: "/User_Management", icon: <FaUsers size={20} />, text: "User Management", show: accessToken && role === 'admin' },
+        { to: "/admin/dashboard", icon: <FaChartPie size={20} />, text: "Dashboard", show: accessToken && role === 'admin' },
+        { to: "/admin/coupons", icon: <FaTag size={20} />, text: "Coupons", show: accessToken && role === 'admin' },
+        { to: "/admin/feedback", icon: <FaComment size={20} />, text: "Feedback", show: accessToken && role === 'admin' },
         { to: "/help", icon: <FaQuestionCircle size={20} />, text: "Help", show: true },
         { 
             to: "/query", 

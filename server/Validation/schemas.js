@@ -76,6 +76,35 @@ const rechargePlanSchema = Joi.object({
     additionalDetails: Joi.string().allow(null, ""),
 }).unknown(true);
 
+// Coupon (admin create/update)
+const couponSchema = Joi.object({
+    code: Joi.string().trim().uppercase().max(24).required(),
+    description: Joi.string().trim().max(120).allow(null, ""),
+    type: Joi.string().valid("percent", "flat").required(),
+    value: Joi.number().min(0).required(),
+    maxDiscount: Joi.number().min(0).default(0),
+    minAmount: Joi.number().min(0).default(0),
+    active: Joi.boolean().default(true),
+    expiresAt: Joi.date().allow(null),
+    usageLimit: Joi.number().min(0).default(0),
+    perUserLimit: Joi.number().min(0).default(1),
+});
+
+// Partial update schema for coupons: every field optional so admins can
+// change just one value (e.g. toggle `active`) without re-sending everything.
+const updateCouponSchema = Joi.object({
+    code: Joi.string().trim().uppercase().max(24),
+    description: Joi.string().trim().max(120).allow(null, ""),
+    type: Joi.string().valid("percent", "flat"),
+    value: Joi.number().min(0),
+    maxDiscount: Joi.number().min(0),
+    minAmount: Joi.number().min(0),
+    active: Joi.boolean(),
+    expiresAt: Joi.date().allow(null),
+    usageLimit: Joi.number().min(0),
+    perUserLimit: Joi.number().min(0),
+}).min(1);
+
 // Payment / OTP
 const cardDetailsSchema = Joi.object({
     cardNumber: Joi.string().trim().required(),
@@ -147,4 +176,6 @@ module.exports = {
     submitQuerySchema,
     updateQuerySchema,
     createFeedbackSchema,
+    couponSchema,
+    updateCouponSchema,
 };
