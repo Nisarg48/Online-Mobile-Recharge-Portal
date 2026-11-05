@@ -110,14 +110,6 @@ function Navbar() {
                         >
                             <FaExchangeAlt size={16} /> Transactions
                         </Link>
-                        {accessToken && (
-                            <Link
-                                to="/coupons"
-                                className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center gap-1.5 text-sm font-medium"
-                            >
-                                <FaTag size={16} /> Coupons
-                            </Link>
-                        )}
                         <Link
                             to="/help"
                             className="text-white hover:text-[#50c878] transition py-2 px-1 flex items-center gap-1.5 text-sm font-medium"
@@ -145,7 +137,7 @@ function Navbar() {
                                             initial={{ opacity: 0, y: -10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
-                                            className="absolute right-0 mt-2 w-48 bg-[#1e1e1e] rounded-lg shadow-xl border border-[#333333] z-50"
+                                            className="absolute right-0 mt-2 w-48 bg-[#1e1e1e] rounded-lg shadow-xl border border-[#333333] z-50 transform -translate-x-1/2"
                                         >
                                             <div className="py-1">
                                                 <Link
@@ -288,13 +280,6 @@ function Navbar() {
                                             <FaExchangeAlt size={18} /> Transactions
                                         </Link>
                                         <Link
-                                            to="/coupons"
-                                            onClick={() => setMobileMenuOpen(false)}
-                                            className="block px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
-                                        >
-                                            <FaTag size={18} /> Coupons
-                                        </Link>
-                                        <Link
                                             to="/help"
                                             onClick={() => setMobileMenuOpen(false)}
                                             className="block px-3 py-2 rounded hover:bg-[#2a2a2a] text-white hover:text-[#50c878] transition flex items-center gap-3"
@@ -313,48 +298,56 @@ function Navbar() {
                                                     <FaChevronDown size={14} />
                                                 </button>
                                                 {showAdminDropdown && (
-                                                    <div className="ml-4 space-y-1">
-                                                        <Link
-                                                            to="/admin/dashboard"
-                                                            onClick={() => {
-                                                                setMobileMenuOpen(false);
-                                                                setShowAdminDropdown(false);
-                                                            }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
-                                                        >
-                                                            <FaChartPie size={14} className="mr-2" /> Dashboard
-                                                        </Link>
-                                                        <Link
-                                                            to="/admin/coupons"
-                                                            onClick={() => {
-                                                                setMobileMenuOpen(false);
-                                                                setShowAdminDropdown(false);
-                                                            }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
-                                                        >
-                                                            <FaTag size={14} className="mr-2" /> Coupons
-                                                        </Link>
-                                                        <Link
-                                                            to="/admin/feedback"
-                                                            onClick={() => {
-                                                                setMobileMenuOpen(false);
-                                                                setShowAdminDropdown(false);
-                                                            }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
-                                                        >
-                                                            <FaComment size={14} className="mr-2" /> Feedback
-                                                        </Link>
-                                                        <Link
-                                                            to="/User_Management"
-                                                            onClick={() => {
-                                                                setMobileMenuOpen(false);
-                                                                setShowAdminDropdown(false);
-                                                            }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
-                                                        >
-                                                            <FaUsers size={14} className="mr-2" /> User Management
-                                                        </Link>
-                                                    </div>
+                                                    <div className="ml-4 space-y-1 border-t border-[#333333] pt-3">
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowAdminDropdown(false);
+                                                        }}
+                                                        className="block w-full px-3 py-2 text-sm text-[#ef4444] hover:bg-[#2a2a2a] hover:text-white transition flex items-center gap-2"
+                                                    >
+                                                        <FaTimes size={14} className="mr-2" /> Close Admin Menu
+                                                    </button>
+                                                    <Link
+                                                        to="/admin/dashboard"
+                                                        onClick={() => {
+                                                            setMobileMenuOpen(false);
+                                                            setShowAdminDropdown(false);
+                                                        }}
+                                                        className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                    >
+                                                        <FaChartPie size={14} className="mr-2" /> Dashboard
+                                                    </Link>
+                                                    <Link
+                                                        to="/admin/coupons"
+                                                        onClick={() => {
+                                                            setMobileMenuOpen(false);
+                                                            setShowAdminDropdown(false);
+                                                        }}
+                                                        className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                    >
+                                                        <FaTag size={14} className="mr-2" /> Coupons
+                                                    </Link>
+                                                    <Link
+                                                        to="/admin/feedback"
+                                                        onClick={() => {
+                                                            setMobileMenuOpen(false);
+                                                            setShowAdminDropdown(false);
+                                                        }}
+                                                        className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                    >
+                                                        <FaComment size={14} className="mr-2" /> Feedback
+                                                    </Link>
+                                                    <Link
+                                                        to="/User_Management"
+                                                        onClick={() => {
+                                                            setMobileMenuOpen(false);
+                                                            setShowAdminDropdown(false);
+                                                        }}
+                                                        className="block px-3 py-2 text-sm text-gray-300 hover:text-[#50c878] transition"
+                                                    >
+                                                        <FaUsers size={14} className="mr-2" /> User Management
+                                                    </Link>
+                                                </div>
                                                 )}
                                             </div>
                                         )}

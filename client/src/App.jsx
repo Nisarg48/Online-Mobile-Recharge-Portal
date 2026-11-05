@@ -5,7 +5,6 @@ import Signup from "./pages/SignUp";
 import ForgotPassword from "./pages/Forgot_Password";
 import ChangePassword from "./pages/Change_Password";
 import Profile from "./pages/Profile";
-import Coupons from "./pages/Coupons";
 import Dashboard from "./pages/Dashboard";
 import Coupon_Management from "./pages/Coupon_Management";
 import Feedback_Management from "./pages/Feedback_Management";
@@ -44,7 +43,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/Profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-        <Route path="/coupons" element={<ProtectedRoute><Coupons /></ProtectedRoute>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
         <Route path="/NetworkProvider/:provider/buy" element={<ProtectedRoute><Buy_Plan /></ProtectedRoute>} />

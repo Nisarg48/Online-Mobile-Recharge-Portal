@@ -135,7 +135,6 @@ const deleteCoupon = async (req, res) => {
 
 module.exports = {
     validateCoupon,
-    listAvailableCoupons,
     listCoupons,
     addCoupon,
     updateCoupon,

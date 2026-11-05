@@ -10,8 +10,8 @@ import {
     Phone,
     Mail,
     User as UserIcon,
-    Users,
     CalendarDays,
+    CreditCard,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../Utils/api";
@@ -39,28 +39,6 @@ const getInitials = (name = "") =>
         .map((part) => part[0]?.toUpperCase() || "")
         .join("") || "U";
 
-// Predefined avatar set — users pick one instead of pasting an image URL.
-const AVATAR_OPTIONS = [
-    { emoji: "🐶", color: "#50c878" },
-    { emoji: "🐱", color: "#f59e0b" },
-    { emoji: "🐰", color: "#ef4444" },
-    { emoji: "🦊", color: "#3b82f6" },
-    { emoji: "🐻", color: "#a855f7" },
-    { emoji: "🐼", color: "#06b6d4" },
-    { emoji: "🐨", color: "#84cc16" },
-    { emoji: "🐯", color: "#ec4899" },
-    { emoji: "🦁", color: "#f97316" },
-    { emoji: "🐮", color: "#6366f1" },
-    { emoji: "🐷", color: "#e879f9" },
-    { emoji: "🐸", color: "#22c55e" },
-];
-
-const isEmojiAvatar = (value) =>
-    Boolean(value && AVATAR_OPTIONS.some((o) => o.emoji === value));
-
-const avatarColor = (value) =>
-    AVATAR_OPTIONS.find((o) => o.emoji === value)?.color || "#50c878";
-
 function Profile() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -75,7 +53,6 @@ function Profile() {
     const [showAddFundsModal, setShowAddFundsModal] = useState(false);
     const [amount, setAmount] = useState("");
     const [fundsError, setFundsError] = useState("");
-    const [selectedAvatar, setSelectedAvatar] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -149,11 +126,6 @@ function Profile() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleAvatarSelect = (emoji) => {
-        setSelectedAvatar(emoji);
-        setFormData((prev) => ({ ...prev, avatar: emoji }));
-    };
-
     const toggleEdit = () => {
         setIsEditing((prev) => !prev);
         if (user) {
@@ -166,7 +138,6 @@ function Profile() {
                 avatar: user.avatar || "",
                 autoRechargeEnabled: Boolean(user.autoRechargeEnabled),
             });
-            setSelectedAvatar(user.avatar || "");
         }
     };
 
@@ -180,7 +151,7 @@ function Profile() {
                 mobile_no: formData.mobile_no.trim(),
                 alternate_mobile: formData.alternate_mobile.trim(),
                 address: formData.address.trim(),
-                avatar: selectedAvatar.trim(),
+                avatar: formData.avatar.trim(),
             };
             const { data } = await API.put("/user/updateUser", payload);
             setUser(data);
@@ -409,14 +380,7 @@ function Profile() {
                         </button>
 
                         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-                            {isEmojiAvatar(formData.avatar) ? (
-                                <div
-                                    className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-[#1e1e1e] shadow-lg"
-                                    style={{ backgroundColor: avatarColor(formData.avatar) }}
-                                >
-                                    <span className="text-5xl">{formData.avatar}</span>
-                                </div>
-                            ) : formData.avatar ? (
+                            {formData.avatar ? (
                                 <img
                                     src={formData.avatar}
                                     alt={user.name}
@@ -508,33 +472,10 @@ function Profile() {
                                     <input type="text" name="address" value={formData.address} onChange={handleChange} className={inputClass} placeholder="Optional — street, city, state" disabled={!isEditing} />
                                 </div>
                                 <div className="md:col-span-2">
-                                    <label className="mb-3 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
-                                        <Users className="h-4 w-4 text-[#50c878]" /> Choose Avatar
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <CreditCard className="h-4 w-4 text-[#50c878]" /> Avatar image URL
                                     </label>
-                                    <div className="flex flex-wrap gap-3">
-                                        {AVATAR_OPTIONS.map((option) => (
-                                            <button
-                                                key={option.emoji}
-                                                type="button"
-                                                onClick={() => handleAvatarSelect(option.emoji)}
-                                                className={`flex h-12 w-12 items-center justify-center rounded-full text-2xl transition border-2 ${
-                                                    selectedAvatar === option.emoji
-                                                        ? "border-[#50c878] bg-[#50c878]/20"
-                                                        : "border-[#444444] hover:border-[#50c878]/50"
-                                                }`}
-                                            >
-                                                <span
-                                                    style={{ backgroundColor: option.color }}
-                                                    className="p-1.5 rounded-full"
-                                                >
-                                                    {option.emoji}
-                                                </span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <p className="mt-2 text-xs text-gray-500">
-                                        Pick your avatar — no image URL needed.
-                                    </p>
+                                    <input type="url" name="avatar" value={formData.avatar} onChange={handleChange} className={inputClass} placeholder="Optional — https://…" disabled={!isEditing} />
                                 </div>
                             </div>
 
