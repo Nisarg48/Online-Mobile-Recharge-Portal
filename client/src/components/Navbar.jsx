@@ -299,46 +299,46 @@ function Navbar() {
                                                 </button>
                                                 {showAdminDropdown && (
                                                     <div className="ml-2 space-y-1 border-t border-[#333333] pt-3">
-                                                        <Link
-                                                            to="/admin/dashboard"
+                                                        <button
                                                             onClick={() => {
+                                                                navigate('/admin/dashboard');
                                                                 setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition"
+                                                            className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
                                                             <FaChartPie size={14} className="mr-2" /> Dashboard
-                                                        </Link>
-                                                        <Link
-                                                            to="/admin/coupons"
+                                                        </button>
+                                                        <button
                                                             onClick={() => {
+                                                                navigate('/admin/coupons');
                                                                 setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition"
+                                                            className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
                                                             <FaTag size={14} className="mr-2" /> Coupons
-                                                        </Link>
-                                                        <Link
-                                                            to="/admin/feedback"
+                                                        </button>
+                                                        <button
                                                             onClick={() => {
+                                                                navigate('/admin/feedback');
                                                                 setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition"
+                                                            className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
                                                             <FaComment size={14} className="mr-2" /> Feedback
-                                                        </Link>
-                                                        <Link
-                                                            to="/User_Management"
+                                                        </button>
+                                                        <button
                                                             onClick={() => {
+                                                                navigate('/User_Management');
                                                                 setMobileMenuOpen(false);
                                                                 setShowAdminDropdown(false);
                                                             }}
-                                                            className="block px-3 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition"
+                                                            className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
                                                             <FaUsers size={14} className="mr-2" /> User Management
-                                                        </Link>
+                                                        </button>
                                                     </div>
                                                 )}
                                             </div>
