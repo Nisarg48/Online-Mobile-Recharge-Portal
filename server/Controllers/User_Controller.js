@@ -33,8 +33,8 @@ const updateUser = async (req, res) => {
 
         // Only update the fields the client actually sent, so partial edits
         // (e.g. filling in an address) don't wipe other profile data.
-        const allowed = ["name", "email", "mobile_no", "alternate_mobile", "address", "avatar"];
-        const clearable = ["alternate_mobile", "address", "avatar"];
+        const allowed = ["name", "email", "mobile_no", "alternate_mobile", "address", "avatar", "region", "city"];
+        const clearable = ["alternate_mobile", "address", "avatar", "region", "city"];
         const $set = {};
         const $unset = {};
 

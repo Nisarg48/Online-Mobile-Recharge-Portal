@@ -6,11 +6,16 @@ const password = Joi.string().min(8).max(72).required();
 const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
 
 // Auth
+const region = Joi.string().trim().max(60).allow(null, "");
+const city = Joi.string().trim().max(60).allow(null, "");
+
 const signupSchema = Joi.object({
     name: Joi.string().trim().min(2).max(60).required(),
     email,
     mobile_no: mobileNo,
     password,
+    region,
+    city,
 });
 
 const loginSchema = Joi.object({
@@ -41,6 +46,8 @@ const updateUserSchema = Joi.object({
     alternate_mobile: Joi.string().pattern(/^[6-9]\d{9}$/).allow(null, ""),
     address: Joi.string().trim().max(250).allow(null, ""),
     avatar: Joi.string().trim().max(500).allow(null, ""),
+    region,
+    city,
 }).min(1);
 
 const toggleAutoRechargeSchema = Joi.object({

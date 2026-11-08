@@ -9,7 +9,7 @@ const hashToken = (token) => crypto.createHash("sha256").update(token).digest("h
 // Signup User
 const SignupUser = async (req, res) => {
     try {
-        const { name, email, mobile_no, password } = req.body;
+        const { name, email, mobile_no, password, region, city } = req.body;
 
         const existingUser = await User.findOne({ $or: [{ email }, { mobile_no }] });
         if (existingUser) {
@@ -26,6 +26,8 @@ const SignupUser = async (req, res) => {
             mobile_no,
             password: hashedPassword,
             role: "user",
+            region: region || undefined,
+            city: city || undefined,
         });
         await newUser.save();
 

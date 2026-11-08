@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { INDIAN_STATES } from "../Utils/regions";
 
 function SignUp() {
     const navigate = useNavigate();
@@ -88,6 +89,31 @@ function SignUp() {
                                 {errors.mobile_no.message}
                             </p>
                         )}
+                    </div>
+
+                    {/* Region + City (optional, powers regional analytics) */}
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label className="block mb-2 text-lg font-medium text-[#ffffff]">State / Region</label>
+                            <select
+                                {...register("region")}
+                                className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
+                            >
+                                <option value="">Select (optional)</option>
+                                {INDIAN_STATES.map((state) => (
+                                    <option key={state} value={state}>{state}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block mb-2 text-lg font-medium text-[#ffffff]">City</label>
+                            <input
+                                type="text"
+                                {...register("city")}
+                                className="w-full px-4 py-3 text-sm rounded-lg border border-[#333333] bg-[#1e1e1e] text-[#ffffff] placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#50c878] transition-all"
+                                placeholder="Optional"
+                            />
+                        </div>
                     </div>
 
                     {/* Password Field */}

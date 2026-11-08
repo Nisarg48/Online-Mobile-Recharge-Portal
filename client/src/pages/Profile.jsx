@@ -12,9 +12,11 @@ import {
     User as UserIcon,
     CalendarDays,
     CreditCard,
+    Building2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import API from "../Utils/api";
+import { INDIAN_STATES } from "../Utils/regions";
 import { logout } from "../Utils/auth";
 import { formatDate, formatDateTime } from "../Utils/format";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,6 +28,8 @@ const emptyForm = {
     mobile_no: "",
     alternate_mobile: "",
     address: "",
+    region: "",
+    city: "",
     avatar: "",
     autoRechargeEnabled: false,
 };
@@ -66,6 +70,8 @@ function Profile() {
                     mobile_no: userData.mobile_no || "",
                     alternate_mobile: userData.alternate_mobile || "",
                     address: userData.address || "",
+                    region: userData.region || "",
+                    city: userData.city || "",
                     avatar: userData.avatar || "",
                     autoRechargeEnabled: Boolean(userData.autoRechargeEnabled),
                 });
@@ -135,6 +141,8 @@ function Profile() {
                 mobile_no: user.mobile_no || "",
                 alternate_mobile: user.alternate_mobile || "",
                 address: user.address || "",
+                region: user.region || "",
+                city: user.city || "",
                 avatar: user.avatar || "",
                 autoRechargeEnabled: Boolean(user.autoRechargeEnabled),
             });
@@ -151,6 +159,8 @@ function Profile() {
                 mobile_no: formData.mobile_no.trim(),
                 alternate_mobile: formData.alternate_mobile.trim(),
                 address: formData.address.trim(),
+                region: formData.region.trim(),
+                city: formData.city.trim(),
                 avatar: formData.avatar.trim(),
             };
             const { data } = await API.put("/user/updateUser", payload);
@@ -465,11 +475,28 @@ function Profile() {
                                     </label>
                                     <input type="tel" name="alternate_mobile" inputMode="numeric" maxLength={10} value={formData.alternate_mobile} onChange={(e) => setFormData((p) => ({ ...p, alternate_mobile: e.target.value.replace(/\D/g, "").slice(0, 10) }))} className={inputClass} placeholder="Optional" disabled={!isEditing} />
                                 </div>
+                                <div>
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <MapPin className="h-4 w-4 text-[#50c878]" /> State / Region
+                                    </label>
+                                    <select name="region" value={formData.region} onChange={handleChange} className={inputClass} disabled={!isEditing}>
+                                        <option value="">Select your state</option>
+                                        {INDIAN_STATES.map((state) => (
+                                            <option key={state} value={state}>{state}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
+                                        <Building2 className="h-4 w-4 text-[#50c878]" /> City
+                                    </label>
+                                    <input type="text" name="city" value={formData.city} onChange={handleChange} className={inputClass} placeholder="Optional — e.g. Ahmedabad" disabled={!isEditing} />
+                                </div>
                                 <div className="md:col-span-2">
                                     <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
                                         <MapPin className="h-4 w-4 text-[#50c878]" /> Address
                                     </label>
-                                    <input type="text" name="address" value={formData.address} onChange={handleChange} className={inputClass} placeholder="Optional — street, city, state" disabled={!isEditing} />
+                                    <input type="text" name="address" value={formData.address} onChange={handleChange} className={inputClass} placeholder="Optional — street, area, landmark" disabled={!isEditing} />
                                 </div>
                                 <div className="md:col-span-2">
                                     <label className="mb-2 flex items-center gap-2 text-sm font-medium text-[#cfcfcf]">
