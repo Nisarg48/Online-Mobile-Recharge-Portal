@@ -3,6 +3,7 @@ import { FaReply, FaCheckCircle, FaClock } from 'react-icons/fa';
 import API from '../Utils/api';
 import { toast } from '../Utils/toast';
 import PageLayout from './PageLayout';
+import AdminTabs from "../components/AdminTabs";
 
 function Query_Page() {
     const [queries, setQueries] = useState([]);
@@ -65,6 +66,7 @@ function Query_Page() {
 
     return (
         <PageLayout title="Query Management">
+            <AdminTabs />
             <div className="w-full px-4 py-2">
                 <div className="mb-4">
                     <h1 className="text-xl font-bold text-white">Customer Support Queries</h1>

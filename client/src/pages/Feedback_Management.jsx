@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import PageLayout from "./PageLayout";
+import AdminTabs from "../components/AdminTabs";
 import { FaStar, FaCheck, FaUser, FaComment } from "react-icons/fa";
 import API from "../Utils/api";
 import { formatDateTime } from "../Utils/format";
@@ -41,6 +42,7 @@ const Feedback_Management = () => {
     if (loading) {
         return (
             <PageLayout title="Feedback Management">
+            <AdminTabs />
                 <div className="flex flex-col items-center justify-center h-64 text-gray-400">
                     Loading feedback...
                 </div>
@@ -50,6 +52,7 @@ const Feedback_Management = () => {
 
     return (
         <PageLayout title="Feedback Management">
+            <AdminTabs />
             <div className="mb-4">
                 <h2 className="text-xl font-semibold text-white">Customer Feedback</h2>
                 <p className="text-sm text-gray-400">

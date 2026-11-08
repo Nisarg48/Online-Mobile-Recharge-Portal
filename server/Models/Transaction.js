@@ -37,6 +37,11 @@ const Transaction_Schema = new mongoose.Schema({
     discount_amount: { type: Number, default: 0 },
     coupon_code: { type: String, default: null },
     planExpiryDate: { type: Date, default: null },
+    // Admin refunds credit the user's wallet once; the flag stops double refunds.
+    refunded: { type: Boolean, default: false },
+    refundedAt: { type: Date, default: null },
+    refundedAmount: { type: Number, default: 0 },
+    refundReason: { type: String, default: null },
 }, { timestamps: true });
 
 Transaction_Schema.pre("validate", function (next) {

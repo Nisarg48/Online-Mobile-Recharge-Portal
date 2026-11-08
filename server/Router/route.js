@@ -19,6 +19,8 @@ const {
     changePasswordSchema,
     couponSchema,
     updateCouponSchema,
+    walletAdjustSchema,
+    refundSchema,
 } = require("../Validation/schemas");
 
 const {
@@ -85,7 +87,14 @@ const {
     deleteCoupon,
 } = require("../Controllers/Coupon_Controller");
 
-const { getDashboard, getRegions } = require("../Controllers/Admin_Controller");
+const {
+    getDashboard,
+    getRegions,
+    listAdminTransactions,
+    adjustUserWallet,
+    refundTransaction,
+    listAuditLogs,
+} = require("../Controllers/Admin_Controller");
 
 // Auth Routes
 const authRoutes = require("./authRoute");
@@ -119,6 +128,10 @@ router.post('/autoRecharge/run', verifyToken, isAdmin, runAutoRecharge);
 // Admin Dashboard
 router.get('/admin/dashboard', verifyToken, isAdmin, getDashboard);
 router.get('/admin/regions', verifyToken, isAdmin, getRegions);
+router.get('/admin/transactions', verifyToken, isAdmin, listAdminTransactions);
+router.put('/admin/users/:id/wallet', verifyToken, isAdmin, validate(walletAdjustSchema), adjustUserWallet);
+router.post('/admin/transactions/:id/refund', verifyToken, isAdmin, validate(refundSchema), refundTransaction);
+router.get('/admin/audit', verifyToken, isAdmin, listAuditLogs);
 
 // Admin Routes
 router.delete('/user/deleteUser/:id', verifyToken, isAdmin, deleteUser);

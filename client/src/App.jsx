@@ -7,6 +7,7 @@ import ChangePassword from "./pages/Change_Password";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import Regions from "./pages/Regions";
+import Admin_Transactions from "./pages/Admin_Transactions";
 import Coupon_Management from "./pages/Coupon_Management";
 import Feedback_Management from "./pages/Feedback_Management";
 import NetworkProvider from "./pages/NetworkProvider";
@@ -35,6 +36,7 @@ function App() {
           <Route path="/User_Management" element={<AdminRoute><User_Management /></AdminRoute>} />
           <Route path="/admin/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
           <Route path="/admin/regions" element={<AdminRoute><Regions /></AdminRoute>} />
+          <Route path="/admin/transactions" element={<AdminRoute><Admin_Transactions /></AdminRoute>} />
           <Route path="/admin/coupons" element={<AdminRoute><Coupon_Management /></AdminRoute>} />
           <Route path="/admin/feedback" element={<AdminRoute><Feedback_Management /></AdminRoute>} />
           <Route path="/terms" element={<Terms />} />

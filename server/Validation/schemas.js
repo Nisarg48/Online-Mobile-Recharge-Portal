@@ -58,6 +58,21 @@ const changeUserRoleSchema = Joi.object({
     role: Joi.string().valid("user", "admin").required(),
 });
 
+// Admin wallet adjustment: positive credits, negative debits, never zero.
+const walletAdjustSchema = Joi.object({
+    amount: Joi.number().required().invalid(0).custom((value, helpers) => {
+        if (Math.abs(value) > 100000) {
+            return helpers.message("Amount must be between -100000 and 100000");
+        }
+        return value;
+    }),
+    reason: Joi.string().trim().min(3).max(200).required(),
+});
+
+const refundSchema = Joi.object({
+    reason: Joi.string().trim().max(200).allow(null, ""),
+});
+
 // Recharge Plan
 const rechargePlanSchema = Joi.object({
     platform: Joi.string().trim().required(),
@@ -175,6 +190,8 @@ module.exports = {
     updateUserSchema,
     toggleAutoRechargeSchema,
     changeUserRoleSchema,
+    walletAdjustSchema,
+    refundSchema,
     rechargePlanSchema,
     verifyCardDetailsSchema,
     validateCouponSchema,

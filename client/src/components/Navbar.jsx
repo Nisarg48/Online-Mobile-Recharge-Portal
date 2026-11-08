@@ -163,6 +163,13 @@ function Navbar() {
                                                     <FaMap size={14} className="mr-2" /> Regions
                                                 </Link>
                                                 <Link
+                                                    to="/admin/transactions"
+                                                    onClick={() => setShowAdminDropdown(false)}
+                                                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
+                                                >
+                                                    <FaExchangeAlt size={14} className="mr-2" /> Transactions
+                                                </Link>
+                                                <Link
                                                     to="/admin/coupons"
                                                     onClick={() => setShowAdminDropdown(false)}
                                                     className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
@@ -331,6 +338,16 @@ function Navbar() {
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
                                                             <FaMap size={14} className="mr-2" /> Regions
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                navigate('/admin/transactions');
+                                                                setShowAdminDropdown(false);
+                                                                setMobileMenuOpen(false);
+                                                            }}
+                                                            className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
+                                                        >
+                                                            <FaExchangeAlt size={14} className="mr-2" /> Transactions
                                                         </button>
                                                         <button
                                                             onClick={() => {

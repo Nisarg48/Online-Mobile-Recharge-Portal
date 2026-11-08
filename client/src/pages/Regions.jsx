@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import PageLayout from "./PageLayout";
+import AdminTabs from "../components/AdminTabs";
 import { FaMap, FaUsers, FaExchangeAlt, FaMoneyBillWave, FaGlobeAsia } from "react-icons/fa";
 import API from "../Utils/api";
 import { toast } from "../Utils/toast";
@@ -74,6 +75,7 @@ const Regions = () => {
     if (loading) {
         return (
             <PageLayout title="Regional Analytics">
+                <AdminTabs />
                 <div className="flex h-64 items-center justify-center text-gray-400">
                     Loading regional analytics...
                 </div>
@@ -84,6 +86,7 @@ const Regions = () => {
     if (!data) {
         return (
             <PageLayout title="Regional Analytics">
+                <AdminTabs />
                 <div className="flex h-64 items-center justify-center text-gray-400">
                     Failed to load regional analytics.
                 </div>
@@ -98,6 +101,7 @@ const Regions = () => {
 
     return (
         <PageLayout title="Regional Analytics">
+            <AdminTabs />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="rounded-xl border border-[#444444] bg-[#1e1e1e] p-4">
                     <div className="flex items-center justify-between">

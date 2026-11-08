@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import PageLayout from "./PageLayout";
+import AdminTabs from "../components/AdminTabs";
 import { FaSearch, FaEye, FaTimes, FaTrash, FaUserEdit, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import API from "../Utils/api";
 import { formatDateTime } from "../Utils/format";
@@ -117,6 +118,7 @@ function User_Management() {
 
     return (
         <PageLayout title="User Management">
+            <AdminTabs />
             <div className="flex justify-between items-center mb-4">
                 <div className="relative w-full max-w-md">
                     <input
