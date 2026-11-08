@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import {
-    FaChartPie, FaMap, FaExchangeAlt, FaTag, FaComment, FaUsers,
+    FaChartPie, FaMap, FaExchangeAlt, FaTag, FaComment, FaUsers, FaHistory,
 } from "react-icons/fa";
 
 const TABS = [
@@ -10,6 +10,7 @@ const TABS = [
     { to: "/admin/coupons", label: "Coupons", icon: FaTag },
     { to: "/admin/feedback", label: "Feedback", icon: FaComment },
     { to: "/User_Management", label: "Users", icon: FaUsers },
+    { to: "/admin/audit", label: "Audit", icon: FaHistory },
 ];
 
 const AdminTabs = () => (

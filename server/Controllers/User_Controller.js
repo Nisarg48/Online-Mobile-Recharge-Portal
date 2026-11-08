@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const { sendMail } = require("../Utils/mailer");
+const { recordAudit } = require("../Utils/audit");
 
 const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
 
@@ -210,12 +211,33 @@ const logout = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findByIdAndDelete(id);
+
+        if (String(req.user.userId) === String(id)) {
+            return res.status(400).json({ message: "You cannot delete your own account" });
+        }
+
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
+
+        if (user.role === "admin") {
+            const admins = await User.countDocuments({ role: "admin" });
+            if (admins <= 1) {
+                return res.status(409).json({ message: "Cannot delete the last admin account" });
+            }
+        }
+
+        await User.findByIdAndDelete(id);
+        await recordAudit(req, {
+            action: "user.delete",
+            target_type: "user",
+            target_id: id,
+            details: `Deleted ${user.email}`,
+        });
         res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
+        console.error("Delete user error:", error);
         res.status(500).json({ message: "Error deleting user" });
     }
 };
@@ -226,12 +248,38 @@ const changeUserRole = async (req, res) => {
         const { id } = req.params;
         const { role } = req.body;
 
-        const user = await User.findByIdAndUpdate(id, { role }, { new: true, runValidators: true });
-        if (!user) {
+        if (String(req.user.userId) === String(id)) {
+            return res.status(400).json({ message: "You cannot change your own role" });
+        }
+
+        const target = await User.findById(id);
+        if (!target) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.status(200).json(user);
+
+        if (target.role === "admin" && role !== "admin") {
+            const admins = await User.countDocuments({ role: "admin" });
+            if (admins <= 1) {
+                return res.status(409).json({ message: "Cannot demote the last admin account" });
+            }
+        }
+
+        const previousRole = target.role;
+        target.role = role;
+        await target.save();
+
+        if (previousRole !== role) {
+            await recordAudit(req, {
+                action: "user.role",
+                target_type: "user",
+                target_id: id,
+                details: `${previousRole} → ${role} for ${target.email}`,
+            });
+        }
+
+        res.status(200).json(target);
     } catch (error) {
+        console.error("Change user role error:", error);
         res.status(500).json({ message: "Error updating role" });
     }
 };
@@ -240,17 +288,37 @@ const changeUserRole = async (req, res) => {
 const toggleUserStatus = async (req, res) => {
     try {
         const { id } = req.params;
+
+        if (String(req.user.userId) === String(id)) {
+            return res.status(400).json({ message: "You cannot change your own account status" });
+        }
+
         const user = await User.findById(id);
 
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
+        if (user.isActive && user.role === "admin") {
+            const activeAdmins = await User.countDocuments({ role: "admin", isActive: true });
+            if (activeAdmins <= 1) {
+                return res.status(409).json({ message: "Cannot disable the last active admin" });
+            }
+        }
+
         user.isActive = !user.isActive;
         await user.save();
 
-        res.status(200).json({ message: `User ${user.isActive ? "enabled" : "disabled"}` });
+        await recordAudit(req, {
+            action: "user.status",
+            target_type: "user",
+            target_id: id,
+            details: `${user.isActive ? "Enabled" : "Disabled"} ${user.email}`,
+        });
+
+        res.status(200).json(user);
     } catch (error) {
+        console.error("Toggle user status error:", error);
         res.status(500).json({ message: "Error toggling user status" });
     }
 };
