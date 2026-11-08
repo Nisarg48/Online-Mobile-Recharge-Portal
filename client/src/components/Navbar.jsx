@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
     FaNetworkWired, FaExchangeAlt, FaQuestionCircle, FaSignOutAlt,
     FaSignInAlt, FaUserCircle,     FaChevronDown, FaChevronUp,     FaUsers,
-    FaBars, FaTimes, FaChartPie, FaTag, FaComment,     FaCog
+    FaBars, FaTimes, FaChartPie, FaTag, FaComment, FaMap,     FaCog
 } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -154,6 +154,13 @@ function Navbar() {
                                                     {unrepliedCount > 0 && (
                                                         <span className="ml-auto bg-[#50c878] text-[#1e1e1e] text-[10px] rounded-full px-2 py-0.5">{unrepliedCount}</span>
                                                     )}
+                                                </Link>
+                                                <Link
+                                                    to="/admin/regions"
+                                                    onClick={() => setShowAdminDropdown(false)}
+                                                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#2a2a2a] hover:text-white transition"
+                                                >
+                                                    <FaMap size={14} className="mr-2" /> Regions
                                                 </Link>
                                                 <Link
                                                     to="/admin/coupons"
@@ -314,6 +321,16 @@ function Navbar() {
                                                             className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
                                                         >
                                                             <FaChartPie size={14} className="mr-2" /> Dashboard
+                                                        </button>
+                                                        <button
+                                                            onClick={() => {
+                                                                navigate('/admin/regions');
+                                                                setShowAdminDropdown(false);
+                                                                setMobileMenuOpen(false);
+                                                            }}
+                                                            className="block w-full px-3 py-2 text-left text-gray-300 hover:bg-[#2a2a2a] hover:text-[#50c878] transition flex items-center gap-3"
+                                                        >
+                                                            <FaMap size={14} className="mr-2" /> Regions
                                                         </button>
                                                         <button
                                                             onClick={() => {

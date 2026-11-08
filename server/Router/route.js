@@ -85,7 +85,7 @@ const {
     deleteCoupon,
 } = require("../Controllers/Coupon_Controller");
 
-const { getDashboard } = require("../Controllers/Admin_Controller");
+const { getDashboard, getRegions } = require("../Controllers/Admin_Controller");
 
 // Auth Routes
 const authRoutes = require("./authRoute");
@@ -118,6 +118,7 @@ router.post('/autoRecharge/run', verifyToken, isAdmin, runAutoRecharge);
 
 // Admin Dashboard
 router.get('/admin/dashboard', verifyToken, isAdmin, getDashboard);
+router.get('/admin/regions', verifyToken, isAdmin, getRegions);
 
 // Admin Routes
 router.delete('/user/deleteUser/:id', verifyToken, isAdmin, deleteUser);
